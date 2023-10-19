@@ -1,0 +1,54 @@
+.primary-button {
+    background-color: #000000;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+.Polaris-Checkbox__Backdrop::after {
+    pointer-events: painted;
+}
+#baby-new-hide thead .Polaris-Checkbox {
+    display: none;
+}
+
+#don .Polaris-ResourceList__ResourceListWrapper .Polaris-ResourceList__HeaderOuterWrapper {
+    display: none;
+}
+
+#testhideid .Polaris-IndexTable__ColumnHeaderCheckboxWrapper {
+    display: none   ;
+}
+
+#mother-order .Polaris-Checkbox {
+    display: none;
+}
+
+/* Styles for the transition effect */
+.collpse {
+  overflow: hidden;
+  transition:  0.3s ease-in-out; /* Adjust the duration as needed */
+}
+
+.collpse {
+  max-height: none;
+  overflow: auto;
+  transition: 0.3s ease-in-out; /* Adjust the duration as needed */
+}
+.error-message{
+    color: red;
+}
+@media (min-width: 48em){
+.Polaris-Text--heading2xl {
+    font-size: var(--p-font-size-500);
+    line-height: var(--p-font-line-height-5);
+    margin: 0 20px;
+}
+}
+@media (min-width: 48em){
+.Polaris-Text--heading3xl {
+    font-size: var(--p-font-size-600);
+    line-height: var(--p-font-line-height-6);
+    margin: 0 20px;
+}
+}
