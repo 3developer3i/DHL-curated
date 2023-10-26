@@ -1,12 +1,13 @@
-import { ButtonGroup, Tooltip, Page, Icon, Button, Banner, Modal, FormLayout, TextField, TextContainer } from '@shopify/polaris';
+import { ButtonGroup, Tooltip, Page, Icon, Button, Banner, Modal, FormLayout, TextField, TextContainer, Frame, Toast } from '@shopify/polaris';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
     ReceiptMajor, LegalMajor, PrintMajor, LocationsMinor,
     ChevronDownMinor, ChevronUpMinor, DeleteMajor
 } from '@shopify/polaris-icons';
 import DeletePopup from '../components/popopdelete';
 import { BaseURl, shop } from '../contant'
+import ActionListInPopoverExample from '../components/items';
 
 const MotherOrderIndexTable = () => {
 
@@ -16,11 +17,18 @@ const MotherOrderIndexTable = () => {
     const [addTracking, setAddTracking] = useState("");
     const [shipmenttrackingnumber, setShipmenttrackingnumber] = useState("");
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [toastmessage, setToastMessage] = useState(false);
+    const [popoverActive, setPopoverActive] = useState(false);
+    const [APIMessage, setAPIMessage] = useState("");
+
+    const toggleActive = useCallback(() => setToastMessage((toastmessage) => !toastmessage), []);
+    const toastMarkup = toastmessage ? (
+        <Toast content={APIMessage} onDismiss={toggleActive} />
+    ) : null;
 
     const fetchAllBabyOrderlist = () => {
         setLoading(true);
-        axios
-            .get(`http://${BaseURl}/all_mother_order?shop_name=${shop}`)
+        axios.get(`https://${BaseURl}/all_mother_order?shop_name=${shop}`)
             .then((res) => {
                 console.log(res, "mother order.");
                 setMotherOrder(res.data.mother_order_list);
@@ -42,17 +50,17 @@ const MotherOrderIndexTable = () => {
         newCollapsibleStates[index] = !newCollapsibleStates[index];
         setCollapsibleStates(newCollapsibleStates);
     };
-
+    // setLoading(true);
     const DeleteSpecificMother = async (mother_order_id) => {
         const formData = new FormData();
         formData.append("shop_name", shop);
         formData.append("mother_order_id", mother_order_id)
         setLoading(true);
-        const response = await axios.post(`http://${BaseURl}/delete_specific_mother_order`, new URLSearchParams(formData));
+        const response = await axios.post(`https://${BaseURl}/delete_specific_mother_order`, new URLSearchParams(formData));
         if (response.status === 200) {
             if (response.data.success === "Mother order is deleted") {
                 fetchAllBabyOrderlist();
-                setLoading(false);
+                // setLoading(false);
                 setIsDeleteModalOpen(false);
             }
         };
@@ -63,6 +71,20 @@ const MotherOrderIndexTable = () => {
     const closeModal = () => {
         setIsModalOpen(!isModalOpen)
     };
+
+    function renderNames(names) {
+        const namesArray = names.split(',');
+
+        return namesArray.map((name, index) => {
+            const shouldAddLineBreak = (index + 1) % 4 === 0;
+            return (
+                <React.Fragment key={index}>
+                    {namesArray.length > 1 ? `${name},` : `${name}`}&nbsp;
+                    {shouldAddLineBreak && <br />}
+                </React.Fragment>
+            );
+        });
+    }
 
     return (
         <Page>
@@ -81,7 +103,7 @@ const MotherOrderIndexTable = () => {
                 </div>
             )}
             {motherorder.length > 0 && !loading && (
-                <div className="Polaris-LegacyCard">
+                <div className="Polaris-LegacyCard" style={{ width: "110%" }}>
                     <div className="Polaris-LegacyCard__Header" ><h2 className="Polaris-Text--root Polaris-Text--headingMd">Mother Order Lists</h2></div>
                     <div className="Polaris-IndexTable">
                         <div className="Polaris-IndexTable__IndexTableWrapper Polaris-IndexTable__IndexTableWrapper--scrollBarHidden">
@@ -110,7 +132,7 @@ const MotherOrderIndexTable = () => {
                                                             {/* Add row content */}
                                                         </td>
                                                         <td className="Polaris-IndexTable__TableCell">{datas.mother_order_id}</td>
-                                                        <td className="Polaris-IndexTable__TableCell">{datas.mother_order_number}</td>
+                                                        <td className="Polaris-IndexTable__TableCell">{renderNames(datas.mother_order_number)}</td>
                                                         <td className="Polaris-IndexTable__TableCell">{datas.mother_order_date}</td>
                                                         <td className="Polaris-IndexTable__TableCell">{datas.price === null ? "0$" : datas.price}</td>
                                                         <td className="Polaris-IndexTable__TableCell">
@@ -137,7 +159,7 @@ const MotherOrderIndexTable = () => {
                                                                 </Tooltip>
                                                                 <Tooltip content="Commercial Invoice">
                                                                     <div onClick={() => {
-                                                                        window.open(datas.Commercial_invoice, "_blank")
+                                                                        window.open(datas.comercial_mother_pdf, "_blank")
                                                                     }}>
                                                                         <Icon
                                                                             source={LegalMajor}
@@ -169,7 +191,6 @@ const MotherOrderIndexTable = () => {
                                                                 }} destructive size='micro' accessibilityLabel='Delete' icon={DeleteMajor}></Button>
                                                             </Tooltip>
                                                         </td>
-
                                                         <td onClick={() => toggleCollapsible(index)} className="Polaris-IndexTable__TableCell">
                                                             {collapsibleStates[index] ? <Icon
                                                                 source={ChevronUpMinor}
@@ -210,83 +231,43 @@ const MotherOrderIndexTable = () => {
                                                             </FormLayout>
                                                         </Modal.Section>
                                                     </Modal>
-                                                    {collapsibleStates[index] && <tr onClick={() => toggleCollapsible(index)}
-                                                        className={`Polaris-IndexTable__TableRow ${collapsibleStates[index] ? 'collapsible-open' : ''
-                                                            }`} style={{ height: `${70 * (datas.baby_order_data.length > 2 ? datas.baby_order_data.length - 1 : datas.baby_order_data.length)}px` }}>
-                                                        <div class="Polaris-LegacyCard" style={{ display: "contents" }}>
-                                                            <table style={{ position: "absolute" }} className="Polaris-IndexTable__Table Polaris-IndexTable__Table--sticky">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th className="Polaris-IndexTable__TableHeading Polaris-IndexTable__TableHeading--first" data-index-table-heading="true">
-                                                                            {/* Add header content */}
-                                                                        </th>
-                                                                        <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Order Number</th>
-                                                                        <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Title</th>
-                                                                        <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
-                                                                        <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
-                                                                        <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Add Tracking</th>
-                                                                        <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true"></th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    {datas.baby_order_data.map((data1, indexs) =>
-                                                                        <tr style={{ backgroundColor: "#ebebeb" }} id={indexs} className="Polaris-IndexTable__TableRow">
-                                                                            <td className="Polaris-IndexTable__TableCell  Polaris-IndexTable__TableHeading--first">
-                                                                                {/* Add row content */}
-                                                                            </td>
-                                                                            <td className="Polaris-IndexTable__TableCell">#{data1.baby_order_number}</td>
-                                                                            <td className="Polaris-IndexTable__TableCell">{data1.baby_title}</td>
-                                                                            <td className="Polaris-IndexTable__TableCell">{data1.baby_date}</td>
-                                                                            <td className="Polaris-IndexTable__TableCell">{data1.baby_total}</td>
-                                                                            <td className="Polaris-IndexTable__TableCell"><ButtonGroup>
-                                                                                {/* <Tooltip content="Print Invoice">
-                                                                                    <div>
-                                                                                        <Icon
-                                                                                            source={PrintMajor}
-                                                                                            tone="base"
-                                                                                            color='success'
-                                                                                        />
-                                                                                    </div>
-                                                                                </Tooltip> */}
-                                                                                <Tooltip content="Package Slip">
-                                                                                    <div onClick={() => {
-                                                                                        window.open(data1.filePath, "_blank")
-                                                                                    }}>
-                                                                                        <Icon
-                                                                                            source={ReceiptMajor}
-                                                                                            tone="base"
-                                                                                            color='base'
-                                                                                        />
-                                                                                    </div>
-                                                                                </Tooltip>
-                                                                                <Tooltip content="Commercial Invoice">
-                                                                                    <div onClick={() => {
-                                                                                        window.open(data1.Commercial_invoice, "_blank")
-                                                                                    }}>
-                                                                                        <Icon
-                                                                                            source={LegalMajor}
-                                                                                            tone="base"
-                                                                                            color='subdued'
-                                                                                        />
-                                                                                    </div>
-                                                                                </Tooltip>
-                                                                                <Tooltip content="Add Tracking">
-                                                                                    <div >
-                                                                                        <Icon
-                                                                                            source={LocationsMinor}
-                                                                                            tone="base"
-                                                                                            color='success'
-                                                                                        />
-                                                                                    </div>
-                                                                                </Tooltip>
-                                                                            </ButtonGroup></td>
-                                                                            <td className="Polaris-IndexTable__TableCell"></td>
-                                                                            <td className="Polaris-IndexTable__TableCell"></td>
-                                                                        </tr>)}
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </tr>
+                                                    {collapsibleStates[index] &&
+                                                        <tr className={`Polaris-IndexTable__TableRow ${collapsibleStates[index] ? 'collapsible-open' : ''
+                                                            }`} style={{ height: datas.baby_order_data.length < 4 ? `${datas.baby_order_data.length * 70.4285714286}px` : `${datas.baby_order_data.length * 42.4285714286}px` }}>
+                                                            <div className="Polaris-LegacyCard" style={{ display: "contents" }}>
+                                                                <table style={{ position: "absolute" }} className="Polaris-IndexTable__Table Polaris-IndexTable__Table--sticky">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th className="Polaris-IndexTable__TableHeading Polaris-IndexTable__TableHeading--first" data-index-table-heading="true">
+                                                                                {/* Add header content */}
+                                                                            </th>
+                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Order Number</th>
+                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Title</th>
+                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
+                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
+                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Items</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {datas.baby_order_data.map((data1, indexs) =>
+                                                                            <tr style={{ backgroundColor: "#ebebeb" }} id={indexs} className="Polaris-IndexTable__TableRow">
+                                                                                <td className="Polaris-IndexTable__TableCell  Polaris-IndexTable__TableHeading--first">
+                                                                                    {/* Add row content */}
+                                                                                </td>
+                                                                                <td className="Polaris-IndexTable__TableCell">#{data1.baby_order_number}</td>
+                                                                                <td className="Polaris-IndexTable__TableCell">{data1.baby_title}</td>
+                                                                                <td className="Polaris-IndexTable__TableCell">{data1.baby_date}</td>
+                                                                                <td className="Polaris-IndexTable__TableCell">{data1.baby_total}</td>
+                                                                                <td className="clasPolaris-IndexTable__TableCell">
+                                                                                    <ActionListInPopoverExample fulfillmentStatus={[]}
+                                                                                        itemsdata={data1.line_items}
+                                                                                        Item='ITEMS' />
+                                                                                </td>
+                                                                            </tr>)}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </tr>
                                                     }
                                                 </>
                                             )
@@ -320,6 +301,11 @@ const MotherOrderIndexTable = () => {
                     </TextContainer>
                 </Modal.Section>
             </Modal>
+            <div style={{ height: '250px' }}>
+                <Frame>
+                    {toastMarkup}
+                </Frame>
+            </div>
         </Page>
     );
 };

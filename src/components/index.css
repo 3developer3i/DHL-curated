@@ -52,3 +52,11 @@
     margin: 0 20px;
 }
 }
+
+#testhideid .Polaris-Checkbox {
+    display: none;
+}
+
+#toast-message .Polaris-Frame {
+   min-height: 0ch;
+}

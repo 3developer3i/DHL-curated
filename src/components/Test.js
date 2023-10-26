@@ -13,7 +13,7 @@ const MotherorderIndexTable = () => {
 
     const fetchAllBabyOrderlist = () => {
         axios
-            .get("http://3itesth18.pagekite.me/all_mother_order?shop_name=user-action.myshopify.com")
+            .get("http://curated.3iwebexperts.com/all_mother_order?shop_name=user-action.myshopify.com")
             .then((res) => {
                 // console.log(res);
                 setMotherOrder(res.data.mother_order_list);

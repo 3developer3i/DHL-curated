@@ -32,6 +32,7 @@ function Table() {
         singular: 'order',
         plural: 'orders',
     };
+
     // Function to fetch line items data
     // https://3itesth18.pagekite.me/Get_line_items?shop_name=user-action.myshopify.com&order_id=5141685371061
 
@@ -133,6 +134,7 @@ function Table() {
     ));
 
     let trueData = true;
+    
     useEffect(() => {
         if (trueData) {
             setIsLoading1(true);

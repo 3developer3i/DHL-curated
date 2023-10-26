@@ -123,7 +123,7 @@ function TrackModalExample({ sub_order, trackingId }) {
                         />
                     </div>
                 </Tooltip>
-                <Tooltip content="Commercial Invoice">
+                {/* <Tooltip content="Commercial Invoice">
                     <div onClick={() => {
                         window.open(newDatas.Commercial_invoice, "_blank")
                     }}>
@@ -133,7 +133,7 @@ function TrackModalExample({ sub_order, trackingId }) {
                             color='subdued'
                         />
                     </div>
-                </Tooltip>
+                </Tooltip> */}
                 <Tooltip content="Add Tracking">
                     <div onClick={handleChange}>
                         <Icon

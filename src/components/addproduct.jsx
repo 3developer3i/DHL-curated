@@ -126,11 +126,11 @@ function AddproductTable({ countproductlists, ordernumber, customer, d }) {
                             <TrackModalExample trackingId={index} sub_order={order_list} />
                         </div>
                     </IndexTable.Cell>
-                    <IndexTable.Cell>
+                    {/* <IndexTable.Cell>
                         <div onClick={handleTrackModalClick}>
                             <DeletePopup baby_order_number={baby_order_number} />
                         </div>
-                    </IndexTable.Cell>
+                    </IndexTable.Cell> */}
                 </IndexTable.Row>
             </>
         ),
@@ -157,11 +157,11 @@ function AddproductTable({ countproductlists, ordernumber, customer, d }) {
                         <TrackModalExample trackingId={index} sub_order={motherOrderData} />
                     </div>
                 </IndexTable.Cell>
-                <IndexTable.Cell>
+                {/* <IndexTable.Cell>
                     <div onClick={handleTrackModalClick}>
                         <DeletePopup mother_order_number={mother_order_id} />
                     </div>
-                </IndexTable.Cell>
+                </IndexTable.Cell> */}
             </IndexTable.Row>
         ),
     );
@@ -181,11 +181,10 @@ function AddproductTable({ countproductlists, ordernumber, customer, d }) {
                             onSelectionChange={handleSelectionChange}
                             headings={[
                                 { title: 'Order Number' },
-                                // { title: 'Shopify Order' },
                                 { title: 'Products Details' },
                                 { title: 'Date' },
                                 { title: 'Options' },
-                                { title: 'Action' },
+                                // { title: 'Action' },
                             ]}
                         >
                             {rowMarkup}

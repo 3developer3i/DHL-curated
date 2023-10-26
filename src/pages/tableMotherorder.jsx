@@ -69,7 +69,7 @@ export default function MotherOrderList() {
 
     const fetchAllBabyOrderlist = () => {
         axios
-            .get("http://3itesth18.pagekite.me/all_baby_order?shop_name=user-action.myshopify.com")
+            .get("http://curated.3iwebexperts.com/all_baby_order?shop_name=user-action.myshopify.com")
             .then((res) => {
                 console.log(res);
                 setDatas(res.data.order_list);

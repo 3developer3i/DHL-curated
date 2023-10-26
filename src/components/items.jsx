@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Popover, Icon, Grid, Thumbnail, LegacyCard, Badge } from '@shopify/polaris';
+import { Popover, Icon, Grid, Thumbnail, LegacyCard, Badge, Text } from '@shopify/polaris';
 import { DropdownMinor } from '@shopify/polaris-icons';
 
 function ActionListInPopoverExample({ itemsdata }) {
@@ -36,9 +36,9 @@ function ActionListInPopoverExample({ itemsdata }) {
                                             />
                                         </div>
                                         <div style={{ marginLeft: '8px', whiteSpace: 'normal' }}>
-                                            <a href="#" style={{ whiteSpace: 'normal' }}>
-                                                {item.name} × {item.quantity}
-                                            </a>
+                                            <Text style={{ whiteSpace: 'normal' }}>
+                                            {item.name} <br/><Text>price: {item.quantity} x {item.price}</Text>
+                                            </Text>
                                         </div>
                                     </div>
                                 </div>
