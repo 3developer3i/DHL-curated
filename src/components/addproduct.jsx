@@ -10,9 +10,9 @@ import {
     Button,
     Collapsible,
     TextContainer,
-    Link,Grid, Badge,
+    Link, Grid, Badge,
     Pagination,
-    Popover, Icon
+    Popover, Icon, Tooltip
 } from '@shopify/polaris';
 import {
     ReceiptMajor,
@@ -24,6 +24,7 @@ import TrackModalExample from './trackmodal';
 import { ModalContext } from '../context/modalContext';
 import DeletePopup from './popopdelete';
 import axios from 'axios';
+import { BaseURl, shop } from '../contant';
 
 function AddproductTable({ countproductlists, ordernumber, customer, d }) {
 
@@ -137,9 +138,23 @@ function AddproductTable({ countproductlists, ordernumber, customer, d }) {
         }
         handleSelectionChange()
     };
+
     const toggleActive2 = useCallback(() => {
         setActive2((prevActive) => !prevActive);
     }, []);
+
+    // delete parent baby orderdelete_specific_parent_baby_order/
+    const deleteParentBabyorder = async (Id) => {
+        const formData = new FormData();
+        formData.append("shop_name", shop);
+        formData.append("parent_baby_order_id", Id);
+        // setLoading(true);
+        const response = await axios.post(`https://${BaseURl}/delete_specific_parent_baby_order`, new URLSearchParams(formData));
+        if (response.status === 200) {
+            console.log(response.data, "delete parent baby..");
+            // setLoading(false);
+        }
+    };
 
     const rowMarkup = order_list && order_list.map(
         ({ baby_total, baby_order_number, baby_date, baby_title, line_items }, index) => (
@@ -228,8 +243,10 @@ function AddproductTable({ countproductlists, ordernumber, customer, d }) {
                     </div>
                 </IndexTable.Cell>
                 <IndexTable.Cell>
-                    <div onClick={handleTrackModalClick}>
-                        <DeletePopup mother_order_number={mother_order_id} />
+                    <div>
+                        <Tooltip content="delete">
+                            <Button destructive onClick={() => deleteParentBabyorder(mother_order_id)} size='micro' accessibilityLabel='Delete' icon={DeleteMajor}></Button>
+                        </Tooltip>
                     </div>
                 </IndexTable.Cell>
             </IndexTable.Row>

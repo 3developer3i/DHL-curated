@@ -257,6 +257,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
             if (res.status === 200) {
                 console.log(res.data, "parent baby......");
                 setIsLoading(false);
+                setCallApiParentBaby(true)
             }
             // setOpenTable(true);
         }).catch((err) => console.log(err))
