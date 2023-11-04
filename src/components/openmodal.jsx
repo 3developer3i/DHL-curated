@@ -1,5 +1,5 @@
 
-import { Page, Popover, Select, LegacyCard, Grid, Layout, FormLayout, TextField, Text, Checkbox, ResourceList, ResourceItem, Button, Thumbnail, Icon, LegacyStack, Banner, Toast, Frame } from '@shopify/polaris';
+import { Page, Popover, Select, LegacyCard, Grid, Layout, FormLayout, TextField, Text, Checkbox, ResourceList, ResourceItem, Button, Thumbnail, Icon, LegacyStack, Banner, Toast, Frame, Pagination } from '@shopify/polaris';
 import { useState, useCallback, useEffect, useContext } from 'react';
 import {
     EditMajor, MobileBackArrowMajor
@@ -25,31 +25,26 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
     };
 
     const modalcontext = useContext(ModalContext)
-    const { uniqOrderId, setMotherOrderData, isLoading, ShowTable1, setShowtable, setIsLoading, setSelectedItems, selectedItems, setBabyOrderData, setTableData, tableData, babyorderlists, setOpenTable, setOrder_List, trackingId, order_list, setMotherOrder, setDeleteIndex, setBabyOrderNumber, openmotherorder, setSub_order, sub_order, deleteIndex } = modalcontext;
+    const { uniqOrderId, setMotherOrderData, isLoading, ShowTable1, setShowtable, setIsLoading, setSelectedItems, selectedItems, setBabyOrderData, setTableData, tableData, babyorderlists, setOpenTable, setOrder_List, setCallApiParentBaby, callApiParentBaby, order_list, setMotherOrder, babyIDs, babyOrderIDs, setBabyOrderNumber, openmotherorder, setSub_order, sub_order, parentBabyOrder} = modalcontext;
 
     const [isModalClose, setIsModalClose] = useState(false);
     const closeModal = () => {
         setIsModalClose(true);
     };
 
-    const [checked, setChecked] = useState();
-
-    const handleChange = useCallback(
-        (newChecked) => setChecked(newChecked),
-        [],
-    );
-
     const [createbabyorder, setcreatebabyorder] = useState(false)
     const [newData, setNewData] = useState([]);
-    // const [ShowTable1, setShowtable] = useState(false);
     const [discheckbox, setDischeckbox] = useState(true);
     const [customerData, setCustomerData] = useState([]);
     const [storecreatedata, setStorecreatedata] = useState([]);
-    // const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [toastmessage, setToastMessage] = useState(false);
+    const [APIMessage, setAPIMessage] = useState("");
 
-    // console.log(lineItemsData);
-    const checkselectite = selectedItems;
+    const toggleActive = useCallback(() => setToastMessage((toastmessage) => !toastmessage), []);
+    const toastMarkup = toastmessage ? (
+        <Toast content={APIMessage} onDismiss={toggleActive} />
+    ) : null;
+
 
     // https://3itesth18.pagekite.me/create_baby_order
     const notes = lineItemsData && lineItemsData.order_list_extra[0].note ? lineItemsData.order_list_extra[0].note : 'No notes from customer';
@@ -89,7 +84,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
     const [popoverActive, setPopoverActive] = useState(false);
     const [tagValue, setTagValue] = useState('');
 
-    const fetchLineItems = async () => {
+    const fetchLineItems = async (checkIt) => {
         fetch(`https://${BaseURl}/get_baby_order?shop_name=${shop}&order_id=${uniqOrderId}`)
             .then((response) => response.json())
             .then((data) => {
@@ -100,20 +95,14 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                 setOrder_List(data.order_list);
                 setIsModalOpen(true);
                 setSelectedItems([]);
+                if (checkIt === 'yes') {
+                    toggleActive()
+                }
             })
             .catch((error) => {
                 console.error('Error fetching line items data:', error);
             });
-        // const response = await axios.get(`https://${BaseURl}/get_baby_order?shop_name=${shop}&order_id=${uniqOrderId}`)
-        // if (response.status === 200) {
-        //     if (response.data.order_list) {
-        //         setOrder_List(response.data.order_list);
-        //     }
-        //     setTableData(response.data.order_list_extra[0].line_items);
-        // };
     };
-
-    console.log(selectedBoxSize, "ms.....");
 
     const fetchData = () => {
         setIsLoading(true); // Set loading to true before making the request
@@ -122,15 +111,18 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
         formData.append("order_id", lineItemsData.order_list_extra[0].order_id);
         formData.append("variant_id", selectedItems);
         formData.append("shop_name", shop);
+        formData.append("order_number", lineItemsData.order_list_extra[0].order_number);
         formData.append("select_box_size", getselctId);
         setIsLoading(true);
 
         axios.post(`https://${BaseURl}/create_baby_order`, new URLSearchParams(formData))
             .then((res) => {
-                // console.log(res.data);
+                console.log(res.data);
                 if (res.data.json_line_items === undefined) {
-                    setIsLoading(false)
-                    return alert(res.data.msg);
+                    // setIsLoading(false)
+                    fetchLineItems('yes');
+                    console.log(res.data.msg);
+                    setAPIMessage("Baby Order Created SuccessFully");
                 }
                 if (res.data) {
                     setStorecreatedata(res.data.json_line_items);
@@ -226,11 +218,54 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
         [],
     );
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 5;
+
+    const paginatedData = tableData.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
+
+    const totalItems = tableData.length;
+    const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
+    // create_parent_baby_order APIS
+    const fetchCreateParentBabyOrder = () => {
+        fetch(`https://${BaseURl}/all_parent_baby_order?shop_name=${shop}`)
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(data,"parent get..");
+        })
+        .catch((error) => {
+            console.error('Error fetching line items data:', error);
+        });
+    };
+
+    const createParentBabyOrder = () => {
+        console.log(babyOrderIDs, babyIDs);
+        const formData = new FormData();
+        formData.append("order_id", babyOrderIDs);
+        formData.append("baby_list", babyIDs);
+        formData.append("shop_name", shop);
+        formData.append("shipperselect", "1");
+        setIsLoading(true);
+        axios.post(`https://${BaseURl}/create_parent_baby_order`, new URLSearchParams(formData)).then((res) => {
+            if (res.status === 200) {
+                console.log(res.data, "parent baby......");
+                setIsLoading(false);
+            }
+            // setOpenTable(true);
+        }).catch((err) => console.log(err))
+    };
+
     return (
         <>
             {isModalClose ? (
                 <>
-
                     <Table />
                 </>
             ) : (
@@ -250,7 +285,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                     <div style={{ display: 'flex', marginLeft: "10Px", alignItems: 'center', fontWeight: "bold" }}>
                                         {lineItemsData && lineItemsData.order_list_extra[0].order_number && lineItemsData.order_list_extra[0].order_number}
                                     </div>
-                                    <div style={{ marginLeft: "55%" }}>
+                                    <div style={{ marginLeft: "25%" }}>
                                         <Popover
                                             active={popoverActive}
                                             activator={<Button size='slim' primary onClick={() => togglePopoverActive()} disabled={createbabyorder && !openmotherorder ? false : true}>CREATE BABY ORDER</Button>}
@@ -267,6 +302,12 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                     </div>
                                     {openmotherorder && <div style={{ marginLeft: "10px" }}>
                                         <Button size='slim' onClick={() => { fetchMotherData() }} primary disabled={false}>CREATE MOTHER ORDER</Button>
+                                    </div>}
+                                    {tableData.length === 0 && <div style={{ marginLeft: "10px" }}>
+                                        <Button size='slim' onClick={() => {
+                                            setCallApiParentBaby(true); // Iterate through the data and collect baby_ID values
+                                            createParentBabyOrder();
+                                        }} disabled={callApiParentBaby ? true : false} primary>CREATE PARENT BABY ORDER</Button>
                                     </div>}
                                 </div>
                             </>
@@ -287,11 +328,12 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                                             <ResourceList
                                                                 resourceName={{ singular: 'product', plural: 'products' }}
                                                                 selectedItems={selectedItems}
-                                                                onSelectionChange={(selectedId) => {
+                                                                onSelectionChange={(selectedId, dataId) => {
                                                                     setSelectedItems(selectedId);
+
                                                                 }}
                                                                 selectable
-                                                                items={tableData}
+                                                                items={paginatedData}
                                                                 idForItem={(item) => item.variant_id}
                                                                 renderItem={(item, index) => {
                                                                     return (
@@ -325,6 +367,20 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                                                 }}
                                                             />
                                                         </div>
+                                                        {tableData.length > 9 &&
+                                                            <>
+                                                                <div className="Polaris-IndexTable__TableRow"></div>
+                                                                <div style={{ display: "flex", justifyContent: "center", paddingBottom: "10px", paddingTop: "10px" }}>
+                                                                    <Pagination
+                                                                        hasPrevious={currentPage > 1}
+                                                                        hasNext={currentPage < totalPages}
+                                                                        label={`${paginatedData.length} of ${tableData.length}`}
+                                                                        onPrevious={() => handlePageChange(currentPage - 1)}
+                                                                        onNext={() => handlePageChange(currentPage + 1)}
+                                                                    />
+                                                                </div>
+                                                            </>
+                                                        }
                                                     </LegacyCard>
                                                     {tableData.length > 0 ? "" : <div style={{
                                                         fontSize: '16px', // Adjust the font size as needed
@@ -445,13 +501,12 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                 </div>
                             </Grid.Cell>
                             <Grid.Cell columnSpan={{ xs: 5, sm: 2, md: 2, lg: 3, xl: 12 }}>
-
-                                {(ShowTable1 && order_list.length !== 0) ? (
+                                {(ShowTable1 || order_list.length !== 0 || parentBabyOrder.length !== 0) ? (
                                     <>
-                                        <AddproductTable sub_order={sub_order} newData={alreadybabyorder.length > 0 ? alreadybabyorder : storecreatedata} countproductlists={tableData.length} id={id} ordernumber={ordernumber} customer={customer} d={date} />
+                                        <AddproductTable  />
                                     </>
 
-                                ) : (
+                               ) : (
                                     <>
                                         <div style={{
                                             fontSize: '24px', // Adjust the font size as needed
@@ -462,11 +517,15 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                         }}>
                                             No Products Selected
                                         </div>
-
                                     </>
-                                )}
+                                )} 
                             </Grid.Cell>
                         </Grid>
+                        <div id="toast-message">
+                            <Frame>
+                                {toastMarkup}
+                            </Frame>
+                        </div>
                     </Page>
                 </>
             )}

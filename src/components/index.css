@@ -60,3 +60,7 @@
 #toast-message .Polaris-Frame {
    min-height: 0ch;
 }
+
+#baby-new-hide .Polaris-LegacyCard{
+  width: 110%;
+}

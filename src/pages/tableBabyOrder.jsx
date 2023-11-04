@@ -7,6 +7,7 @@ import {
   Page,
   Banner,
   Popover,
+  Pagination,
 } from "@shopify/polaris";
 import React, { useEffect, useState, useCallback, useContext } from "react";
 import axios from "axios";
@@ -64,6 +65,8 @@ export default function BabyOrderList() {
     provinceCode: "DE",
     city: "SCHKEUDITZ",
     companyName: "The Curated AS C/O DHL HUB LEIPZIG GMBH",
+    state: ".",
+    country: "."
   });
   const [shipperformData, setShipperFormData] = useState({
     shipperfullName: "The Curated AS",
@@ -78,17 +81,31 @@ export default function BabyOrderList() {
     shippercity: "BEIJING",
     shippercompanyName: "The Curated AS CO/warehouse",
     shipperselect: "",
+    shipperstate: ".",
+    shippercountry: "."
   });
   const [commercialForm, setCommercialForm] = useState({
     REFERENCE_NUMBER: ".",
     SHIPPER_EXPORT_REFERENCES: ".",
     SHIPPER: ".",
-    CONSIGNEE: ".",
     COUNTRY_OF_EXPORT: ".",
     IMPORTER: ".",
     INDIRECT_REPRESENTATIVE: ".",
     REASON_FOR_EXPORT: ".",
     COUNTRY_OF_ULTIMATE_DESTINATION: ".",
+    consignee_companyName: "",
+    consignee_fullName: "",
+    consignee_address: "",
+    consignee_state: "",
+    consignee_country: "",
+    consignee_pincode: "",
+    EORI_Id: "",
+    tax_id: "",
+    REPRESENTATIVE_NAME: "",
+    REPRESENTATIVE_ADDRESS: "",
+    REPRESENTATIVE_STATE: "",
+    REPRESENTATIVE_COUNTRY: "",
+    REPRESENTATIVE_ZIPCODE: "",
   });
 
   // Print Toast Message
@@ -164,15 +181,16 @@ export default function BabyOrderList() {
   const fetchAllBabyOrderlist = (checkIt, name) => {
     if (checkIt !== "yes") {
       setLoading(true);
-    }
+    };
 
-    axios
-      .get(`https://${BaseURl}/all_baby_order?shop_name=${shop}`)
+    axios.get(`https://${BaseURl}/all_parent_baby_order?shop_name=${shop}`)
       .then((res) => {
         console.log(res, "baaby...");
+
         if (res.data.all_data) {
-          setDatas(res.data.all_data.order_list);
+          setDatas(res.data.mother_order_list);
         };
+
         if (res.data.all_data) {
           setCommercialForm({
             REFERENCE_NUMBER:
@@ -180,7 +198,7 @@ export default function BabyOrderList() {
             SHIPPER_EXPORT_REFERENCES:
               res.data.all_data.commercial_data.SHIPPER_EXPORT_REFERENCES,
             SHIPPER: res.data.all_data.commercial_data.SHIPPER,
-            CONSIGNEE: res.data.all_data.commercial_data.CONSIGNEE,
+            // CONSIGNEE: res.data.all_data.commercial_data.CONSIGNEE,
             COUNTRY_OF_EXPORT:
               res.data.all_data.commercial_data.COUNTRY_OF_EXPORT,
             IMPORTER: res.data.all_data.commercial_data.IMPORTER,
@@ -190,6 +208,19 @@ export default function BabyOrderList() {
               res.data.all_data.commercial_data.REASON_FOR_EXPORT,
             COUNTRY_OF_ULTIMATE_DESTINATION:
               res.data.all_data.commercial_data.COUNTRY_OF_ULTIMATE_DESTINATION,
+            consignee_address: res.data.all_data.commercial_data.consignee_address,
+            consignee_companyName: res.data.all_data.commercial_data.consignee_companyname,
+            consignee_fullName: res.data.all_data.commercial_data.consignee_fullname,
+            consignee_country: res.data.all_data.commercial_data.consignee_country,
+            consignee_pincode: res.data.all_data.commercial_data.consignee_postalcode,
+            consignee_state: res.data.all_data.commercial_data.consignee_state,
+            tax_id: res.data.all_data.commercial_data.tax_id,
+            EORI_Id: res.data.all_data.commercial_data.eori_id,
+            REPRESENTATIVE_NAME: res.data.all_data.commercial_data.representative_name,
+            REPRESENTATIVE_ADDRESS: res.data.all_data.commercial_data.representative_address,
+            REPRESENTATIVE_STATE: res.data.all_data.commercial_data.representative_state,
+            REPRESENTATIVE_COUNTRY: res.data.all_data.commercial_data.representative_country,
+            REPRESENTATIVE_ZIPCODE: res.data.all_data.commercial_data.representative_zipcode,
           });
           setShipperFormData({
             shipperfullName:
@@ -211,6 +242,8 @@ export default function BabyOrderList() {
             shippercity: res.data.all_data.commercial_data.shipper_city,
             shippercompanyName:
               res.data.all_data.commercial_data.shipper_companyName,
+            shipperstate: res.data.all_data.commercial_data.shipper_state,
+            shippercountry: res.data.all_data.commercial_data.shipper_country
           });
           setFormData({
             fullName: res.data.all_data.commercial_data.receiver_Full_Name,
@@ -228,22 +261,30 @@ export default function BabyOrderList() {
               res.data.all_data.commercial_data.receiver_provincecode,
             city: res.data.all_data.commercial_data.receiver_city,
             companyName: res.data.all_data.commercial_data.receiver_companyName,
+            state: res.data.all_data.commercial_data.receiver_state,
+            country: res.data.all_data.commercial_data.receiver_country
           });
         };
+
         if (checkIt === 'yes') {
           if (name === "add-commercial") {
             toggleActive();
             // setLoading(false);
           } else if (name === "create-mother") {
+            setAPIMessage("MotherOrder Created");
+            toggleActive();
             togglePopoverActive();
-            toggleActive();
-            // setLoading(false);
           } else if (name == "add-address") {
-            handleChange();
             toggleActive();
+            handleChange();
+            // toggleActive();
+            // setLoading(false);
+          } else if (name == "baby-delete") {
+            toggleActive();
+            // toggleActive();
             // setLoading(false);
           }
-        }
+        };
         setLoading(false);
       })
       .catch((err) => console.log(err));
@@ -312,17 +353,31 @@ export default function BabyOrderList() {
     setActive2((prevActive) => !prevActive);
   }, []);
 
-  const rowMarkup = datas.map(
+  // paginmation
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
+
+  const paginatedData = datas.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const totalItems = datas.length;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  const rowMarkup = paginatedData.map(
     (
       {
-        id,
         baby_order_number,
         baby_title,
         baby_total,
         baby_date,
-        customer,
         filePath,
-        paymentStatus,
+        baby_ID,
         comercial_baby_pdf,
         shipmenttrackingnumber,
         trackingnumber,
@@ -337,9 +392,14 @@ export default function BabyOrderList() {
           selected={selectedResources.includes(index)}
           position={index}
         >
-          <IndexTable.Cell s>
+          <IndexTable.Cell>
             <Text variant="bodyMd" fontWeight="bold" as="span">
               #{baby_order_number}
+            </Text>
+          </IndexTable.Cell>
+          <IndexTable.Cell>
+            <Text variant="bodyMd" fontWeight="bold" as="span">
+              #{baby_ID}
             </Text>
           </IndexTable.Cell>
           <IndexTable.Cell>
@@ -348,7 +408,7 @@ export default function BabyOrderList() {
             </Text>
           </IndexTable.Cell>
           <IndexTable.Cell>{baby_date}</IndexTable.Cell>
-          <IndexTable.Cell>{baby_total}</IndexTable.Cell>
+          <IndexTable.Cell> {typeof baby_total === 'number' ? baby_total.toFixed(1) : parseFloat(baby_total).toFixed(1)}</IndexTable.Cell>
           <IndexTable.Cell>
             <ButtonGroup>
               {/* <Tooltip content="Print Invoice">
@@ -390,7 +450,7 @@ export default function BabyOrderList() {
               <Button
                 onClick={() => {
                   // console.log(datas.mother_order_id);
-                  setBabyNumber(baby_order_number);
+                  setBabyNumber(baby_ID);
                   setIsDeleteModalOpen(!isDeleteModalOpen);
                 }}
                 destructive
@@ -488,13 +548,14 @@ export default function BabyOrderList() {
   );
 
   const handleSubmit = () => {
-    // handleChange();
+
+    setLoading(true);
     const selectedBabyOrderNumbers = [];
     const selectedBabyOrderIds = [];
 
     selectedResources.forEach((index) => {
-      if (datas[index] && datas[index].baby_order_number) {
-        selectedBabyOrderNumbers.push(datas[index].baby_order_number);
+      if (datas[index] && datas[index].baby_ID) {
+        selectedBabyOrderNumbers.push(datas[index].baby_ID);
       }
     });
     selectedResources.forEach((index) => {
@@ -520,25 +581,13 @@ export default function BabyOrderList() {
     formDatas.append("companyName", formData.companyName);
     formDatas.append("shipperFirstName", shipperformData.shipperfullName);
     formDatas.append("shipperemail", shipperformData.shipperemail);
-    formDatas.append(
-      "shippermobileNumber",
-      shipperformData.shippermobileNumber
-    );
+    formDatas.append("shippermobileNumber", shipperformData.shippermobileNumber);
     formDatas.append("shipperphone", shipperformData.shipperphone);
-    formDatas.append(
-      "shipperaddressLine1",
-      shipperformData.shipperaddressLine1
-    );
-    formDatas.append(
-      "shipperaddressLine2",
-      shipperformData.shipperaddressLine2
-    );
+    formDatas.append("shipperaddressLine1", shipperformData.shipperaddressLine1);
+    formDatas.append("shipperaddressLine2", shipperformData.shipperaddressLine2);
     formDatas.append("shipperpostalcode", shipperformData.shipperpostalCode);
     formDatas.append("shippercountrycode", shipperformData.shippercountryCode);
-    formDatas.append(
-      "shipperprovincecode",
-      shipperformData.shipperprovinceCode
-    );
+    formDatas.append("shipperprovincecode", shipperformData.shipperprovinceCode);
     formDatas.append("shippercity", shipperformData.shippercity);
     formDatas.append("shippercompanyName", shipperformData.shippercompanyName);
     formDatas.append("shipperselect", getselctId);
@@ -549,8 +598,6 @@ export default function BabyOrderList() {
       }
     }
 
-    setLoading(true);
-
     axios
       .post(
         `https://${BaseURl}/create_mother_order`,
@@ -558,13 +605,11 @@ export default function BabyOrderList() {
       )
       .then((res) => {
         if (res.status === 200) {
-          console.log(res, "277788999..........");
+          console.log(res.data, "mother created ..........");
           if (res.data.msg === "MotherOrder Created") {
             handleSelectionChange();
             fetchAllBabyOrderlist('yes', "create-mother");
-            setAPIMessage("MotherOrder Created")
-          } else {
-            setLoading(false);
+            // setAPIMessage("MotherOrder Created")
           }
         }
       })
@@ -581,9 +626,10 @@ export default function BabyOrderList() {
       new URLSearchParams(formData)
     );
     if (response.status === 200) {
+      console.log(response.data);
       if (response.data.success === "Baby order is deleted") {
         handleSelectionChange();
-        fetchAllBabyOrderlist('yes');
+        fetchAllBabyOrderlist('yes', 'baby-delete');
         setAPIMessage("Baby order is deleted")
         setIsDeleteModalOpen(false);
       }
@@ -654,6 +700,8 @@ export default function BabyOrderList() {
     formDatass.append("provinceCode", formData.provinceCode);
     formDatass.append("city", formData.city);
     formDatass.append("companyName", formData.companyName);
+    formDatass.append("state", formData.state);
+    formDatass.append("country", formData.country);
     formDatass.append("shipperFirstName", shipperformData.shipperfullName);
     formDatass.append("shipperemail", shipperformData.shipperemail);
     formDatass.append("shippermobileNumber", shipperformData.shippermobileNumber);
@@ -665,6 +713,8 @@ export default function BabyOrderList() {
     formDatass.append("shipperprovincecode", shipperformData.shipperprovinceCode);
     formDatass.append("shippercity", shipperformData.shippercity);
     formDatass.append("shippercompanyName", shipperformData.shippercompanyName);
+    formDatass.append("shipperstate", shipperformData.shipperstate);
+    formDatass.append("shippercountry", shipperformData.shippercountry);
     formDatass.append("shipperselect", getselctId);
     const response = await axios.post(`https://${BaseURl}/get_address_detail`, new URLSearchParams(formDatass));
     if (response.status === 200) {
@@ -673,6 +723,7 @@ export default function BabyOrderList() {
       setAPIMessage("Address Details Add SuccessFully");
     }
   };
+
 
   return (
     <Page>
@@ -711,8 +762,8 @@ export default function BabyOrderList() {
                 <div style={{ display: "flex" }}>
                   <div>
                     <Popover
-                      active={popoverActive}
-                      activator={<Button pressed onClick={() => togglePopoverActive()} disabled={(datas.length === 0 || selectedResources.length === 0) ? true : false}>CREATE MOTHER ORDER</Button>}
+                      active={""}
+                      activator={<Button pressed onClick={() => handleSubmit()} disabled={(datas.length === 0 || selectedResources.length === 0) ? true : false}>CREATE MOTHER ORDER</Button>}
                       onClose={togglePopoverActive}
                       ariaHaspopup={false}
                       sectioned
@@ -918,7 +969,6 @@ export default function BabyOrderList() {
                                 />
                               )}
                             </div>
-
                             <div className="form-field">
                               <label>provincecode</label>
                               <TextField
@@ -942,7 +992,6 @@ export default function BabyOrderList() {
                                 />
                               )}
                             </div>
-
                             <div className="form-field">
                               <label>city</label>
                               <TextField
@@ -960,27 +1009,29 @@ export default function BabyOrderList() {
                                 />
                               )}
                             </div>
-
                             <div className="form-field">
-                              <label>companyName</label>
+                              <label>state</label>
+                              <TextField
+                                error={formData.state ? "" : "This Field Is Required"}
+                                type="text"
+                                name="state"
+                                value={formData.state}
+                                onChange={(value) => handleChangethree("state", value)}
+                              />
+                            </div>
+                            <div className="form-field">
+                              <label>country</label>
                               <TextField
                                 error={
-                                  formData.companyName ? "" : "This Field Is Required"
+                                  formData.country ? "" : "This Field Is Required"
                                 }
                                 type="text"
-                                name="companyName"
-                                value={formData.companyName}
+                                name="country"
+                                value={formData.country}
                                 onChange={(value) =>
-                                  handleChangethree("companyName", value)
+                                  handleChangethree("country", value)
                                 }
                               />
-                              {!formData && (
-                                <ErrorMessage
-                                  name="companyName"
-                                  component="div"
-                                  className="error-message"
-                                />
-                              )}
                             </div>
                           </FormLayout.Group>
                         </FormLayout>
@@ -1224,6 +1275,32 @@ export default function BabyOrderList() {
                             </div>
 
                             <div className="form-field">
+                              <label>state</label>
+                              <TextField
+                                error={shipperformData.shipperstate ? "" : "This Field Is Required"}
+                                type="text"
+                                name="state"
+                                value={shipperformData.shipperstate}
+                                onChange={(value) => handleChangethree("shipperstate", value)}
+                              />
+                            </div>
+
+                            <div className="form-field">
+                              <label>country</label>
+                              <TextField
+                                error={
+                                  shipperformData.shippercountry ? "" : "This Field Is Required"
+                                }
+                                type="text"
+                                name="country"
+                                value={shipperformData.shippercountry}
+                                onChange={(value) =>
+                                  handleChangethree("shippercountry", value)
+                                }
+                              />
+                            </div>
+
+                            <div className="form-field">
                               <label>companyName</label>
                               <TextField
                                 error={
@@ -1325,23 +1402,7 @@ export default function BabyOrderList() {
                                 name="SHIPPER"
                                 value={commercialForm.SHIPPER}
                                 onChange={(value) =>
-                                  handleChangethree("mobileNumber", value)
-                                }
-                              />
-                            </div>
-                            <div className="form-field">
-                              <label>Consignee</label>
-                              <TextField
-                                error={
-                                  commercialForm.CONSIGNEE
-                                    ? ""
-                                    : "This Field Is Required"
-                                }
-                                type="text"
-                                name="CONSIGNEE"
-                                value={commercialForm.CONSIGNEE}
-                                onChange={(value) =>
-                                  handleChangethree("CONSIGNEE", value)
+                                  handleChangethree("SHIPPER", value)
                                 }
                               />
                             </div>
@@ -1429,6 +1490,167 @@ export default function BabyOrderList() {
                                 }
                               />
                             </div>
+                            <div className="form-field">
+                              <label>Tax Id</label>
+                              <TextField
+                                error={
+                                  commercialForm.tax_id
+                                    ? ""
+                                    : "This Field Is Required"
+                                }
+                                type="text"
+                                name="tax_id"
+                                value={commercialForm.tax_id}
+                                onChange={(value) =>
+                                  handleChangethree("tax_id", value)
+                                }
+                              />
+                            </div>
+                            <div className="form-field">
+                              <label>EORI Id</label>
+                              <TextField
+                                error={
+                                  commercialForm.EORI_Id
+                                    ? ""
+                                    : "This Field Is Required"
+                                }
+                                type="text"
+                                name="EORI_Id"
+                                value={commercialForm.EORI_Id}
+                                onChange={(value) =>
+                                  handleChangethree(
+                                    "EORI_Id",
+                                    value
+                                  )
+                                }
+                              />
+                            </div>
+                          </FormLayout.Group>
+                          <div style={{ marginLeft: "0px", marginTop: "20px" }}>
+                            <Text variant="headingLg" as="h5">
+                              Consignee Details
+                            </Text>
+                          </div>
+                          <FormLayout.Group>
+                            <div className="form-field">
+                              <label>Company Name</label>
+                              <TextField
+                                error={commercialForm.consignee_companyName ? "" : "This Field Is Required"}
+                                type="text"
+                                name="companyName"
+                                value={commercialForm.consignee_companyName}
+                                onChange={(value) => handleChangethree("consignee_companyName", value)}
+                              />
+                            </div>
+                            <div className="form-field">
+                              <label>Full Name</label>
+                              <TextField
+                                error={commercialForm.consignee_fullName ? "" : "This Field Is Required"}
+                                type="text"
+                                name="fullName"
+                                value={commercialForm.consignee_fullName}
+                                onChange={(value) => handleChangethree("consignee_fullName", value)}
+                              />
+                            </div>
+                            <div className="form-field">
+                              <label>Address</label>
+                              <TextField
+                                error={commercialForm.consignee_address ? "" : "This Field Is Required"}
+                                type="text"
+                                name="address"
+                                value={commercialForm.consignee_address}
+                                onChange={(value) => handleChangethree("consignee_address", value)}
+                              />
+                            </div>
+                            <div className="form-field">
+                              <label>State</label>
+                              <TextField
+                                error={commercialForm.consignee_state ? "" : "This Field Is Required"}
+                                type="text"
+                                name="state"
+                                value={commercialForm.consignee_state}
+                                onChange={(value) => handleChangethree("consignee_state", value)}
+                              />
+                            </div>
+                            <div className="form-field">
+                              <label>Country</label>
+                              <TextField
+                                error={commercialForm.consignee_country ? "" : "This Field Is Required"}
+                                type="text"
+                                name="country"
+                                value={commercialForm.consignee_country}
+                                onChange={(value) => handleChangethree("consignee_country", value)}
+                              />
+                            </div>
+                            <div className="form-field">
+                              <label>PinCode</label>
+                              <TextField
+                                error={commercialForm.consignee_pincode ? "" : "This Field Is Required"}
+                                type="text"
+                                name="pincode"
+                                value={commercialForm.consignee_pincode}
+                                onChange={(value) => handleChangethree("consignee_pincode", value)}
+                              />
+                            </div>
+
+                          </FormLayout.Group>
+                          <div style={{ marginLeft: "0px", marginTop: "20px" }}>
+                            <Text variant="headingLg" as="h5">
+                              Indirect Representative
+                            </Text>
+                          </div>
+                          <FormLayout.Group>
+                            <div className="form-field">
+                              <label>Name</label>
+                              <TextField
+                                error={commercialForm.REPRESENTATIVE_NAME ? "" : "This Field Is Required"}
+                                type="text"
+                                name="REPRESENTATIVE_NAME"
+                                value={commercialForm.REPRESENTATIVE_NAME}
+                                onChange={(value) => handleChangethree("REPRESENTATIVE_NAME", value)}
+                              />
+                            </div>
+                            <div className="form-field">
+                              <label>Address</label>
+                              <TextField
+                                error={commercialForm.REPRESENTATIVE_ADDRESS ? "" : "This Field Is Required"}
+                                type="text"
+                                name="REPRESENTATIVE_ADDRESS"
+                                value={commercialForm.REPRESENTATIVE_ADDRESS}
+                                onChange={(value) => handleChangethree("REPRESENTATIVE_ADDRESS", value)}
+                              />
+                            </div>
+                            <div className="form-field">
+                              <label>State</label>
+                              <TextField
+                                error={commercialForm.REPRESENTATIVE_STATE ? "" : "This Field Is Required"}
+                                type="text"
+                                name="REPRESENTATIVE_STATE"
+                                value={commercialForm.REPRESENTATIVE_STATE}
+                                onChange={(value) => handleChangethree("REPRESENTATIVE_STATE", value)}
+                              />
+                            </div>
+                            <div className="form-field">
+                              <label>Country</label>
+                              <TextField
+                                error={commercialForm.REPRESENTATIVE_COUNTRY ? "" : "This Field Is Required"}
+                                type="text"
+                                name="REPRESENTATIVE_COUNTRY"
+                                value={commercialForm.REPRESENTATIVE_COUNTRY}
+                                onChange={(value) => handleChangethree("REPRESENTATIVE_COUNTRY", value)}
+                              />
+                            </div>
+                            <div className="form-field">
+                              <label>PinCode</label>
+                              <TextField
+                                error={commercialForm.REPRESENTATIVE_ZIPCODE ? "" : "This Field Is Required"}
+                                type="text"
+                                name="REPRESENTATIVE_ZIPCODE"
+                                value={commercialForm.REPRESENTATIVE_ZIPCODE}
+                                onChange={(value) => handleChangethree("REPRESENTATIVE_ZIPCODE", value)}
+                              />
+                            </div>
+
                           </FormLayout.Group>
                         </FormLayout>
                       </Modal.Section>
@@ -1491,6 +1713,7 @@ export default function BabyOrderList() {
               // selectable={false}
               headings={[
                 { title: "Order Number" },
+                { title: "Baby Number" },
                 { title: "Babies Details" },
                 { title: "Date" },
                 { title: "Total" },
@@ -1501,6 +1724,16 @@ export default function BabyOrderList() {
             >
               {rowMarkup}
             </IndexTable>
+            <div className="Polaris-IndexTable__TableRow"></div>
+            <div style={{ display: "flex", justifyContent: "center", paddingBottom: "10px", paddingTop: "10px" }}>
+              <Pagination
+                hasPrevious={currentPage > 1}
+                hasNext={currentPage < totalPages}
+                label={`${paginatedData.length} of ${datas.length}`}
+                onPrevious={() => handlePageChange(currentPage - 1)}
+                onNext={() => handlePageChange(currentPage + 1)}
+              />
+            </div>
           </LegacyCard>
         </div>
       )}

@@ -6,6 +6,7 @@ import {
     LegacyCard,
     Text,
     Badge,
+    Pagination,
 } from '@shopify/polaris';
 import OpenModal from './openmodal';
 import ActionListInPopoverExample from './items';
@@ -14,10 +15,11 @@ import { shop } from '../contant';
 import { BaseURl } from '../contant';
 import { useContext } from 'react';
 import { ModalContext } from '../context/modalContext';
+import axios from 'axios';
 
 function Table() {
 
-    const { setUniqOrderId, setOrder_List, order_list, setSelectedItems, setMotherOrderData, setShowtable, setLineItemsData, lineItemsData, setTableData } = useContext(ModalContext);
+    const { setUniqOrderId, setOrder_List, order_list, setSelectedItems, setMotherOrderData, setShowtable, setParentBabyOrder, setLineItemsData, lineItemsData, setTableData } = useContext(ModalContext);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
@@ -39,30 +41,36 @@ function Table() {
     const fetchLineItems = (orderId) => {
         setIsLoading(true);
         setIsLoading1(true);
-        fetch(`https://${BaseURl}/get_baby_order?shop_name=${shop}&order_id=${orderId}`)
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data, "line items ..");
-                setLineItemsData(data); // Set the line items data in state
-                setShowtable(true);
-                setIsLoading(false);
-                setIsLoading1(false);
-                if (data.order_list_extra[0].line_items) {
-                    setTableData(data.order_list_extra[0].line_items);
-                };
-                if (data.mother_order_list.length > 0) {
-                    setMotherOrderData(data.mother_order_list);
-                };
-                if (data.order_list.length > 0) {
-                    setOrder_List(data.order_list);
-                } else {
-                    setOrder_List([]);
-                };
-            })
-            .catch((error) => {
-                console.error('Error fetching line items data:', error);
-            });
-    };
+      
+        // Define your API endpoint
+        const apiUrl = `https://${BaseURl}/get_baby_order?shop_name=${shop}&order_id=${orderId}`;
+      
+        // Use Axios to make the HTTP request
+        axios.get(apiUrl)
+          .then((response) => {
+              const data = response.data;
+              if (data.parent_baby_order_list) {
+                  setParentBabyOrder(data.parent_baby_order_list);
+              }
+              if (data.order_list) {
+                  setOrder_List(data.order_list);
+              }
+              if (data.order_list_extra[0].line_items) {
+                  setTableData(data.order_list_extra[0].line_items);
+              }
+            console.log(data, "line items ..");
+            setLineItemsData(data); // Set the line items data in state
+            // if (data.mother_order_list.length > 0) {
+            //     setMotherOrderData(data.mother_order_list);
+            // }
+            setShowtable(true);
+            setIsLoading(false);
+            setIsLoading1(false);
+          })
+          .catch((error) => {
+            console.error('Error fetching line items data:', error);
+          });
+      };
 
     const openModal = (order) => {
         setSelectedOrder(order);
@@ -78,8 +86,9 @@ function Table() {
     };
 
     useEffect(() => {
-        // Fetch data from your API
-        fetch(`https://${BaseURl}/Get_order_list?shop_name=${shop}`)
+        if (BaseURl && shop) {
+            // Fetch data from your API
+            fetch(`https://${BaseURl}/Get_order_list?shop_name=${shop}`)
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
@@ -90,9 +99,25 @@ function Table() {
                 console.error('Error fetching data:', error);
                 setIsLoading(true);
             });
-    }, []);
+        }
+    }, [BaseURl, shop]);
 
-    const rowMarkup = orders.map((order) => (
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 10;
+
+    const paginatedData = orders.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
+
+    const totalItems = orders.length;
+    const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
+    const rowMarkup = paginatedData.map((order) => (
         <IndexTable.Row key={order.order_id}>
             <IndexTable.Cell>
                 <Text variant="bodyMd" fontWeight="bold" as="span">
@@ -134,7 +159,7 @@ function Table() {
     ));
 
     let trueData = true;
-    
+
     useEffect(() => {
         if (trueData) {
             setIsLoading1(true);
@@ -153,7 +178,7 @@ function Table() {
                 <OpenModal
                     order={selectedOrder}
                     lineItemsData={lineItemsData} // Pass line items data to OpenModal
-                    onClose={closeModal}
+                    // onClose={closeModal}
                     active={active}
                     setIsLoading1={setIsLoading1}
                     isLoading1={isLoading1}
@@ -169,22 +194,34 @@ function Table() {
                                 <div className="spinner-inner"></div>
                             </div>
                         ) : (
-                            <IndexTable
-                                selectable={false}
-                                resourceName={resourceName}
-                                itemCount={orders.length}
-                                headings={[
-                                    { title: 'Order Number' },
-                                    { title: 'Date' },
-                                    { title: 'Customer' },
-                                    { title: 'Total' },
-                                    { title: 'Payment status' },
-                                    { title: 'Fulfillment status' },
-                                    { title: 'Items' },
-                                ]}
-                            >
-                                {rowMarkup}
-                            </IndexTable>
+                            <>
+                                <IndexTable
+                                    selectable={false}
+                                    resourceName={resourceName}
+                                    itemCount={orders.length}
+                                    headings={[
+                                        { title: 'Order Number' },
+                                        { title: 'Date' },
+                                        { title: 'Customer' },
+                                        { title: 'Total' },
+                                        { title: 'Payment status' },
+                                        { title: 'Fulfillment status' },
+                                        { title: 'Items' },
+                                    ]}
+                                >
+                                    {rowMarkup}
+                                </IndexTable>
+                                <div className="Polaris-IndexTable__TableRow"></div>
+                                <div style={{ display: "flex", justifyContent: "center", paddingBottom: "10px", paddingTop:"10px" }}>
+                                    <Pagination
+                                        hasPrevious={currentPage > 1}
+                                        hasNext={currentPage < totalPages}
+                                        label={`${paginatedData.length} of ${orders.length}`}
+                                        onPrevious={() => handlePageChange(currentPage - 1)}
+                                        onNext={() => handlePageChange(currentPage + 1)}
+                                    />
+                                </div>
+                            </>
                         )}
                     </LegacyCard>
                 </Page>

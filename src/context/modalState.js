@@ -23,7 +23,13 @@ export default function ModalState(props) {
     const [orderlength, setOrderLength] = useState("");
     const [opentable, setOpenTable] = useState(false);
 
+    // ParentBaby Order State
+    const [parentBabyOrder, setParentBabyOrder] = useState([]);
     const [motherOrderData, setMotherOrderData] = useState([]);
+    const [callApiParentBaby, setCallApiParentBaby] = useState(false);
+    // Initialize a state variable to hold the baby IDs
+    const [babyIDs, setBabyIDs] = useState([]);
+    const [babyOrderIDs, setBabyOrderIDs] = useState([]);
 
     const [run, setRun] = useState(false);
     const [extraData, setExtraData] = useState([]);
@@ -32,7 +38,7 @@ export default function ModalState(props) {
     const [ShowTable1, setShowtable] = useState(false);
 
     return (
-        <ModalContext.Provider value={{setDeleteIndex, ShowTable1, setShowtable, isLoading, setIsLoading, deleteIndex, setOrderLength, setExtraData, extraData, run, setRun, motherOrderData, setTableData, tableData, lineItemsData, setLineItemsData, setMotherOrderData, setOpenTable, opentable, orderlength, setSub_order, sub_order, openmotherorder, setMotherOrder, setOrder_List, trackingId, setTrackingId, order_list, setUniqOrderId, uniqOrderId, setTrackingNumbers, setBabyorderlists, setRemainsproducts, deselectitem, setDeselectitem, babyorderlists, trackingNumbers, selectedItems, remainsproducts, setSelectedItems, setBabyOrderData, babyorderdata, babyordernumber, setBabyOrderNumber }}>
+        <ModalContext.Provider value={{ callApiParentBaby, babyOrderIDs, setBabyOrderIDs, babyIDs, setBabyIDs, setCallApiParentBaby, parentBabyOrder, setParentBabyOrder, setDeleteIndex, ShowTable1, setShowtable, isLoading, setIsLoading, deleteIndex, setOrderLength, setExtraData, extraData, run, setRun, motherOrderData, setTableData, tableData, lineItemsData, setLineItemsData, setMotherOrderData, setOpenTable, opentable, orderlength, setSub_order, sub_order, openmotherorder, setMotherOrder, setOrder_List, trackingId, setTrackingId, order_list, setUniqOrderId, uniqOrderId, setTrackingNumbers, setBabyorderlists, setRemainsproducts, deselectitem, setDeselectitem, babyorderlists, trackingNumbers, selectedItems, remainsproducts, setSelectedItems, setBabyOrderData, babyorderdata, babyordernumber, setBabyOrderNumber }}>
             {props.children}
         </ModalContext.Provider>
     );
