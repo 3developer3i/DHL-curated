@@ -6,7 +6,7 @@ import TestBabyOrderList from './pages/parentbaby';
 
 function App() {
 
-  const [state, setState] = useState("baby");
+  const [state, setState] = useState("");
 
   useEffect(() => {
     const currentPath = window.location.pathname;

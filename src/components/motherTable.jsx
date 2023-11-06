@@ -9,7 +9,7 @@ import {
 import React from 'react';
 
 export default function MotherOrderList() {
-    
+
     const orders = [
         {
             id: '1020',
@@ -39,7 +39,7 @@ export default function MotherOrderList() {
             fulfillmentStatus: <Badge progress="incomplete">Unfulfilled</Badge>,
         },
     ];
-    
+
     const resourceName = {
         singular: 'order',
         plural: 'orders',

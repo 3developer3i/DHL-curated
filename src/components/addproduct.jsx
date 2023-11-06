@@ -33,8 +33,6 @@ function AddproductTable({ setToastMessage, ordernumber, customer, d }) {
     const { setTrackingId, setBabyorderlists, order_list, setMotherOrder, orderlength, uniqOrderId, setTableData, parentBabyOrder, setOrder_List, setBabyOrderIDs, setParentBabyOrder, setBabyIDs, setIsLoading } = modalcontext;
 
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const dateString = "";
-    const dateParts = dateString && dateString.split(" ");
 
     const resourceName = {
         singular: 'order',
@@ -265,7 +263,7 @@ function AddproductTable({ setToastMessage, ordernumber, customer, d }) {
                         <TrackModalExample trackingId={index} sub_order={parentBabyOrder} />
                     </div>
                 </IndexTable.Cell>
-                <IndexTable.Cell>
+                {/* <IndexTable.Cell>
                     <div>
                         <Tooltip content="delete">
                             <Button destructive onClick={() => setIsDeleteModalOpen(true)} size='micro' accessibilityLabel='Delete' icon={DeleteMajor}></Button>
@@ -293,7 +291,7 @@ function AddproductTable({ setToastMessage, ordernumber, customer, d }) {
                             </Modal.Section>
                         </Modal>}
                     </div>
-                </IndexTable.Cell>
+                </IndexTable.Cell> */}
             </IndexTable.Row>
         ),
     );
@@ -361,8 +359,7 @@ function AddproductTable({ setToastMessage, ordernumber, customer, d }) {
                                 { title: 'Products Details' },
                                 { title: 'Date' },
                                 { title: 'Total' },
-                                { title: 'Add Tracking' },
-                                { title: 'Action' }
+                                { title: 'Options' }
                             ]}
                         >
                             {rowMarkups}

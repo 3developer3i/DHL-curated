@@ -36,7 +36,6 @@ function Table() {
     };
 
     // Function to fetch line items data
-    // https://3itesth18.pagekite.me/Get_line_items?shop_name=user-action.myshopify.com&order_id=5141685371061
 
     const fetchLineItems = (orderId) => {
         setIsLoading(true);
@@ -59,10 +58,7 @@ function Table() {
                   setTableData(data.order_list_extra[0].line_items);
               }
             console.log(data, "line items ..");
-            setLineItemsData(data); // Set the line items data in state
-            // if (data.mother_order_list.length > 0) {
-            //     setMotherOrderData(data.mother_order_list);
-            // }
+            setLineItemsData(data);
             setShowtable(true);
             setIsLoading(false);
             setIsLoading1(false);
@@ -177,8 +173,7 @@ function Table() {
             {isModalOpen ? (
                 <OpenModal
                     order={selectedOrder}
-                    lineItemsData={lineItemsData} // Pass line items data to OpenModal
-                    // onClose={closeModal}
+                    lineItemsData={lineItemsData}
                     active={active}
                     setIsLoading1={setIsLoading1}
                     isLoading1={isLoading1}

@@ -38,7 +38,7 @@ import { DropdownMinor } from '@shopify/polaris-icons';
 export default function TestBabyOrderList() {
 
     const [loading, setLoading] = useState(false);
-    const { lineItemsData, parentBabyOrder, setParentBabyOrder } = useContext(ModalContext);
+    const { parentBabyOrder, setParentBabyOrder } = useContext(ModalContext);
     const [orderNumbers, setOrderNumbers] = useState([]);
     const [orderId, setOrderId] = useState([]);
 
@@ -154,7 +154,7 @@ export default function TestBabyOrderList() {
     const fetchAllBabyOrderlist = (checkIt, name) => {
         if (checkIt !== "yes") {
             setLoading(true);
-        } 
+        }
 
         axios.get(`https://${BaseURl}/all_parent_baby_order?shop_name=${shop}`)
             .then((res) => {
@@ -254,7 +254,7 @@ export default function TestBabyOrderList() {
                         handleChange();
                     } else if (name == "baby-delete") {
                         toggleActive();
-                    } 
+                    }
                 };
 
                 setLoading(false);
@@ -580,10 +580,10 @@ export default function TestBabyOrderList() {
             .then((res) => {
                 if (res.status === 200) {
                     console.log(res.data, "mother order created ..........");
-                    // if (res.data.msg === "MotherOrder Created") {
-                    //     handleSelectionChange();
-                    //     fetchAllBabyOrderlist('yes', "create-mother");
-                    // }
+                    if (res.data.msg === "MotherOrder Created") {
+                        handleSelectionChange();
+                        fetchAllBabyOrderlist('yes', "create-mother");
+                    }
                 }
             })
             .catch((err) => console.log(err));
@@ -706,9 +706,9 @@ export default function TestBabyOrderList() {
         const response = await axios.post(`https://${BaseURl}/delete_specific_parent_baby_order`, new URLSearchParams(formData));
         if (response.status === 200) {
             console.log(response.data, "delete parent baby..");
-            fetchAllBabyOrderlist('parent', 'parent');
+            fetchAllBabyOrderlist('yes', 'parent');
             setIsDeleteModalOpen(!isDeleteModalOpen)
-        }
+        };
     };
 
     return (
@@ -718,7 +718,6 @@ export default function TestBabyOrderList() {
                     <div className="spinner-inner"></div>
                 </div>
             )}
-
             <br />
             <ButtonGroup>
                 <Formik
@@ -1754,7 +1753,7 @@ export default function TestBabyOrderList() {
                                                                         />
                                                                     </div>
                                                                 </Tooltip>
-                                                                <Tooltip content="Add Tracking">
+                                                                <Tooltip content="Tracking Info">
                                                                     <div onClick={() => {
                                                                         setIsModalOpen(true);
                                                                         setAddTracking(datas.trackingnumber);
@@ -1793,7 +1792,8 @@ export default function TestBabyOrderList() {
                                                             >
                                                                 <Modal.Section>
                                                                     <TextContainer>
-                                                                        <p style={{ fontSize: '15px', fontWeight: 'bold' }}>Are you sure you want to delete the baby order #{datas.parent_baby_order_id}?</p>
+                                                                    <p style={{ fontSize: '15px', fontWeight: 'bold' }}>
+                                                                        Are you sure you want to delete the baby order #{datas.parent_baby_order_id}?</p>
                                                                     </TextContainer>
                                                                 </Modal.Section>
                                                             </Modal>

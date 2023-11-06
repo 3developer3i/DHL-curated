@@ -114,45 +114,15 @@ export default function BabyOrderList() {
   const [APIMessage, setAPIMessage] = useState("");
 
   const toggleActive = useCallback(() => setToastMessage((toastmessage) => !toastmessage), []);
+
   const togglePopoverActive = useCallback(
     () => setPopoverActive((popoverActive) => !popoverActive),
     [],
   );
+
   const toastMarkup = toastmessage ? (
     <Toast content={APIMessage} onDismiss={toggleActive} />
   ) : null;
-
-  const handleChangetwo = useCallback(() => setActivetwo(!active), [active]);
-
-  const orders = [
-    {
-      id: "1020",
-      order: "#1020",
-      date: "Jul 20 at 4:34pm",
-      customer: "Jaydon Stanton",
-      total: "$969.44",
-      paymentStatus: <Badge progress="complete">Paid</Badge>,
-      fulfillmentStatus: <Badge progress="incomplete">Unfulfilled</Badge>,
-    },
-    {
-      id: "1019",
-      order: "#1019",
-      date: "Jul 20 at 3:46pm",
-      customer: "Ruben Westerfelt",
-      total: "$701.19",
-      paymentStatus: <Badge progress="partiallyComplete">Partially paid</Badge>,
-      fulfillmentStatus: <Badge progress="incomplete">Unfulfilled</Badge>,
-    },
-    {
-      id: "1018",
-      order: "#1018",
-      date: "Jul 20 at 3.44pm",
-      customer: "Leo Carder",
-      total: "$798.24",
-      paymentStatus: <Badge progress="complete">Paid</Badge>,
-      fulfillmentStatus: <Badge progress="incomplete">Unfulfilled</Badge>,
-    },
-  ];
 
   const openModal = (shipmenttrackingnumber, trackingnumber) => {
     setIsModalOpen(true);
@@ -349,6 +319,7 @@ export default function BabyOrderList() {
     }
     handleSelectionChange()
   };
+
   const toggleActive2 = useCallback(() => {
     setActive2((prevActive) => !prevActive);
   }, []);
@@ -724,7 +695,6 @@ export default function BabyOrderList() {
     }
   };
 
-
   return (
     <Page>
       {loading && (
@@ -732,7 +702,6 @@ export default function BabyOrderList() {
           <div className="spinner-inner"></div>
         </div>
       )}
-
       <br />
       <ButtonGroup>
         <Formik

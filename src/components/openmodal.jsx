@@ -39,10 +39,10 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
     const [APIMessage, setAPIMessage] = useState("");
 
     const toggleActive = useCallback(() => setToastMessage((toastmessage) => !toastmessage), []);
+    
     const toastMarkup = toastmessage ? (
         <Toast content={APIMessage} onDismiss={toggleActive} />
     ) : null;
-
 
     // https://3itesth18.pagekite.me/create_baby_order
     const notes = lineItemsData && lineItemsData.order_list_extra[0].note ? lineItemsData.order_list_extra[0].note : 'No notes from customer';
@@ -236,19 +236,8 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
     };
 
     // create_parent_baby_order APIS
-    const fetchCreateParentBabyOrder = () => {
-        fetch(`https://${BaseURl}/all_parent_baby_order?shop_name=${shop}`)
-        .then((response) => response.json())
-        .then((data) => {
-            console.log(data,"parent get..");
-        })
-        .catch((error) => {
-            console.error('Error fetching line items data:', error);
-        });
-    };
 
     const createParentBabyOrder = () => {
-        console.log(babyOrderIDs, babyIDs);
         const formData = new FormData();
         formData.append("order_id", babyOrderIDs);
         formData.append("baby_list", babyIDs);
@@ -258,10 +247,9 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
         axios.post(`https://${BaseURl}/create_parent_baby_order`, new URLSearchParams(formData)).then((res) => {
             if (res.status === 200) {
                 console.log(res.data, "parent baby......");
-                setCallApiParentBaby(true);
                 fetchLineItems('parent');
+                setCallApiParentBaby(true);
             }
-            // setOpenTable(true);
         }).catch((err) => console.log(err))
     };
 

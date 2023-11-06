@@ -134,7 +134,7 @@ function TrackModalExample({ sub_order, trackingId }) {
                         />
                     </div>
                 </Tooltip> */}
-                <Tooltip content="Add Tracking">
+                <Tooltip content="Tracking Info">
                     <div onClick={handleChange}>
                         <Icon
                             source={LocationsMinor}
