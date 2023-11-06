@@ -113,6 +113,7 @@ export default function TestBabyOrderList() {
     const [popoverActive, setPopoverActive] = useState(false);
     const [APIMessage, setAPIMessage] = useState("");
     const [selectedResources, setSelectedRows] = useState([]);
+
     const [collapsibleStates, setCollapsibleStates] = useState(
         parentBabyOrder.map(() => false)
     );
@@ -124,15 +125,15 @@ export default function TestBabyOrderList() {
     };
 
     const toggleActive = useCallback(() => setToastMessage((toastmessage) => !toastmessage), []);
+
     const togglePopoverActive = useCallback(
         () => setPopoverActive((popoverActive) => !popoverActive),
         [],
     );
+
     const toastMarkup = toastmessage ? (
         <Toast content={APIMessage} onDismiss={toggleActive} />
     ) : null;
-
-    const handleChangetwo = useCallback(() => setActivetwo(!active), [active]);
 
     const openModal = (shipmenttrackingnumber, trackingnumber) => {
         setIsModalOpen(true);
@@ -148,23 +149,23 @@ export default function TestBabyOrderList() {
         window.open(url, "_blank"); // Opens the URL in a new tab or window
     };
 
-    const { allResourcesSelected, handleSelectionChange } =
-        useIndexResourceState(parentBabyOrder);
+    const { allResourcesSelected, handleSelectionChange } = useIndexResourceState(parentBabyOrder);
 
     const fetchAllBabyOrderlist = (checkIt, name) => {
         if (checkIt !== "yes") {
             setLoading(true);
-        }
-        setLoading(true);
+        } 
 
         axios.get(`https://${BaseURl}/all_parent_baby_order?shop_name=${shop}`)
             .then((res) => {
-                console.log(res, "baaby...");
+                console.log(res, "all_parent_baby_order...");
                 setParentBabyOrder(res.data.parent_baby_order_list);
-                // setDatas(res.data.mother_order_list);
-
-                if (res.data) {
-                };
+                setDatas(res.data.parent_baby_order_list);
+                if (checkIt === "parent") {
+                    setLoading(false);
+                } else if (res.data.parent_baby_order_list.length === 0) {
+                    setLoading(false);
+                }
 
                 if (res.data) {
                     setCommercialForm({
@@ -244,7 +245,6 @@ export default function TestBabyOrderList() {
                 if (checkIt === 'yes') {
                     if (name === "add-commercial") {
                         toggleActive();
-                        // setLoading(false);
                     } else if (name === "create-mother") {
                         setAPIMessage("MotherOrder Created");
                         toggleActive();
@@ -252,14 +252,11 @@ export default function TestBabyOrderList() {
                     } else if (name == "add-address") {
                         toggleActive();
                         handleChange();
-                        // toggleActive();
-                        // setLoading(false);
                     } else if (name == "baby-delete") {
                         toggleActive();
-                        // toggleActive();
-                        // setLoading(false);
-                    }
+                    } 
                 };
+
                 setLoading(false);
             })
             .catch((err) => console.log(err));
@@ -324,6 +321,7 @@ export default function TestBabyOrderList() {
         }
         handleSelectionChange()
     };
+
     const toggleActive2 = useCallback(() => {
         setActive2((prevActive) => !prevActive);
     }, []);
@@ -530,19 +528,19 @@ export default function TestBabyOrderList() {
         const selectedBabyOrderIds = [];
 
         selectedResources.forEach((index) => {
-            if (datas[index] && datas[index].baby_ID) {
-                selectedBabyOrderNumbers.push(datas[index].baby_ID);
+            if (parentBabyOrder[index] && parentBabyOrder[index].parent_baby_order_id) {
+                selectedBabyOrderNumbers.push(parentBabyOrder[index].parent_baby_order_id);
             }
         });
         selectedResources.forEach((index) => {
-            if (datas[index] && datas[index].baby_order_id) {
-                selectedBabyOrderIds.push(datas[index].baby_order_id);
+            if (parentBabyOrder[index] && parentBabyOrder[index].baby_order_id) {
+                selectedBabyOrderIds.push(parentBabyOrder[index].baby_order_id);
             }
         });
         console.log(selectedBabyOrderIds, "test...");
         const formDatas = new FormData();
         formDatas.append("baby_list", selectedBabyOrderNumbers);
-        formDatas.append("order_id", selectedBabyOrderIds);
+        // formDatas.append("order_id", selectedBabyOrderIds);
         formDatas.append("shop_name", shop);
         formDatas.append("fullName", formData.fullName);
         formDatas.append("email", formData.email);
@@ -581,12 +579,11 @@ export default function TestBabyOrderList() {
             )
             .then((res) => {
                 if (res.status === 200) {
-                    console.log(res.data, "mother created ..........");
-                    if (res.data.msg === "MotherOrder Created") {
-                        handleSelectionChange();
-                        fetchAllBabyOrderlist('yes', "create-mother");
-                        // setAPIMessage("MotherOrder Created")
-                    }
+                    console.log(res.data, "mother order created ..........");
+                    // if (res.data.msg === "MotherOrder Created") {
+                    //     handleSelectionChange();
+                    //     fetchAllBabyOrderlist('yes', "create-mother");
+                    // }
                 }
             })
             .catch((err) => console.log(err));
@@ -700,7 +697,20 @@ export default function TestBabyOrderList() {
         }
     };
 
-    console.log(parentBabyOrder, "test..");
+    // delete parent baby orderdelete_specific_parent_baby_order/
+    const deleteParentBabyorder = async (Id) => {
+        const formData = new FormData();
+        formData.append("shop_name", shop);
+        formData.append("parent_baby_order_id", Id);
+        setLoading(true);
+        const response = await axios.post(`https://${BaseURl}/delete_specific_parent_baby_order`, new URLSearchParams(formData));
+        if (response.status === 200) {
+            console.log(response.data, "delete parent baby..");
+            fetchAllBabyOrderlist('parent', 'parent');
+            setIsDeleteModalOpen(!isDeleteModalOpen)
+        }
+    };
+
     return (
         <Page>
             {loading && (
@@ -1698,7 +1708,6 @@ export default function TestBabyOrderList() {
                                     </thead>
                                     <tbody>
                                         {paginatedData && paginatedData.map((datas, index) => {
-                                            // console.log(datas, "inside ...");
                                             return (
                                                 <>
                                                     <tr className="Polaris-IndexTable__TableRow">
@@ -1763,11 +1772,31 @@ export default function TestBabyOrderList() {
                                                         <td className="Polaris-IndexTable__TableCell">
                                                             <Tooltip content="delete">
                                                                 <Button onClick={() => {
-                                                                    // console.log(datas.mother_order_id);
-                                                                    // setMotherNumber(datas.mother_order_id);
                                                                     setIsDeleteModalOpen(!isDeleteModalOpen)
                                                                 }} destructive size='micro' accessibilityLabel='Delete' icon={DeleteMajor}></Button>
                                                             </Tooltip>
+                                                            <Modal
+                                                                open={isDeleteModalOpen}
+                                                                onClose={() => setIsDeleteModalOpen(!isDeleteModalOpen)}
+                                                                title="Delete Confirmation"
+                                                                primaryAction={{
+                                                                    content: 'Delete',
+                                                                    onAction: () => deleteParentBabyorder(datas.parent_baby_order_id),
+                                                                }}
+                                                                secondaryActions={[
+                                                                    {
+                                                                        content: 'Cancel',
+                                                                        onAction: () => setIsDeleteModalOpen(!isDeleteModalOpen),
+                                                                    },
+                                                                ]}
+                                                                size="small"
+                                                            >
+                                                                <Modal.Section>
+                                                                    <TextContainer>
+                                                                        <p style={{ fontSize: '15px', fontWeight: 'bold' }}>Are you sure you want to delete the baby order #{datas.parent_baby_order_id}?</p>
+                                                                    </TextContainer>
+                                                                </Modal.Section>
+                                                            </Modal>
                                                         </td>
                                                         <td onClick={() => {
                                                             toggleCollapsible(index);
@@ -1813,7 +1842,7 @@ export default function TestBabyOrderList() {
                                                     </Modal>
                                                     {collapsibleStates[index] &&
                                                         <tr className={`Polaris-IndexTable__TableRow ${collapsibleStates[index] ? 'collapsible-open' : ''
-                                                            }`} style={{ height: datas.baby_order_data.length < 4 ? `${datas.baby_order_data.length * 55.4285714286}px` : `${datas.baby_order_data.length * 42.4285714286}px` }}>
+                                                            }`} style={{ height: datas.baby_order_data.length < 4 ? datas.baby_order_data.length === 1 ? `${datas.baby_order_data.length * 73}px` : `${datas.baby_order_data.length * 55}px` : `${datas.baby_order_data.length * 42.4285714286}px` }}>
                                                             <div className="Polaris-LegacyCard" style={{ display: "contents" }}>
                                                                 <table style={{ position: "absolute" }} className="Polaris-IndexTable__Table Polaris-IndexTable__Table--sticky">
                                                                     <thead>

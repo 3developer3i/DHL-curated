@@ -12,7 +12,7 @@ import {
     TextContainer,
     Link, Grid, Badge,
     Pagination,
-    Popover, Icon, Tooltip
+    Popover, Icon, Tooltip, Modal
 } from '@shopify/polaris';
 import {
     ReceiptMajor,
@@ -26,25 +26,15 @@ import DeletePopup from './popopdelete';
 import axios from 'axios';
 import { BaseURl, shop } from '../contant';
 
-function AddproductTable({ countproductlists, ordernumber, customer, d }) {
+function AddproductTable({ setToastMessage, ordernumber, customer, d }) {
 
     // const Ids = id;
     const modalcontext = useContext(ModalContext);
-    const { setTrackingId, setBabyorderlists, order_list, setMotherOrder, orderlength, opentable, callApiParentBaby, parentBabyOrder, babyOrderIDs, setBabyOrderIDs, babyIDs, setBabyIDs } = modalcontext;
+    const { setTrackingId, setBabyorderlists, order_list, setMotherOrder, orderlength, uniqOrderId, setTableData, parentBabyOrder, setOrder_List, setBabyOrderIDs, setParentBabyOrder, setBabyIDs, setIsLoading } = modalcontext;
 
-    const newData = order_list && order_list;
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const dateString = "";
     const dateParts = dateString && dateString.split(" ");
-    const month = dateParts && dateParts[0];
-    const day = dateParts && dateParts[1];
-    const [selectedproduct, setselectedproduct] = useState([]);
-
-    const [motherData, setMotherData] = useState([{
-        baby_total: "$25:00",
-        baby_order_number: "DHL1",
-        baby_date: "2023-10-05T11:08:19.803Z",
-        baby_title: "Airboy mini pop"
-    }]);
 
     const resourceName = {
         singular: 'order',
@@ -108,6 +98,7 @@ function AddproductTable({ countproductlists, ordernumber, customer, d }) {
         e.stopPropagation();
     };
 
+    // baby order pagination
     const [toggle, setToggle] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 10;
@@ -122,6 +113,23 @@ function AddproductTable({ countproductlists, ordernumber, customer, d }) {
 
     const handlePageChange = (newPage) => {
         setCurrentPage(newPage);
+    };
+
+    // parent baby order pagination
+    const [toggle1, setToggle1] = useState(false);
+    const [currentPage1, setCurrentPage1] = useState(1);
+    const ITEMS_PER_PAGE1 = 10;
+
+    const paginatedData1 = parentBabyOrder && parentBabyOrder.slice(
+        (currentPage1 - 1) * ITEMS_PER_PAGE1,
+        currentPage1 * ITEMS_PER_PAGE1
+    );
+
+    const totalItems1 = parentBabyOrder && parentBabyOrder.length;
+    const totalPages1 = Math.ceil(totalItems1 / ITEMS_PER_PAGE1);
+
+    const handlePageChange1 = (newPage) => {
+        setCurrentPage1(newPage);
     };
 
     // items
@@ -143,20 +151,35 @@ function AddproductTable({ countproductlists, ordernumber, customer, d }) {
         setActive2((prevActive) => !prevActive);
     }, []);
 
+    const fetchLineItems = async () => {
+        fetch(`https://${BaseURl}/get_baby_order?shop_name=${shop}&order_id=${uniqOrderId}`)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data, "test...");
+                setTableData(data.order_list_extra[0].line_items);
+                setOrder_List(data.order_list);
+                setParentBabyOrder(data.parent_baby_order_list);
+                setIsLoading(false);
+            })
+            .catch((error) => {
+                console.error('Error fetching line items data:', error);
+            });
+    };
+
     // delete parent baby orderdelete_specific_parent_baby_order/
     const deleteParentBabyorder = async (Id) => {
         const formData = new FormData();
         formData.append("shop_name", shop);
         formData.append("parent_baby_order_id", Id);
-        // setLoading(true);
+        setIsLoading(true);
         const response = await axios.post(`https://${BaseURl}/delete_specific_parent_baby_order`, new URLSearchParams(formData));
         if (response.status === 200) {
             console.log(response.data, "delete parent baby..");
-            // setLoading(false);
+            fetchLineItems();
         }
     };
 
-    const rowMarkup = order_list && order_list.map(
+    const rowMarkup = paginatedData && paginatedData.map(
         ({ baby_total, baby_order_number, baby_date, baby_title, line_items }, index) => (
             <>
                 <IndexTable.Row
@@ -223,7 +246,7 @@ function AddproductTable({ countproductlists, ordernumber, customer, d }) {
 
     const [motherTrue, setMotherTrue] = useState(false);
 
-    const rowMarkups = parentBabyOrder.length > 0 && parentBabyOrder.map(
+    const rowMarkups = paginatedData1.length > 0 && paginatedData1.map(
         ({ price, mother_order_id
             , mother_order_date, mother_order_number
         }, index) => (
@@ -245,8 +268,30 @@ function AddproductTable({ countproductlists, ordernumber, customer, d }) {
                 <IndexTable.Cell>
                     <div>
                         <Tooltip content="delete">
-                            <Button destructive onClick={() => deleteParentBabyorder(mother_order_id)} size='micro' accessibilityLabel='Delete' icon={DeleteMajor}></Button>
+                            <Button destructive onClick={() => setIsDeleteModalOpen(true)} size='micro' accessibilityLabel='Delete' icon={DeleteMajor}></Button>
                         </Tooltip>
+                        {isDeleteModalOpen && <Modal
+                            open={isDeleteModalOpen}
+                            onClose={() => setIsDeleteModalOpen(false)}
+                            title="Delete Confirmation"
+                            primaryAction={{
+                                content: 'Delete',
+                                onAction: () => deleteParentBabyorder(mother_order_id),
+                            }}
+                            secondaryActions={[
+                                {
+                                    content: 'Cancel',
+                                    onAction: () => setIsDeleteModalOpen(false),
+                                },
+                            ]}
+                            size="small"
+                        >
+                            <Modal.Section>
+                                <TextContainer>
+                                    <p style={{ fontSize: '15px', fontWeight: 'bold' }}>Are you sure you want to delete the baby order #{mother_order_id}?</p>
+                                </TextContainer>
+                            </Modal.Section>
+                        </Modal>}
                     </div>
                 </IndexTable.Cell>
             </IndexTable.Row>
@@ -265,7 +310,7 @@ function AddproductTable({ countproductlists, ordernumber, customer, d }) {
 
     return (
         <>
-            <div>
+            {order_list.length > 0 && <div>
                 <LegacyCard title="Baby Order Lists">
                     <div id='testhideid'>
                         <IndexTable
@@ -280,8 +325,7 @@ function AddproductTable({ countproductlists, ordernumber, customer, d }) {
                                 { title: 'Order Number' },
                                 { title: 'Products Details' },
                                 { title: 'Date' },
-                                { title: 'Options' },
-                                // { title: 'Action' },
+                                { title: 'Options' }
                             ]}
                         >
                             {rowMarkup}
@@ -300,10 +344,10 @@ function AddproductTable({ countproductlists, ordernumber, customer, d }) {
                         </>}
                     </div>
                 </LegacyCard>
-            </div>
+            </div>}
 
 
-            <div style={{ marginTop: "10px" }}>
+            {parentBabyOrder.length > 0 && <div style={{ marginTop: "10px" }}>
                 <LegacyCard title="Parent Baby Order Lists">
                     <div id='testhideid'>
                         <IndexTable
@@ -318,14 +362,29 @@ function AddproductTable({ countproductlists, ordernumber, customer, d }) {
                                 { title: 'Date' },
                                 { title: 'Total' },
                                 { title: 'Add Tracking' },
-                                { title: 'Action' },
+                                { title: 'Action' }
                             ]}
                         >
                             {rowMarkups}
                         </IndexTable>
+                        {parentBabyOrder.length > 9 &&
+                            <>
+                                <div className="Polaris-IndexTable__TableRow"></div>
+                                <div style={{ display: "flex", justifyContent: "center", paddingBottom: "10px", paddingTop: "10px" }}>
+                                    <Pagination
+                                        hasPrevious={currentPage1 > 1}
+                                        hasNext={currentPage1 < totalPages1}
+                                        label={`${paginatedData1.length} of ${parentBabyOrder.length}`}
+                                        onPrevious={() => handlePageChange1(currentPage1 - 1)}
+                                        onNext={() => handlePageChange1(currentPage1 + 1)}
+                                    />
+                                </div>
+                            </>
+                        }
                     </div>
                 </LegacyCard>
-            </div>
+            </div>}
+
         </>
     );
 }

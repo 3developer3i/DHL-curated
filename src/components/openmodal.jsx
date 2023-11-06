@@ -25,12 +25,10 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
     };
 
     const modalcontext = useContext(ModalContext)
-    const { uniqOrderId, setMotherOrderData, isLoading, ShowTable1, setShowtable, setIsLoading, setSelectedItems, selectedItems, setBabyOrderData, setTableData, tableData, babyorderlists, setOpenTable, setOrder_List, setCallApiParentBaby, callApiParentBaby, order_list, setMotherOrder, babyIDs, babyOrderIDs, setBabyOrderNumber, openmotherorder, setSub_order, sub_order, parentBabyOrder} = modalcontext;
+    const { uniqOrderId, setMotherOrderData, isLoading, ShowTable1, setShowtable, setIsLoading, setSelectedItems, selectedItems, setBabyOrderData, setTableData, tableData, setParentBabyOrder, setOpenTable, setOrder_List, setCallApiParentBaby, callApiParentBaby, order_list, setMotherOrder, babyIDs, babyOrderIDs, setBabyOrderNumber, openmotherorder, setSub_order, sub_order, parentBabyOrder} = modalcontext;
 
     const [isModalClose, setIsModalClose] = useState(false);
-    const closeModal = () => {
-        setIsModalClose(true);
-    };
+    const closeModal = () => {setIsModalClose(true);};
 
     const [createbabyorder, setcreatebabyorder] = useState(false)
     const [newData, setNewData] = useState([]);
@@ -85,16 +83,20 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
     const [tagValue, setTagValue] = useState('');
 
     const fetchLineItems = async (checkIt) => {
+        if (checkIt !== "parent") {
+            setIsLoading(true);
+        }
         fetch(`https://${BaseURl}/get_baby_order?shop_name=${shop}&order_id=${uniqOrderId}`)
             .then((response) => response.json())
             .then((data) => {
                 setShowtable(true);
                 console.log(data, "data..................");
-                setIsLoading(false);
                 setTableData(data.order_list_extra[0].line_items);
                 setOrder_List(data.order_list);
+                setParentBabyOrder(data.parent_baby_order_list);
                 setIsModalOpen(true);
                 setSelectedItems([]);
+                setIsLoading(false);
                 if (checkIt === 'yes') {
                     toggleActive()
                 }
@@ -256,8 +258,8 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
         axios.post(`https://${BaseURl}/create_parent_baby_order`, new URLSearchParams(formData)).then((res) => {
             if (res.status === 200) {
                 console.log(res.data, "parent baby......");
-                setIsLoading(false);
-                setCallApiParentBaby(true)
+                setCallApiParentBaby(true);
+                fetchLineItems('parent');
             }
             // setOpenTable(true);
         }).catch((err) => console.log(err))
@@ -304,11 +306,11 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                     {openmotherorder && <div style={{ marginLeft: "10px" }}>
                                         <Button size='slim' onClick={() => { fetchMotherData() }} primary disabled={false}>CREATE MOTHER ORDER</Button>
                                     </div>}
-                                    {tableData.length === 0 && <div style={{ marginLeft: "10px" }}>
+                                    {(tableData.length === 0 && parentBabyOrder.length == 0) && <div style={{ marginLeft: "10px" }}>
                                         <Button size='slim' onClick={() => {
                                             setCallApiParentBaby(true); // Iterate through the data and collect baby_ID values
                                             createParentBabyOrder();
-                                        }} disabled={callApiParentBaby ? true : false} primary>CREATE PARENT BABY ORDER</Button>
+                                        }} disabled={parentBabyOrder.length == 0 ? false : true} primary>CREATE PARENT BABY ORDER</Button>
                                     </div>}
                                 </div>
                             </>
@@ -504,7 +506,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                             <Grid.Cell columnSpan={{ xs: 5, sm: 2, md: 2, lg: 3, xl: 12 }}>
                                 {(ShowTable1 || order_list.length !== 0 || parentBabyOrder.length !== 0) ? (
                                     <>
-                                        <AddproductTable  />
+                                        <AddproductTable setToastMessage={setToastMessage}  />
                                     </>
 
                                ) : (
