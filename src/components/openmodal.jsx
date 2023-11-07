@@ -51,6 +51,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
         if (lineItemsData) {
             // setTableData(lineItemsData.order_list_extra[0].line_items);
             if (lineItemsData.order_list_extra[0].contact_details !== null) {
+                console.log("lineItemsData.order_list_extra[0].contact_details", lineItemsData.order_list_extra[0].contact_details);
                 setCustomerData(lineItemsData.order_list_extra[0].contact_details);
             };
         };
@@ -494,7 +495,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                             <Grid.Cell columnSpan={{ xs: 5, sm: 2, md: 2, lg: 3, xl: 12 }}>
                                 {(ShowTable1 || order_list.length !== 0 || parentBabyOrder.length !== 0) ? (
                                     <>
-                                        <AddproductTable setToastMessage={setToastMessage}  />
+                                        <AddproductTable number={lineItemsData.order_list_extra[0].order_number} setToastMessage={setToastMessage}  />
                                     </>
 
                                ) : (

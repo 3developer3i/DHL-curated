@@ -47,7 +47,7 @@ function DeletePopup({ baby_order_number, mother_order_number }) {
         formData.append("shop_name", shop);
         formData.append("baby_order_id", baby_order_number);
         setIsLoading(true);
-        const response = await axios.post(`http://${BaseURl}/delete_specific_baby_order`, new URLSearchParams(formData));
+        const response = await axios.post(`https://${BaseURl}/delete_specific_baby_order`, new URLSearchParams(formData));
         if (response.status === 200) {
             fetchdDAta();
         };

@@ -26,7 +26,7 @@ import DeletePopup from './popopdelete';
 import axios from 'axios';
 import { BaseURl, shop } from '../contant';
 
-function AddproductTable({ setToastMessage, ordernumber, customer, d }) {
+function AddproductTable({ number }) {
 
     // const Ids = id;
     const modalcontext = useContext(ModalContext);
@@ -178,7 +178,7 @@ function AddproductTable({ setToastMessage, ordernumber, customer, d }) {
     };
 
     const rowMarkup = paginatedData && paginatedData.map(
-        ({ baby_total, baby_order_number, baby_date, baby_title, line_items }, index) => (
+        ({ baby_ID, baby_order_number, baby_date, baby_title, line_items }, index) => (
             <>
                 <IndexTable.Row
                     id={index + 10}
@@ -187,8 +187,8 @@ function AddproductTable({ setToastMessage, ordernumber, customer, d }) {
                     position={index}
                     onClick={() => setToggle(!toggle)}
                 >
-                    <IndexTable.Cell> &nbsp;&nbsp;#{baby_order_number}</IndexTable.Cell>
-                    {/* <IndexTable.Cell> &nbsp;&nbsp;{`#${index > 3 ? 1007   : 1005}`} </IndexTable.Cell> */}
+                    <IndexTable.Cell>#{number}</IndexTable.Cell>
+                    <IndexTable.Cell>{baby_ID}</IndexTable.Cell>
                     <IndexTable.Cell>{baby_title}</IndexTable.Cell>
                     <IndexTable.Cell>{baby_date}</IndexTable.Cell>
                     <IndexTable.Cell>
@@ -198,7 +198,7 @@ function AddproductTable({ setToastMessage, ordernumber, customer, d }) {
                     </IndexTable.Cell>
                     <IndexTable.Cell>
                         <div onClick={handleTrackModalClick}>
-                            <DeletePopup baby_order_number={baby_order_number} />
+                            <DeletePopup baby_order_number={baby_ID} />
                         </div>
                     </IndexTable.Cell>
                     <IndexTable.Cell>
@@ -321,6 +321,7 @@ function AddproductTable({ setToastMessage, ordernumber, customer, d }) {
                             onSelectionChange={handleSelectionChange}
                             headings={[
                                 { title: 'Order Number' },
+                                { title: 'Baby Id' },
                                 { title: 'Products Details' },
                                 { title: 'Date' },
                                 { title: 'Options' }

@@ -1697,10 +1697,11 @@ export default function TestBabyOrderList() {
                                                 {/* Add header content */}
                                             </th>
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Order Number</th>
+                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Parent Order Number</th>
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Babies Details</th>
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
-                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Add Tracking</th>
+                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Options</th>
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Action</th>
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true"></th>
                                         </tr>
@@ -1725,6 +1726,7 @@ export default function TestBabyOrderList() {
                                                                 }}
                                                             />
                                                         </td>
+                                                        <td className="Polaris-IndexTable__TableCell">{datas.parent_order_number}</td>
                                                         <td className="Polaris-IndexTable__TableCell">{datas.parent_baby_order_id}</td>
                                                         <td className="Polaris-IndexTable__TableCell">{datas.parent_baby_order_number}</td>
                                                         <td className="Polaris-IndexTable__TableCell">{datas.parent_baby_order_date}</td>
@@ -1742,7 +1744,7 @@ export default function TestBabyOrderList() {
                                                                         />
                                                                     </div>
                                                                 </Tooltip>
-                                                                <Tooltip content="Commercial Invoice">
+                                                                {/* <Tooltip content="Commercial Invoice">
                                                                     <div onClick={() => {
                                                                         window.open(datas.comercial_parent_baby_pdf, "_blank")
                                                                     }}>
@@ -1752,7 +1754,7 @@ export default function TestBabyOrderList() {
                                                                             color='subdued'
                                                                         />
                                                                     </div>
-                                                                </Tooltip>
+                                                                </Tooltip> */}
                                                                 <Tooltip content="Tracking Info">
                                                                     <div onClick={() => {
                                                                         setIsModalOpen(true);

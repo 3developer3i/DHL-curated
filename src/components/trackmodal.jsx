@@ -62,6 +62,7 @@ function TrackModalExample({ sub_order, trackingId }) {
     };
 
     const newDatas = sub_order && sub_order[trackingId];
+    console.log(newDatas, "newDatas.....");
     useEffect(() => {
         if (sub_order.length > 0) {
             setOrderLength(sub_order.length)

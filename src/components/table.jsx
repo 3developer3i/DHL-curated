@@ -7,6 +7,7 @@ import {
     Text,
     Badge,
     Pagination,
+    Banner,
 } from '@shopify/polaris';
 import OpenModal from './openmodal';
 import ActionListInPopoverExample from './items';
@@ -40,33 +41,33 @@ function Table() {
     const fetchLineItems = (orderId) => {
         setIsLoading(true);
         setIsLoading1(true);
-      
+
         // Define your API endpoint
         const apiUrl = `https://${BaseURl}/get_baby_order?shop_name=${shop}&order_id=${orderId}`;
-      
+
         // Use Axios to make the HTTP request
         axios.get(apiUrl)
-          .then((response) => {
-              const data = response.data;
-              if (data.parent_baby_order_list) {
-                  setParentBabyOrder(data.parent_baby_order_list);
-              }
-              if (data.order_list) {
-                  setOrder_List(data.order_list);
-              }
-              if (data.order_list_extra[0].line_items) {
-                  setTableData(data.order_list_extra[0].line_items);
-              }
-            console.log(data, "line items ..");
-            setLineItemsData(data);
-            setShowtable(true);
-            setIsLoading(false);
-            setIsLoading1(false);
-          })
-          .catch((error) => {
-            console.error('Error fetching line items data:', error);
-          });
-      };
+            .then((response) => {
+                const data = response.data;
+                if (data.parent_baby_order_list) {
+                    setParentBabyOrder(data.parent_baby_order_list);
+                }
+                if (data.order_list) {
+                    setOrder_List(data.order_list);
+                }
+                if (data.order_list_extra[0].line_items) {
+                    setTableData(data.order_list_extra[0].line_items);
+                }
+                console.log(data, "line items ..");
+                setLineItemsData(data);
+                setShowtable(true);
+                setIsLoading(false);
+                setIsLoading1(false);
+            })
+            .catch((error) => {
+                console.error('Error fetching line items data:', error);
+            });
+    };
 
     const openModal = (order) => {
         setSelectedOrder(order);
@@ -85,16 +86,16 @@ function Table() {
         if (BaseURl && shop) {
             // Fetch data from your API
             fetch(`https://${BaseURl}/Get_order_list?shop_name=${shop}`)
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                setOrders(data.order_list);
-                setIsLoading(false);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-                setIsLoading(true);
-            });
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data);
+                    setOrders(data.order_list);
+                    setIsLoading(false);
+                })
+                .catch((error) => {
+                    console.error('Error fetching data:', error);
+                    setIsLoading(true);
+                });
         }
     }, [BaseURl, shop]);
 
@@ -140,8 +141,8 @@ function Table() {
                 </Badge>
             </IndexTable.Cell>
             <IndexTable.Cell>
-                <Badge status={order.fulfillment_status ? 'success' : 'critical'}>
-                    {order.fulfillment_status ? 'Fulfilled' : 'Unfulfilled'}
+                <Badge status={order.fulfillment_status == "partial" ? 'warning' : order.fulfillment_status == null ? 'critical' : 'success'}>
+                    {order.fulfillment_status == null ? 'UnFulfilled' : order.fulfillment_status == 'partial' ? order.fulfillment_status : order.fulfillment_status}
                 </Badge>
             </IndexTable.Cell>
             <IndexTable.Cell>
@@ -183,6 +184,14 @@ function Table() {
                 />
             ) : (
                 <Page title='Orders Lists'>
+                    {orders.length === 0 && (
+
+                        <div style={{ marginLeft: "20px", marginBottom: "10px" }}>
+                            <Banner title="Order Lists">
+                                <p>no order created yet ...!!</p>
+                            </Banner>
+                        </div>
+                    )}
                     <LegacyCard>
                         {isLoading ? (
                             <div className="spinner">
@@ -207,7 +216,7 @@ function Table() {
                                     {rowMarkup}
                                 </IndexTable>
                                 <div className="Polaris-IndexTable__TableRow"></div>
-                                <div style={{ display: "flex", justifyContent: "center", paddingBottom: "10px", paddingTop:"10px" }}>
+                                <div style={{ display: "flex", justifyContent: "center", paddingBottom: "10px", paddingTop: "10px" }}>
                                     <Pagination
                                         hasPrevious={currentPage > 1}
                                         hasNext={currentPage < totalPages}
