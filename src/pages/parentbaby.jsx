@@ -51,6 +51,9 @@ export default function TestBabyOrderList() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [addTracking, setAddTracking] = useState("");
     const [shipmenttrackingnumber, setShipmenttrackingnumber] = useState("");
+    const [isModalOpen1, setIsModalOpen1] = useState(false);
+    const [addTracking1, setAddTracking1] = useState("");
+    const [shipmenttrackingnumber1, setShipmenttrackingnumber1] = useState("");
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [babynumber, setBabyNumber] = useState("");
     const [formData, setFormData] = useState({
@@ -113,6 +116,7 @@ export default function TestBabyOrderList() {
     const [popoverActive, setPopoverActive] = useState(false);
     const [APIMessage, setAPIMessage] = useState("");
     const [selectedResources, setSelectedRows] = useState([]);
+    console.log(selectedResources);
 
     const [collapsibleStates, setCollapsibleStates] = useState(
         parentBabyOrder.map(() => false)
@@ -192,11 +196,11 @@ export default function TestBabyOrderList() {
                         consignee_state: res.data.commercial_data.consignee_state,
                         tax_id: res.data.commercial_data.tax_id,
                         EORI_Id: res.data.commercial_data.eori_id,
-                        REPRESENTATIVE_NAME: res.data.commercial_data.representative_name,
+                        REPRESENTATIVE_NAME: res.data.commercial_data.representative_fullname,
                         REPRESENTATIVE_ADDRESS: res.data.commercial_data.representative_address,
                         REPRESENTATIVE_STATE: res.data.commercial_data.representative_state,
                         REPRESENTATIVE_COUNTRY: res.data.commercial_data.representative_country,
-                        REPRESENTATIVE_ZIPCODE: res.data.commercial_data.representative_zipcode,
+                        REPRESENTATIVE_ZIPCODE: res.data.commercial_data.representative_postalcode,
                     });
                     setShipperFormData({
                         shipperfullName:
@@ -1726,7 +1730,7 @@ export default function TestBabyOrderList() {
                                                                 }}
                                                             />
                                                         </td>
-                                                        <td className="Polaris-IndexTable__TableCell">{datas.parent_order_number}</td>
+                                                        <td className="Polaris-IndexTable__TableCell">#{datas.parent_order_number}</td>
                                                         <td className="Polaris-IndexTable__TableCell">{datas.parent_baby_order_id}</td>
                                                         <td className="Polaris-IndexTable__TableCell">{datas.parent_baby_order_number}</td>
                                                         <td className="Polaris-IndexTable__TableCell">{datas.parent_baby_order_date}</td>
@@ -1794,8 +1798,8 @@ export default function TestBabyOrderList() {
                                                             >
                                                                 <Modal.Section>
                                                                     <TextContainer>
-                                                                    <p style={{ fontSize: '15px', fontWeight: 'bold' }}>
-                                                                        Are you sure you want to delete the baby order #{datas.parent_baby_order_id}?</p>
+                                                                        <p style={{ fontSize: '15px', fontWeight: 'bold' }}>
+                                                                            Are you sure you want to delete the baby order #{datas.parent_baby_order_id}?</p>
                                                                     </TextContainer>
                                                                 </Modal.Section>
                                                             </Modal>
@@ -1811,37 +1815,8 @@ export default function TestBabyOrderList() {
                                                                 tone="base"
                                                             />}
                                                         </td>
+
                                                     </tr>
-                                                    <Modal
-                                                        open={isModalOpen}
-                                                        onClose={() => setIsModalOpen(false)}
-                                                        title="Add Tracking"
-                                                        secondaryActions={[
-                                                            {
-                                                                content: 'Close',
-                                                                onAction: closeModal,
-                                                            },
-                                                        ]}
-                                                    >
-                                                        <Modal.Section>
-                                                            <FormLayout>
-                                                                <FormLayout.Group>
-                                                                    <TextField
-                                                                        type="text"
-                                                                        label="Tracking number"
-                                                                        autoComplete="off"
-                                                                        value={shipmenttrackingnumber}
-                                                                    />
-                                                                    <TextField
-                                                                        type="text"
-                                                                        label="Shipping carrier"
-                                                                        autoComplete="off"
-                                                                        value={addTracking}
-                                                                    />
-                                                                </FormLayout.Group>
-                                                            </FormLayout>
-                                                        </Modal.Section>
-                                                    </Modal>
                                                     {collapsibleStates[index] &&
                                                         <tr className={`Polaris-IndexTable__TableRow ${collapsibleStates[index] ? 'collapsible-open' : ''
                                                             }`} style={{ height: datas.baby_order_data.length < 4 ? datas.baby_order_data.length === 1 ? `${datas.baby_order_data.length * 73}px` : `${datas.baby_order_data.length * 55}px` : `${datas.baby_order_data.length * 42.4285714286}px` }}>
@@ -1856,6 +1831,7 @@ export default function TestBabyOrderList() {
                                                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Title</th>
                                                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
                                                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
+                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Actions</th>
                                                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Items</th>
                                                                         </tr>
                                                                     </thead>
@@ -1865,16 +1841,75 @@ export default function TestBabyOrderList() {
                                                                                 <td className="Polaris-IndexTable__TableCell  Polaris-IndexTable__TableHeading--first">
 
                                                                                 </td>
-                                                                                <td className="Polaris-IndexTable__TableCell">#{data1.baby_ID}</td>
+                                                                                <td className="Polaris-IndexTable__TableCell">{data1.baby_ID}</td>
                                                                                 <td className="Polaris-IndexTable__TableCell">{data1.baby_title}</td>
                                                                                 <td className="Polaris-IndexTable__TableCell">{data1.baby_date}</td>
                                                                                 <td className="Polaris-IndexTable__TableCell">{data1.baby_total}</td>
+                                                                                <td className="Polaris-IndexTable__TableCell">
+                                                                                    <ButtonGroup>
+                                                                                        <Tooltip content="Package Slip">
+                                                                                            <div onClick={() => {
+                                                                                                window.open(data1.filePath, "_blank")
+                                                                                            }}>
+                                                                                                <Icon
+                                                                                                    source={ReceiptMajor}
+                                                                                                    tone="base"
+                                                                                                    color='base'
+                                                                                                />
+                                                                                            </div>
+                                                                                        </Tooltip>
+                                                                                        <Tooltip content="Tracking Info">
+                                                                                            <div onClick={() => {
+                                                                                                setIsModalOpen1(true);
+                                                                                                setAddTracking1(data1.trackingnumber);
+                                                                                                setShipmenttrackingnumber1(data1.shipmenttrackingnumber);
+                                                                                            }}>
+                                                                                                <Icon
+                                                                                                    source={LocationsMinor}
+                                                                                                    tone="base"
+                                                                                                    color='success'
+                                                                                                />
+                                                                                            </div>
+                                                                                        </Tooltip>
+                                                                                    </ButtonGroup>
+                                                                                </td>
                                                                                 <td className="clasPolaris-IndexTable__TableCell">
                                                                                     <ActionListInPopoverExample fulfillmentStatus={[]}
                                                                                         itemsdata={data1.line_items}
                                                                                         Item='ITEMS' />
                                                                                 </td>
-                                                                            </tr>)}
+                                                                                <Modal
+                                                                                    open={isModalOpen1}
+                                                                                    onClose={() => setIsModalOpen1(false)}
+                                                                                    title="Add Tracking"
+                                                                                    secondaryActions={[
+                                                                                        {
+                                                                                            content: 'Close',
+                                                                                            onAction: () => setIsModalOpen1(false),
+                                                                                        },
+                                                                                    ]}
+                                                                                >
+                                                                                    <Modal.Section>
+                                                                                        <FormLayout>
+                                                                                            <FormLayout.Group>
+                                                                                                <TextField
+                                                                                                    type="text"
+                                                                                                    label="Tracking number"
+                                                                                                    autoComplete="off"
+                                                                                                    value={shipmenttrackingnumber1}
+                                                                                                />
+                                                                                                <TextField
+                                                                                                    type="text"
+                                                                                                    label="Shipping carrier"
+                                                                                                    autoComplete="off"
+                                                                                                    value={addTracking1}
+                                                                                                />
+                                                                                            </FormLayout.Group>
+                                                                                        </FormLayout>
+                                                                                    </Modal.Section>
+                                                                                </Modal>
+                                                                            </tr>
+                                                                        )}
                                                                     </tbody>
                                                                 </table>
                                                             </div>
@@ -1925,6 +1960,36 @@ export default function TestBabyOrderList() {
                             Are you sure you want to delete the baby order #{babynumber}?
                         </p>
                     </TextContainer>
+                </Modal.Section>
+            </Modal>
+            <Modal
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                title="Add Tracking"
+                secondaryActions={[
+                    {
+                        content: 'Close',
+                        onAction: closeModal,
+                    },
+                ]}
+            >
+                <Modal.Section>
+                    <FormLayout>
+                        <FormLayout.Group>
+                            <TextField
+                                type="text"
+                                label="Tracking number"
+                                autoComplete="off"
+                                value={shipmenttrackingnumber}
+                            />
+                            <TextField
+                                type="text"
+                                label="Shipping carrier"
+                                autoComplete="off"
+                                value={addTracking}
+                            />
+                        </FormLayout.Group>
+                    </FormLayout>
                 </Modal.Section>
             </Modal>
             <div id="toast-message">

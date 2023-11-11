@@ -16,6 +16,12 @@ const MotherOrderIndexTable = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [addTracking, setAddTracking] = useState("");
     const [shipmenttrackingnumber, setShipmenttrackingnumber] = useState("");
+    const [isModalOpen1, setIsModalOpen1] = useState(false);
+    const [addTracking1, setAddTracking1] = useState("");
+    const [shipmenttrackingnumber1, setShipmenttrackingnumber1] = useState("");
+    const [isModalOpen2, setIsModalOpen2] = useState(false);
+    const [addTracking2, setAddTracking2] = useState("");
+    const [shipmenttrackingnumber2, setShipmenttrackingnumber2] = useState("");
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [toastmessage, setToastMessage] = useState(false);
     const [APIMessage, setAPIMessage] = useState("");
@@ -48,20 +54,46 @@ const MotherOrderIndexTable = () => {
     const [collapsibleStates, setCollapsibleStates] = useState(
         motherorder.map(() => false)
     );
+    const [testIndex, setTestIndex] = useState(null);
+    const [testIndex1, setTestIndex1] = useState(null);
+    const [countBaby, setCountBaby] = useState(111);
+    const [countBaby1, setCountBaby1] = useState(73);
+    // console.log(countBaby, countBaby1, testIndex, testIndex1, "countbaby...");
 
-    const toggleCollapsible = (index) => {
-        const newCollapsibleStates = [...collapsibleStates];
-        newCollapsibleStates[index] = !newCollapsibleStates[index];
-        setCollapsibleStates(newCollapsibleStates);
+    const toggleCollapsible = (index, datas) => {
+        // const newCollapsibleStates = [...collapsibleStates];
+        // newCollapsibleStates[index] = !newCollapsibleStates[index];
+        // setCollapsibleStates(newCollapsibleStates);
+        if (testIndex == index) {
+            setTestIndex(null);
+            setCountBaby1(73)
+            setCountBaby(datas.parent_baby_order_data.length > 2 ? 148 : 111)
+            console.log("outside");
+        } else {
+            setTestIndex(index);
+            if (testIndex1 != null) {
+                setTestIndex1(null);
+                setCountBaby1(73)
+                setCountBaby(datas.parent_baby_order_data.length > 2 ? 148 : 111)
+            }
+        }
     };
+
     const [collapsibleStates1, setCollapsibleStates1] = useState(
         motherorder.map(() => false)
     );
 
-    const toggleCollapsible1 = (index) => {
-        const newCollapsibleStates = [...collapsibleStates1];
-        newCollapsibleStates[index] = !newCollapsibleStates[index];
-        setCollapsibleStates1(newCollapsibleStates);
+    const toggleCollapsible1 = (index, datas) => {
+        // const newCollapsibleStates = [...collapsibleStates1];
+        // newCollapsibleStates[index] = !newCollapsibleStates[index];
+        // setCollapsibleStates1(newCollapsibleStates);
+        if (testIndex1 == index) {
+            setTestIndex1(null);
+            setCountBaby1(73)
+            setCountBaby(datas.parent_baby_order_data.length > 2 ? 148 : 111)
+        } else {
+            setTestIndex1(index);
+        }
     };
 
 
@@ -146,7 +178,7 @@ const MotherOrderIndexTable = () => {
                                             <th className="Polaris-IndexTable__TableHeading Polaris-IndexTable__TableHeading--first" data-index-table-heading="true">
                                                 {/* Add header content */}
                                             </th>
-                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Order Number</th>
+                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Mother Order Number</th>
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Babies Details</th>
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
@@ -156,7 +188,7 @@ const MotherOrderIndexTable = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {paginatedData && paginatedData.map((datas, index) => {
+                                        {paginatedData && paginatedData.reverse().map((datas, index) => {
                                             return (
                                                 <>
                                                     <tr id={index} className="Polaris-IndexTable__TableRow">
@@ -204,7 +236,8 @@ const MotherOrderIndexTable = () => {
                                                                         />
                                                                     </div>
                                                                 </Tooltip>
-                                                            </ButtonGroup></td>
+                                                            </ButtonGroup>
+                                                        </td>
                                                         <td className="Polaris-IndexTable__TableCell">
                                                             <Tooltip content="delete">
                                                                 <Button onClick={() => {
@@ -214,8 +247,8 @@ const MotherOrderIndexTable = () => {
                                                                 }} destructive size='micro' accessibilityLabel='Delete' icon={DeleteMajor}></Button>
                                                             </Tooltip>
                                                         </td>
-                                                        <td onClick={() => toggleCollapsible(index)} className="Polaris-IndexTable__TableCell">
-                                                            {collapsibleStates[index] ? <Icon
+                                                        <td onClick={() => { setCountBaby(datas.parent_baby_order_data.length > 2 ? 148 : 111); toggleCollapsible(index, datas) }} className="Polaris-IndexTable__TableCell">
+                                                            {testIndex == index ? <Icon
                                                                 source={ChevronUpMinor}
                                                                 tone="base"
                                                             /> : <Icon
@@ -254,11 +287,11 @@ const MotherOrderIndexTable = () => {
                                                             </FormLayout>
                                                         </Modal.Section>
                                                     </Modal>
-                                                    {collapsibleStates[index] &&
-                                                        <tr className={`Polaris-IndexTable__TableRow ${collapsibleStates[index] ? 'collapsible-open' : ''
+                                                    {testIndex == index &&
+                                                        <tr className={`Polaris-IndexTable__TableRow ${testIndex == index ? 'collapsible-open' : ''
                                                             }`} style={{
-                                                                height: openPranetList ? `${datas.parent_baby_order_data[0].baby_order_data.length * 90.4285714286}px` : `${datas.parent_baby_order_data.length * 68}px`
-                                                                }}>
+                                                                height: testIndex == index ? `${datas.parent_baby_order_data.length == 1 ? countBaby1 : countBaby}px` : `${countBaby}px`
+                                                            }}>
                                                             <div className="Polaris-LegacyCard" style={{ display: "contents" }}>
                                                                 <table style={{ position: "absolute" }} className="Polaris-IndexTable__Table Polaris-IndexTable__Table--sticky">
                                                                     <thead>
@@ -266,10 +299,12 @@ const MotherOrderIndexTable = () => {
                                                                             <th className="Polaris-IndexTable__TableHeading Polaris-IndexTable__TableHeading--first" data-index-table-heading="true">
                                                                                 {/* Add header content */}
                                                                             </th>
+                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Order Number</th>
                                                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Parent Baby Number</th>
                                                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Baby Details</th>
                                                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
                                                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
+                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Actions</th>
                                                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true"></th>
                                                                         </tr>
                                                                     </thead>
@@ -280,12 +315,48 @@ const MotherOrderIndexTable = () => {
                                                                                     <td className="Polaris-IndexTable__TableCell  Polaris-IndexTable__TableHeading--first">
                                                                                         {/* Add row content */}
                                                                                     </td>
-                                                                                    <td className="Polaris-IndexTable__TableCell">#{data1.parent_baby_order_id}</td>
+                                                                                    <td className="Polaris-IndexTable__TableCell">#{data1.parent_order_number}</td>
+                                                                                    <td className="Polaris-IndexTable__TableCell">{data1.parent_baby_order_id}</td>
                                                                                     <td className="Polaris-IndexTable__TableCell">{data1.parent_baby_order_number}</td>
                                                                                     <td className="Polaris-IndexTable__TableCell">{data1.parent_baby_order_date}</td>
                                                                                     <td className="Polaris-IndexTable__TableCell">{data1.price}</td>
-                                                                                    <td onClick={() => { setOpenParentList(!openPranetList); toggleCollapsible1(indexs) }} className="Polaris-IndexTable__TableCell">
-                                                                                        {collapsibleStates1[indexs] ? <Icon
+                                                                                    <td className="Polaris-IndexTable__TableCell">
+                                                                                        <ButtonGroup>
+                                                                                            <Tooltip content="Package Slip">
+                                                                                                <div onClick={() => {
+                                                                                                    window.open(data1.filePath, "_blank")
+                                                                                                }}>
+                                                                                                    <Icon
+                                                                                                        source={ReceiptMajor}
+                                                                                                        tone="base"
+                                                                                                        color='base'
+                                                                                                    />
+                                                                                                </div>
+                                                                                            </Tooltip>
+                                                                                            <Tooltip content="Tracking Info">
+                                                                                                <div onClick={() => {
+                                                                                                    setIsModalOpen1(true);
+                                                                                                    setAddTracking1(data1.trackingnumber);
+                                                                                                    setShipmenttrackingnumber1(data1.shipmenttrackingnumber);
+                                                                                                }}>
+                                                                                                    <Icon
+                                                                                                        source={LocationsMinor}
+                                                                                                        tone="base"
+                                                                                                        color='success'
+                                                                                                    />
+                                                                                                </div>
+                                                                                            </Tooltip>
+                                                                                        </ButtonGroup>
+                                                                                    </td>
+                                                                                    <td onClick={() => {
+                                                                                        if (testIndex == index) {
+                                                                                            setCountBaby(datas.parent_baby_order_data.length == 1 ? 222 : (index == 0 ? ((datas.parent_baby_order_data.length === 3 ? 258 : 222) + (data1.baby_order_data.length > 2 ? (37 * (indexs + (data1.baby_order_data.length > 2 ? 0 : 2))) : (37 * index))) : (222 + (data1.baby_order_data.length > 2 ? (37 * (indexs == 0 ? (data1.baby_order_data.length - 1) : indexs)) : (data1.baby_order_data.length > 2 ? 37 : (datas.parent_baby_order_data.length > 2 ? 37 : 0) * (data1.baby_order_data.length - 1))))));
+                                                                                            setCountBaby1(datas.parent_baby_order_data.length == 1 ? (data1.baby_order_data.length > 0 ? 185 : 222) : (indexs == 0 ? (222 + (37 * (indexs + 2))) + (data1.baby_order_data.length > 2 ? 0 : 37) : 296))
+                                                                                            setOpenParentList(!openPranetList);
+                                                                                        }
+                                                                                            toggleCollapsible1(indexs, datas);
+                                                                                    }} className="Polaris-IndexTable__TableCell">
+                                                                                        {testIndex1 == indexs ? <Icon
                                                                                             source={ChevronUpMinor}
                                                                                             tone="base"
                                                                                         /> : <Icon
@@ -294,9 +365,9 @@ const MotherOrderIndexTable = () => {
                                                                                         />}
                                                                                     </td>
                                                                                 </tr>
-                                                                                {collapsibleStates1[indexs] &&
-                                                                                    <tr className={`Polaris-IndexTable__TableRow ${collapsibleStates1[indexs] ? 'collapsible-open' : ''
-                                                                                        }`} style={{ height: data1.baby_order_data.length < 4 ? data1.baby_order_data.length === 1 ? `${data1.baby_order_data.length * 73}px` : `${data1.baby_order_data.length * 155}px` : `${data1.baby_order_data.length * 142.4285714286}px` }}>
+                                                                                {testIndex1 == indexs &&
+                                                                                    <tr className={`Polaris-IndexTable__TableRow ${testIndex1 == indexs ? 'collapsible-open' : ''
+                                                                                        }`} style={{ height: testIndex1 == indexs && `${datas.parent_baby_order_data.length == 1 ? "" : (data1.baby_order_data.length < 3 ? 111 : 148)}px` }}>
                                                                                         <div className="Polaris-LegacyCard" style={{ display: "contents" }}>
                                                                                             <table style={{ position: "absolute" }} className="Polaris-IndexTable__Table Polaris-IndexTable__Table--sticky">
                                                                                                 <thead>
@@ -308,6 +379,7 @@ const MotherOrderIndexTable = () => {
                                                                                                         <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Title</th>
                                                                                                         <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
                                                                                                         <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
+                                                                                                        <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Actions</th>
                                                                                                         <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Items</th>
                                                                                                     </tr>
                                                                                                 </thead>
@@ -321,6 +393,34 @@ const MotherOrderIndexTable = () => {
                                                                                                             <td className="Polaris-IndexTable__TableCell">{data1.baby_title}</td>
                                                                                                             <td className="Polaris-IndexTable__TableCell">{data1.baby_date}</td>
                                                                                                             <td className="Polaris-IndexTable__TableCell">{data1.baby_total}</td>
+                                                                                                            <td className="Polaris-IndexTable__TableCell">
+                                                                                                                <ButtonGroup>
+                                                                                                                    <Tooltip content="Package Slip">
+                                                                                                                        <div onClick={() => {
+                                                                                                                            window.open(data1.filePath, "_blank")
+                                                                                                                        }}>
+                                                                                                                            <Icon
+                                                                                                                                source={ReceiptMajor}
+                                                                                                                                tone="base"
+                                                                                                                                color='base'
+                                                                                                                            />
+                                                                                                                        </div>
+                                                                                                                    </Tooltip>
+                                                                                                                    <Tooltip content="Tracking Info">
+                                                                                                                        <div onClick={() => {
+                                                                                                                            setIsModalOpen2(true);
+                                                                                                                            setAddTracking2(data1.trackingnumber);
+                                                                                                                            setShipmenttrackingnumber2(data1.shipmenttrackingnumber);
+                                                                                                                        }}>
+                                                                                                                            <Icon
+                                                                                                                                source={LocationsMinor}
+                                                                                                                                tone="base"
+                                                                                                                                color='success'
+                                                                                                                            />
+                                                                                                                        </div>
+                                                                                                                    </Tooltip>
+                                                                                                                </ButtonGroup>
+                                                                                                            </td>
                                                                                                             <td className="clasPolaris-IndexTable__TableCell">
                                                                                                                 <ActionListInPopoverExample fulfillmentStatus={[]}
                                                                                                                     itemsdata={data1.line_items}
@@ -379,6 +479,66 @@ const MotherOrderIndexTable = () => {
                     <TextContainer>
                         <p style={{ fontSize: '15px', fontWeight: 'bold' }}>Are you sure you want to delete the mother_order_date order #{mothernumber}?</p>
                     </TextContainer>
+                </Modal.Section>
+            </Modal>
+            <Modal
+                open={isModalOpen1}
+                onClose={() => setIsModalOpen1(false)}
+                title="Add Tracking"
+                secondaryActions={[
+                    {
+                        content: 'Close',
+                        onAction: () => setIsModalOpen1(false),
+                    },
+                ]}
+            >
+                <Modal.Section>
+                    <FormLayout>
+                        <FormLayout.Group>
+                            <TextField
+                                type="text"
+                                label="Tracking number"
+                                autoComplete="off"
+                                value={shipmenttrackingnumber1}
+                            />
+                            <TextField
+                                type="text"
+                                label="Shipping carrier"
+                                autoComplete="off"
+                                value={addTracking1}
+                            />
+                        </FormLayout.Group>
+                    </FormLayout>
+                </Modal.Section>
+            </Modal>
+            <Modal
+                open={isModalOpen2}
+                onClose={() => setIsModalOpen2(false)}
+                title="Add Tracking"
+                secondaryActions={[
+                    {
+                        content: 'Close',
+                        onAction: () => setIsModalOpen2(),
+                    },
+                ]}
+            >
+                <Modal.Section>
+                    <FormLayout>
+                        <FormLayout.Group>
+                            <TextField
+                                type="text"
+                                label="Tracking number"
+                                autoComplete="off"
+                                value={shipmenttrackingnumber2}
+                            />
+                            <TextField
+                                type="text"
+                                label="Shipping carrier"
+                                autoComplete="off"
+                                value={addTracking2}
+                            />
+                        </FormLayout.Group>
+                    </FormLayout>
                 </Modal.Section>
             </Modal>
             <div id="toast-message">

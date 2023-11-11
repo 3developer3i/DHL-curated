@@ -254,6 +254,11 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
         }).catch((err) => console.log(err))
     };
 
+    function parsePrice(price) {
+        const parsed = parseFloat(price);
+        return parsed;
+      }
+
     return (
         <>
             {isModalClose ? (
@@ -349,7 +354,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                                                                             </button>
                                                                                         </div>
                                                                                         <div>
-                                                                                            <span style={{ marginLeft: '26px' }}> <span style={textStyle}>${item.price * item.quantity}</span></span>
+                                                                                            <span style={{ marginLeft: '26px' }}> <span style={textStyle}>${parseFloat(item.price.replace(/[^\d.-]/g, '')) * item.quantity}</span></span>
                                                                                         </div>
                                                                                     </div> </>
                                                                                 </Text>

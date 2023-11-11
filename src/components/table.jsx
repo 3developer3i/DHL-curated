@@ -134,7 +134,7 @@ function Table() {
                     'No customer'
                 )}
             </IndexTable.Cell>
-            <IndexTable.Cell>$ {order.total_price}</IndexTable.Cell>
+            <IndexTable.Cell>${order.total_price}</IndexTable.Cell>
             <IndexTable.Cell>
                 <Badge status={order.financial_status === 'paid' ? 'success' : 'warning'}>
                     {order.financial_status === 'paid' ? 'Paid' : 'Pending'}
