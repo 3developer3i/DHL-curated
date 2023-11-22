@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Table from './components/table';
-import BabyOrderList from './pages/tableBabyOrder';
 import MotherOrderIndexTable from './pages/newMotherorder';
 import TestBabyOrderList from './pages/parentbaby';
+import AddressPage from './pages/tableAddressPage';
 
 function App() {
 
@@ -26,6 +26,7 @@ function App() {
       {state === "" && <Table />}
       {state === "mother" && <MotherOrderIndexTable />}
       {state === "baby" && <TestBabyOrderList />}
+      {state === "address" && <AddressPage />}
     </div>
   );
 }

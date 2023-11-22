@@ -111,12 +111,42 @@ export default function TestBabyOrderList() {
         REPRESENTATIVE_ZIPCODE: "",
     });
 
+    const validateFormData = (formData) => {
+        for (const key in formData) {
+            const disallowedCharactersRegex = /[(){}\[\]!"'?]/;
+            // Check if the input contains any disallowed characters
+            if (disallowedCharactersRegex.test(formData[key])) {
+                alert("missing....")
+                return false;
+            }
+            if (formData.hasOwnProperty(key) && formData[key].trim() === '') {
+                return false; // Return false if any value is empty
+            }
+        }
+        return true; // Return true if all values are non-empty
+    };
+    const validateShipperFormData = (shipperformData) => {
+        for (const key in shipperformData) {
+            if (shipperformData.hasOwnProperty(key) && shipperformData[key].trim() === '') {
+                return false; // Return false if any value is empty
+            }
+        }
+        return true; // Return true if all values are non-empty
+    };
+    const validateCommercialForm = (commercialForm) => {
+        for (const key in commercialForm) {
+            if (commercialForm.hasOwnProperty(key) && commercialForm[key].trim() === '') {
+                return false; // Return false if any value is empty
+            }
+        }
+        return true; // Return true if all values are non-empty
+    };
+
     // Print Toast Message
     const [toastmessage, setToastMessage] = useState(false);
     const [popoverActive, setPopoverActive] = useState(false);
     const [APIMessage, setAPIMessage] = useState("");
     const [selectedResources, setSelectedRows] = useState([]);
-    console.log(selectedResources);
 
     const [collapsibleStates, setCollapsibleStates] = useState(
         parentBabyOrder.map(() => false)
@@ -147,10 +177,6 @@ export default function TestBabyOrderList() {
 
     const closeModal = () => {
         setIsModalOpen(false);
-    };
-
-    const openUrl = (url) => {
-        window.open(url, "_blank"); // Opens the URL in a new tab or window
     };
 
     const { allResourcesSelected, handleSelectionChange } = useIndexResourceState(parentBabyOrder);
@@ -252,6 +278,7 @@ export default function TestBabyOrderList() {
                     } else if (name === "create-mother") {
                         setAPIMessage("MotherOrder Created");
                         toggleActive();
+                        setSelectedRows([]);
                         togglePopoverActive();
                     } else if (name == "add-address") {
                         toggleActive();
@@ -279,22 +306,29 @@ export default function TestBabyOrderList() {
         }
     }, [datas]);
 
+    const [disallowedCharactersError, setDisallowedCharactersError] = useState('');
+
     const handleChangethree = (field, value) => {
-        setFormData((prevData) => ({
-            ...prevData,
-            [field]: value,
-        }));
+        const disallowedCharactersRegex = /[(){}\[\]!"'?]/;
+        // Check if the input contains any disallowed characters
+        if (disallowedCharactersRegex.test(value)) {
+            setDisallowedCharactersError(`Error: The input cannot contain disallowed characters: (){}[]!"',.?`);
+        } else {
+            setDisallowedCharactersError('');
+            setFormData((prevData) => ({
+                ...prevData,
+                [field]: value,
+            }));
 
-        setShipperFormData((prevData) => ({
-            ...prevData,
-            [field]: value,
-        }));
-        setCommercialForm((prevData) => ({
-            ...prevData,
-            [field]: value,
-        }));
-
-        console.log("ss", shipperformData);
+            setShipperFormData((prevData) => ({
+                ...prevData,
+                [field]: value,
+            }));
+            setCommercialForm((prevData) => ({
+                ...prevData,
+                [field]: value,
+            }));
+        }
     };
 
     const validationSchema = Yup.object().shape({
@@ -315,20 +349,6 @@ export default function TestBabyOrderList() {
     const [active2, setActive2] = useState(false);
 
     const [openCardIndex, setOpenCardIndex] = useState(null);
-
-    const handleCardClick = (index) => {
-        if (openCardIndex === index) {
-            // Clicking the same card should close it
-            setOpenCardIndex(null);
-        } else {
-            setOpenCardIndex(index);
-        }
-        handleSelectionChange()
-    };
-
-    const toggleActive2 = useCallback(() => {
-        setActive2((prevActive) => !prevActive);
-    }, []);
 
     // paginmation
     const [currentPage, setCurrentPage] = useState(1);
@@ -587,6 +607,7 @@ export default function TestBabyOrderList() {
                     if (res.data.msg === "MotherOrder Created") {
                         handleSelectionChange();
                         fetchAllBabyOrderlist('yes', "create-mother");
+
                     }
                 }
             })
@@ -619,85 +640,112 @@ export default function TestBabyOrderList() {
         const selectedBabyOrderIds = [];
         setLoading(true);
 
-        selectedResources.forEach((index) => {
-            if (datas[index] && datas[index].baby_order_number) {
-                selectedBabyOrderNumbers.push(datas[index].baby_order_number);
+        if (disallowedCharactersError == '') {
+            if (!validateCommercialForm(commercialForm)) {
+                // Handle error for commercialForm
+                console.log('Error: Some fields in commercialForm are empty');
+                return;
+            };
+            selectedResources.forEach((index) => {
+                if (datas[index] && datas[index].baby_order_number) {
+                    selectedBabyOrderNumbers.push(datas[index].baby_order_number);
+                }
+            });
+            selectedResources.forEach((index) => {
+                if (datas[index] && datas[index].baby_order_id) {
+                    selectedBabyOrderIds.push(datas[index].baby_order_id);
+                }
+            });
+            const formData = new FormData();
+            formData.append("shop_name", shop);
+            for (const key in commercialForm) {
+                if (commercialForm.hasOwnProperty(key)) {
+                    formData.append(key.toLowerCase(), commercialForm[key]);
+                }
             }
-        });
-        selectedResources.forEach((index) => {
-            if (datas[index] && datas[index].baby_order_id) {
-                selectedBabyOrderIds.push(datas[index].baby_order_id);
+            const response = await axios.post(
+                `https://${BaseURl}/get_comercial_detail`,
+                new URLSearchParams(formData)
+            );
+            console.log(response.data, "checl first");
+            if (response.status === 200) {
+                fetchAllBabyOrderlist('yes', "add-commercial");
+                handleChanges();
+                setAPIMessage("Commercial Details Add SuccessFully");
             }
-        });
-        const formData = new FormData();
-        formData.append("shop_name", shop);
-        for (const key in commercialForm) {
-            if (commercialForm.hasOwnProperty(key)) {
-                formData.append(key.toLowerCase(), commercialForm[key]);
-            }
+        } else {
+            console.log("error commercial data post");
         }
-        const response = await axios.post(
-            `https://${BaseURl}/get_comercial_detail`,
-            new URLSearchParams(formData)
-        );
-        console.log(response.data, "checl first");
-        if (response.status === 200) {
-            fetchAllBabyOrderlist('yes', "add-commercial");
-            handleChanges();
-            setAPIMessage("Commercial Details Add SuccessFully");
-        }
+
     };
 
     // Address data post 
     const addressDataPost = async () => {
         const selectedBabyOrderNumbers = [];
         const selectedBabyOrderIds = [];
-        setLoading(true);
+        if (disallowedCharactersError == '') {
+            if (!validateFormData(formData)) {
+                // Handle error for formData
+                console.log('Error: Some fields in formData are empty');
+                // alert('Error: Some fields in formData are empty');
+                return;
+            }
 
-        selectedResources.forEach((index) => {
-            if (datas[index] && datas[index].baby_order_number) {
-                selectedBabyOrderNumbers.push(datas[index].baby_order_number);
+            if (!validateShipperFormData(shipperformData)) {
+                // Handle error for shipperformData
+                console.log('Error: Some fields in shipperformData are empty');
+                // alert('Error: Some fields in shipperformData are empty');
+                return;
             }
-        });
-        selectedResources.forEach((index) => {
-            if (datas[index] && datas[index].baby_order_id) {
-                selectedBabyOrderIds.push(datas[index].baby_order_id);
-            }
-        });
-        const formDatass = new FormData();
-        formDatass.append("shop_name", shop);
-        formDatass.append("fullName", formData.fullName);
-        formDatass.append("email", formData.email);
-        formDatass.append("mobileNumber", formData.mobileNumber);
-        formDatass.append("phone", formData.phone);
-        formDatass.append("addressLine1", formData.addressLine1);
-        formDatass.append("addressLine2", formData.addressLine2);
-        formDatass.append("postalCode", formData.postalCode);
-        formDatass.append("countryCode", formData.countryCode);
-        formDatass.append("provinceCode", formData.provinceCode);
-        formDatass.append("city", formData.city);
-        formDatass.append("companyName", formData.companyName);
-        formDatass.append("state", formData.state);
-        formDatass.append("country", formData.country);
-        formDatass.append("shipperFirstName", shipperformData.shipperfullName);
-        formDatass.append("shipperemail", shipperformData.shipperemail);
-        formDatass.append("shippermobileNumber", shipperformData.shippermobileNumber);
-        formDatass.append("shipperphone", shipperformData.shipperphone);
-        formDatass.append("shipperaddressLine1", shipperformData.shipperaddressLine1);
-        formDatass.append("shipperaddressLine2", shipperformData.shipperaddressLine2);
-        formDatass.append("shipperpostalcode", shipperformData.shipperpostalCode);
-        formDatass.append("shippercountrycode", shipperformData.shippercountryCode);
-        formDatass.append("shipperprovincecode", shipperformData.shipperprovinceCode);
-        formDatass.append("shippercity", shipperformData.shippercity);
-        formDatass.append("shippercompanyName", shipperformData.shippercompanyName);
-        formDatass.append("shipperstate", shipperformData.shipperstate);
-        formDatass.append("shippercountry", shipperformData.shippercountry);
-        formDatass.append("shipperselect", getselctId);
-        const response = await axios.post(`https://${BaseURl}/get_address_detail`, new URLSearchParams(formDatass));
-        if (response.status === 200) {
-            fetchAllBabyOrderlist('yes', "add-address");
-            // handleChanges();
-            setAPIMessage("Address Details Add SuccessFully");
+            setLoading(true);
+
+            selectedResources.forEach((index) => {
+                if (datas[index] && datas[index].baby_order_number) {
+                    selectedBabyOrderNumbers.push(datas[index].baby_order_number);
+                }
+            });
+            selectedResources.forEach((index) => {
+                if (datas[index] && datas[index].baby_order_id) {
+                    selectedBabyOrderIds.push(datas[index].baby_order_id);
+                }
+            });
+            const formDatass = new FormData();
+            formDatass.append("shop_name", shop);
+            formDatass.append("fullName", formData.fullName);
+            formDatass.append("email", formData.email);
+            formDatass.append("mobileNumber", formData.mobileNumber);
+            formDatass.append("phone", formData.phone);
+            formDatass.append("addressLine1", formData.addressLine1);
+            formDatass.append("addressLine2", formData.addressLine2);
+            formDatass.append("postalCode", formData.postalCode);
+            formDatass.append("countryCode", formData.countryCode);
+            formDatass.append("provinceCode", formData.provinceCode);
+            formDatass.append("city", formData.city);
+            formDatass.append("companyName", formData.companyName);
+            formDatass.append("state", formData.state);
+            formDatass.append("country", formData.country);
+            formDatass.append("shipperFirstName", shipperformData.shipperfullName);
+            formDatass.append("shipperemail", shipperformData.shipperemail);
+            formDatass.append("shippermobileNumber", shipperformData.shippermobileNumber);
+            formDatass.append("shipperphone", shipperformData.shipperphone);
+            formDatass.append("shipperaddressLine1", shipperformData.shipperaddressLine1);
+            formDatass.append("shipperaddressLine2", shipperformData.shipperaddressLine2);
+            formDatass.append("shipperpostalcode", shipperformData.shipperpostalCode);
+            formDatass.append("shippercountrycode", shipperformData.shippercountryCode);
+            formDatass.append("shipperprovincecode", shipperformData.shipperprovinceCode);
+            formDatass.append("shippercity", shipperformData.shippercity);
+            formDatass.append("shippercompanyName", shipperformData.shippercompanyName);
+            formDatass.append("shipperstate", shipperformData.shipperstate);
+            formDatass.append("shippercountry", shipperformData.shippercountry);
+            formDatass.append("shipperselect", getselctId);
+            const response = await axios.post(`https://${BaseURl}/get_address_detail`, new URLSearchParams(formDatass));
+            if (response.status === 200) {
+                fetchAllBabyOrderlist('yes', "add-address");
+                // handleChanges();
+                setAPIMessage("Address Details Add SuccessFully");
+            };
+        } else {
+            console.log("error");
         }
     };
 
@@ -714,6 +762,9 @@ export default function TestBabyOrderList() {
             setIsDeleteModalOpen(!isDeleteModalOpen)
         };
     };
+
+    const [deleteParentId, setDeleteParentId] = useState('');
+    console.log(deleteParentId);
 
     return (
         <Page>
@@ -796,9 +847,7 @@ export default function TestBabyOrderList() {
                                                             <TextField
                                                                 type="text"
                                                                 name="fullName"
-                                                                error={
-                                                                    formData.fullName ? "" : "This Field Is Required"
-                                                                }
+                                                                error={(formData.fullName ? '' : 'This Field Is Required')}
                                                                 value={formData.fullName}
                                                                 onChange={(value) =>
                                                                     handleChangethree("fullName", value)
@@ -808,7 +857,7 @@ export default function TestBabyOrderList() {
                                                         <div className="form-field">
                                                             <label>email</label>
                                                             <TextField
-                                                                error={formData.email ? "" : "This Field Is Required"}
+                                                                error={(formData.email ? '' : 'This Field Is Required')}
                                                                 type="text"
                                                                 name="email"
                                                                 value={formData.email}
@@ -1777,32 +1826,11 @@ export default function TestBabyOrderList() {
                                                         <td className="Polaris-IndexTable__TableCell">
                                                             <Tooltip content="delete">
                                                                 <Button onClick={() => {
-                                                                    setIsDeleteModalOpen(!isDeleteModalOpen)
+                                                                    setDeleteParentId(datas.parent_baby_order_id);
+                                                                    setIsDeleteModalOpen(!isDeleteModalOpen);
                                                                 }} destructive size='micro' accessibilityLabel='Delete' icon={DeleteMajor}></Button>
                                                             </Tooltip>
-                                                            <Modal
-                                                                open={isDeleteModalOpen}
-                                                                onClose={() => setIsDeleteModalOpen(!isDeleteModalOpen)}
-                                                                title="Delete Confirmation"
-                                                                primaryAction={{
-                                                                    content: 'Delete',
-                                                                    onAction: () => deleteParentBabyorder(datas.parent_baby_order_id),
-                                                                }}
-                                                                secondaryActions={[
-                                                                    {
-                                                                        content: 'Cancel',
-                                                                        onAction: () => setIsDeleteModalOpen(!isDeleteModalOpen),
-                                                                    },
-                                                                ]}
-                                                                size="small"
-                                                            >
-                                                                <Modal.Section>
-                                                                    <TextContainer>
-                                                                        <p style={{ fontSize: '15px', fontWeight: 'bold' }}>
-                                                                            Are you sure you want to delete the baby order #{datas.parent_baby_order_id}?</p>
-                                                                    </TextContainer>
-                                                                </Modal.Section>
-                                                            </Modal>
+
                                                         </td>
                                                         <td onClick={() => {
                                                             toggleCollapsible(index);
@@ -1819,7 +1847,10 @@ export default function TestBabyOrderList() {
                                                     </tr>
                                                     {collapsibleStates[index] &&
                                                         <tr className={`Polaris-IndexTable__TableRow ${collapsibleStates[index] ? 'collapsible-open' : ''
-                                                            }`} style={{ height: datas.baby_order_data.length < 4 ? datas.baby_order_data.length === 1 ? `${datas.baby_order_data.length * 73}px` : `${datas.baby_order_data.length * 55}px` : `${datas.baby_order_data.length * 42.4285714286}px` }}>
+                                                            }`} style={{
+                                                                // height: datas.baby_order_data.length < 4 ? datas.baby_order_data.length === 1 ? `${datas.baby_order_data.length * 73}px` : `${datas.baby_order_data.length * 55}px` : `${datas.baby_order_data.length * 42.4285714286}px` 
+                                                                height: `${(datas.baby_order_data.length + 1) * 37}px`
+                                                            }}>
                                                             <div className="Polaris-LegacyCard" style={{ display: "contents" }}>
                                                                 <table style={{ position: "absolute" }} className="Polaris-IndexTable__Table Polaris-IndexTable__Table--sticky">
                                                                     <thead>
@@ -1878,36 +1909,7 @@ export default function TestBabyOrderList() {
                                                                                         itemsdata={data1.line_items}
                                                                                         Item='ITEMS' />
                                                                                 </td>
-                                                                                <Modal
-                                                                                    open={isModalOpen1}
-                                                                                    onClose={() => setIsModalOpen1(false)}
-                                                                                    title="Add Tracking"
-                                                                                    secondaryActions={[
-                                                                                        {
-                                                                                            content: 'Close',
-                                                                                            onAction: () => setIsModalOpen1(false),
-                                                                                        },
-                                                                                    ]}
-                                                                                >
-                                                                                    <Modal.Section>
-                                                                                        <FormLayout>
-                                                                                            <FormLayout.Group>
-                                                                                                <TextField
-                                                                                                    type="text"
-                                                                                                    label="Tracking number"
-                                                                                                    autoComplete="off"
-                                                                                                    value={shipmenttrackingnumber1}
-                                                                                                />
-                                                                                                <TextField
-                                                                                                    type="text"
-                                                                                                    label="Shipping carrier"
-                                                                                                    autoComplete="off"
-                                                                                                    value={addTracking1}
-                                                                                                />
-                                                                                            </FormLayout.Group>
-                                                                                        </FormLayout>
-                                                                                    </Modal.Section>
-                                                                                </Modal>
+
                                                                             </tr>
                                                                         )}
                                                                     </tbody>
@@ -1920,6 +1922,29 @@ export default function TestBabyOrderList() {
                                         })}
                                     </tbody>
                                 </table>
+                                {deleteParentId && <Modal
+                                    open={isDeleteModalOpen}
+                                    onClose={() => setIsDeleteModalOpen(!isDeleteModalOpen)}
+                                    title="Delete Confirmation"
+                                    primaryAction={{
+                                        content: 'Delete',
+                                        onAction: () => deleteParentBabyorder(deleteParentId),
+                                    }}
+                                    secondaryActions={[
+                                        {
+                                            content: 'Cancel',
+                                            onAction: () => setIsDeleteModalOpen(!isDeleteModalOpen),
+                                        },
+                                    ]}
+                                    size="small"
+                                >
+                                    <Modal.Section>
+                                        <TextContainer>
+                                            <p style={{ fontSize: '15px', fontWeight: 'bold' }}>
+                                                Are you sure you want to delete the baby order #{deleteParentId}?</p>
+                                        </TextContainer>
+                                    </Modal.Section>
+                                </Modal>}
                                 <div className="Polaris-IndexTable__TableRow"></div>
                                 {/* <div style={{ display: "flex", justifyContent: "center", paddingBottom: "10px", paddingTop: "10px" }}>
 
@@ -1938,6 +1963,59 @@ export default function TestBabyOrderList() {
                     </div>}
                 </div>
             )}
+            {/* <Modal
+                open={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(!isDeleteModalOpen)}
+                title="Delete Confirmation"
+                primaryAction={{
+                    content: 'Delete',
+                    onAction: () => deleteParentBabyorder(deleteParentId),
+                }}
+                secondaryActions={[
+                    {
+                        content: 'Cancel',
+                        onAction: () => setIsDeleteModalOpen(!isDeleteModalOpen),
+                    },
+                ]}
+                size="small"
+            >
+                <Modal.Section>
+                    <TextContainer>
+                        <p style={{ fontSize: '15px', fontWeight: 'bold' }}>
+                            Are you sure you want to delete the baby order #{deleteParentId}?</p>
+                    </TextContainer>
+                </Modal.Section>
+            </Modal> */}
+            <Modal
+                open={isModalOpen1}
+                onClose={() => setIsModalOpen1(false)}
+                title="Add Tracking"
+                secondaryActions={[
+                    {
+                        content: 'Close',
+                        onAction: () => setIsModalOpen1(false),
+                    },
+                ]}
+            >
+                <Modal.Section>
+                    <FormLayout>
+                        <FormLayout.Group>
+                            <TextField
+                                type="text"
+                                label="Tracking number"
+                                autoComplete="off"
+                                value={shipmenttrackingnumber1}
+                            />
+                            <TextField
+                                type="text"
+                                label="Shipping carrier"
+                                autoComplete="off"
+                                value={addTracking1}
+                            />
+                        </FormLayout.Group>
+                    </FormLayout>
+                </Modal.Section>
+            </Modal>
             <Modal
                 open={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(!isDeleteModalOpen)}

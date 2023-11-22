@@ -210,30 +210,31 @@ function AddproductTable({ number }) {
                                 {Object.keys(line_items).length} items
                                 <Icon source={DropdownMinor} color="base" />
                             </div>} onClose={toggleActive2}>
-                                {openCardIndex === index && <Grid>
-                                    <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 12 }}>
-                                        <LegacyCard sectioned style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                                            <Badge progress="complete">Item List</Badge>
-                                            {line_items.map((item, i) => (
-                                                <div key={i}>
-                                                    <div style={{ display: 'flex', marginTop: '15px', alignItems: 'center' }}>
-                                                        <div style={{ marginLeft: '8px' }}>
-                                                            <Thumbnail
-                                                                source={item.product_images}
-                                                                alt="Black choker necklace"
-                                                            />
-                                                        </div>
-                                                        <div style={{ marginLeft: '8px', whiteSpace: 'normal' }}>
-                                                            <Text style={{ whiteSpace: 'normal' }}>
-                                                                {item.name} <br /><Text>price: {item.quantity} x {item.price}</Text>
-                                                            </Text>
+                                
+                                    {openCardIndex === index &&
+                                        <div>
+                                            <LegacyCard sectioned style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                                                <Badge progress="complete">Item List</Badge>
+                                                {line_items.map((item, i) => (
+                                                    <div key={i}>
+                                                        <div style={{ display: 'flex', marginTop: '15px', alignItems: 'center' }}>
+                                                            <div style={{ marginLeft: '8px' }}>
+                                                                <Thumbnail
+                                                                    source={item.product_images}
+                                                                    alt="Black choker necklace"
+                                                                />
+                                                            </div>
+                                                            <div style={{ marginLeft: '8px', whiteSpace: 'normal' }}>
+                                                                <Text style={{ whiteSpace: 'normal' }}>
+                                                                    {item.name} <br /><Text>price: {item.quantity} x {item.price}</Text>
+                                                                </Text>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            ))}
-                                        </LegacyCard>
-                                    </Grid.Cell>
-                                </Grid>}
+                                                ))}
+                                            </LegacyCard>
+                                        </div>
+                                    }
                             </Popover>
                         </div>
                     </IndexTable.Cell>

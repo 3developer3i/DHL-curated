@@ -22,8 +22,8 @@ function ActionListInPopoverExample({ itemsdata }) {
     return (
         <div>
             <Popover active={active} activator={activator} onClose={toggleActive}>
-                <Grid>
-                    <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 12 }}>
+                {/* <Grid>
+                    <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 12 }}> */}
                         <LegacyCard sectioned style={{ maxHeight: '300px', overflowY: 'auto' }}>
                             <Badge progress="complete">Item List</Badge>
                             {itemsdata.map((item, i) => (
@@ -44,8 +44,8 @@ function ActionListInPopoverExample({ itemsdata }) {
                                 </div>
                             ))}
                         </LegacyCard>
-                    </Grid.Cell>
-                </Grid>
+                    {/* </Grid.Cell>
+                </Grid> */}
             </Popover>
         </div>
     );

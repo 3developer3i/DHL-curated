@@ -25,10 +25,10 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
     };
 
     const modalcontext = useContext(ModalContext)
-    const { uniqOrderId, setMotherOrderData, isLoading, ShowTable1, setShowtable, setIsLoading, setSelectedItems, selectedItems, setBabyOrderData, setTableData, tableData, setParentBabyOrder, setOpenTable, setOrder_List, setCallApiParentBaby, callApiParentBaby, order_list, setMotherOrder, babyIDs, babyOrderIDs, setBabyOrderNumber, openmotherorder, setSub_order, sub_order, parentBabyOrder} = modalcontext;
+    const { uniqOrderId, setMotherOrderData, isLoading, ShowTable1, setShowtable, setIsLoading, setSelectedItems, selectedItems, setBabyOrderData, setTableData, tableData, setParentBabyOrder, setOpenTable, setOrder_List, setCallApiParentBaby, callApiParentBaby, order_list, setMotherOrder, babyIDs, babyOrderIDs, setBabyOrderNumber, openmotherorder, setSub_order, sub_order, parentBabyOrder } = modalcontext;
 
     const [isModalClose, setIsModalClose] = useState(false);
-    const closeModal = () => {setIsModalClose(true);};
+    const closeModal = () => { setIsModalClose(true); };
 
     const [createbabyorder, setcreatebabyorder] = useState(false)
     const [newData, setNewData] = useState([]);
@@ -39,7 +39,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
     const [APIMessage, setAPIMessage] = useState("");
 
     const toggleActive = useCallback(() => setToastMessage((toastmessage) => !toastmessage), []);
-    
+
     const toastMarkup = toastmessage ? (
         <Toast content={APIMessage} onDismiss={toggleActive} />
     ) : null;
@@ -257,7 +257,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
     function parsePrice(price) {
         const parsed = parseFloat(price);
         return parsed;
-      }
+    }
 
     return (
         <>
@@ -310,8 +310,10 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                             </>
                         }
                     >
-                        <Grid>
-                            <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 8 }}>
+                        {/* <Grid>
+                            <Grid.Cell columnSpan={{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }}> */}
+                        <div style={{ display: window.innerWidth > 630 ? "flex" : "", justifyContent: "space-between" }}>
+                            <div style={{marginRight:window.innerWidth > 630 ? "10px" : ""}}>
                                 <LegacyCard sectioned>
                                     <Layout>
                                         <Layout.Section oneHalf>
@@ -364,7 +366,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                                                 }}
                                                             />
                                                         </div>
-                                                        {tableData.length > 9 &&
+                                                        {tableData.length > 5 &&
                                                             <>
                                                                 <div className="Polaris-IndexTable__TableRow"></div>
                                                                 <div style={{ display: "flex", justifyContent: "center", paddingBottom: "10px", paddingTop: "10px" }}>
@@ -393,131 +395,135 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                         </Layout.Section>
                                     </Layout>
                                 </LegacyCard>
-                            </Grid.Cell>
-                            <Grid.Cell columnSpan={{ xs: 5, sm: 2, md: 2, lg: 3, xl: 4 }}>
-                                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                    <LegacyCard
-                                        title={
-                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', fontWeight: "bold" }}>
-                                                    Notes
-                                                </div>
-                                                <div >
-                                                    <Addnote />
-                                                </div>
+                            </div>
+                            {/* </Grid.Cell> */}
+                            {/* <Grid.Cell columnSpan={{ xs: 5, sm: 2, md: 2, lg: 3, xl: 4 }}> */}
+                            <br />
+                            <div style={{ display: 'flex', flexDirection: 'column', width:"35%" }}>
+                                <LegacyCard
+                                    title={
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', fontWeight: "bold" }}>
+                                                Notes
                                             </div>
-                                        }
-                                        sectioned
-                                    >
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'self-end' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <Text color='subdued'>
-                                                    {notes}
-                                                </Text>
+                                            <div >
+                                                <Addnote />
                                             </div>
                                         </div>
-                                    </LegacyCard>
-
-                                    {customerData.map((datas, index) => {
-                                        // Create an array to store the names of missing fields
-
-                                        // Render LegacyCard with missing field messages
-                                        return (
-                                            <LegacyCard
-                                                title={
-                                                    <>
-                                                        <div style={{ fontWeight: 'bold' }}>Customer</div>
-                                                        <div style={{ marginTop: '5px' }}>
-                                                            <Text color="subdued" as="span">
-                                                                {datas.shipping_address.first_name &&
-                                                                    datas.shipping_address.first_name !== null
-                                                                    ? datas.shipping_address.first_name
-                                                                    : 'no name'}
-                                                                <span style={{ marginLeft: '5px' }}>
-                                                                    {datas.shipping_address.last_name !== null
-                                                                        ? datas.shipping_address.last_name
-                                                                        : ''}
-                                                                </span>
-                                                            </Text>
-                                                        </div><br />
-                                                        <div style={{ fontWeight: 'bold' }}>Contact Information</div>
-                                                        <div>
-                                                            {datas.contact_email !== null ? (
-                                                                <div>{datas.contact_email}</div>
-                                                            ) : (
-                                                                <div style={{ color: 'red' }}>Email: This field is required</div>
-                                                            )}
-                                                        </div>
-                                                        <br /><br />
-                                                        {/* Display email field with required message */}
-                                                        <div style={{ fontWeight: 'bold' }}>Shipping Address</div>
-
-                                                        {/* Include additional fields */}
-                                                        <div>
-                                                            {datas.shipping_address.address1 !== "" ? (
-                                                                <div>{datas.shipping_address.address1}</div>
-                                                            ) : ""}
-                                                        </div>
-                                                        {/* Include additional fields */}
-                                                        <div>
-                                                            {datas.shipping_address.address2 !== "" ? (
-                                                                <div>{datas.shipping_address.address2}</div>
-                                                            ) : ""}
-                                                        </div>
-                                                        {/* Include additional fields */}
-                                                        <div>
-                                                            {datas.shipping_address.city !== "" ? (
-                                                                <div>{datas.shipping_address.city}</div>
-                                                            ) : ""}
-                                                        </div>
-                                                        {/* Include additional fields */}
-                                                        <div>
-                                                            {datas.shipping_address.company !== "" ? (
-                                                                <div>{datas.shipping_address.company}</div>
-                                                            ) : ""}
-                                                        </div>
-                                                        {/* Include additional fields */}
-                                                        <div>
-                                                            {datas.shipping_address.country !== "" ? (
-                                                                <div>{datas.shipping_address.country}</div>
-                                                            ) : ""}
-                                                        </div>
-                                                        <div>
-                                                            {datas.shipping_address.zip !== "" ? (
-                                                                <div>{datas.shipping_address.zip}</div>
-                                                            ) : ""}
-                                                        </div>
-                                                    </>
-                                                }
-                                                sectioned
-                                            >
-                                                {/* Rest of the LegacyCard content */}
-                                            </LegacyCard>
-                                        );
-                                    })}
-                                </div>
-                            </Grid.Cell>
-                            <Grid.Cell columnSpan={{ xs: 5, sm: 2, md: 2, lg: 3, xl: 12 }}>
-                                {(ShowTable1 || order_list.length !== 0 || parentBabyOrder.length !== 0) ? (
-                                    <>
-                                        <AddproductTable number={lineItemsData.order_list_extra[0].order_number} setToastMessage={setToastMessage}  />
-                                    </>
-
-                               ) : (
-                                    <>
-                                        <div style={{
-                                            fontSize: '24px', // Adjust the font size as needed
-                                            fontWeight: 'bold', // Make the text bold
-                                            color: 'red', // Change the text color
-                                            textAlign: 'center', // Center-align the text
-                                            marginTop: '20px', // Add some top margin for spacing
-                                        }}>
-                                            No Products Selected
+                                    }
+                                    sectioned
+                                >
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'self-end' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <Text color='subdued'>
+                                                {notes}
+                                            </Text>
                                         </div>
-                                    </>
-                                )} 
-                            </Grid.Cell>
-                        </Grid>
+                                    </div>
+                                </LegacyCard>
+
+                                {customerData.map((datas, index) => {
+                                    // Create an array to store the names of missing fields
+
+                                    // Render LegacyCard with missing field messages
+                                    return (
+                                        <LegacyCard
+                                            title={
+                                                <>
+                                                    <div style={{ fontWeight: 'bold' }}>Customer</div>
+                                                    <div style={{ marginTop: '5px' }}>
+                                                        <Text color="subdued" as="span">
+                                                            {datas.shipping_address.first_name &&
+                                                                datas.shipping_address.first_name !== null
+                                                                ? datas.shipping_address.first_name
+                                                                : 'no name'}
+                                                            <span style={{ marginLeft: '5px' }}>
+                                                                {datas.shipping_address.last_name !== null
+                                                                    ? datas.shipping_address.last_name
+                                                                    : ''}
+                                                            </span>
+                                                        </Text>
+                                                    </div><br />
+                                                    <div style={{ fontWeight: 'bold' }}>Contact Information</div>
+                                                    <div>
+                                                        {datas.contact_email !== null ? (
+                                                            <div>{datas.contact_email}</div>
+                                                        ) : (
+                                                            <div style={{ color: 'red' }}>Email: This field is required</div>
+                                                        )}
+                                                    </div>
+                                                    <br /><br />
+                                                    {/* Display email field with required message */}
+                                                    <div style={{ fontWeight: 'bold' }}>Shipping Address</div>
+
+                                                    {/* Include additional fields */}
+                                                    <div>
+                                                        {datas.shipping_address.address1 !== "" ? (
+                                                            <div>{datas.shipping_address.address1}</div>
+                                                        ) : ""}
+                                                    </div>
+                                                    {/* Include additional fields */}
+                                                    <div>
+                                                        {datas.shipping_address.address2 !== "" ? (
+                                                            <div>{datas.shipping_address.address2}</div>
+                                                        ) : ""}
+                                                    </div>
+                                                    {/* Include additional fields */}
+                                                    <div>
+                                                        {datas.shipping_address.city !== "" ? (
+                                                            <div>{datas.shipping_address.city}</div>
+                                                        ) : ""}
+                                                    </div>
+                                                    {/* Include additional fields */}
+                                                    <div>
+                                                        {datas.shipping_address.company !== "" ? (
+                                                            <div>{datas.shipping_address.company}</div>
+                                                        ) : ""}
+                                                    </div>
+                                                    {/* Include additional fields */}
+                                                    <div>
+                                                        {datas.shipping_address.country !== "" ? (
+                                                            <div>{datas.shipping_address.country}</div>
+                                                        ) : ""}
+                                                    </div>
+                                                    <div>
+                                                        {datas.shipping_address.zip !== "" ? (
+                                                            <div>{datas.shipping_address.zip}</div>
+                                                        ) : ""}
+                                                    </div>
+                                                </>
+                                            }
+                                            sectioned
+                                        >
+                                            {/* Rest of the LegacyCard content */}
+                                        </LegacyCard>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                        {/* </Grid.Cell>
+                        </Grid> */}
+                        <br />
+                        <Grid.Cell>
+                            {(ShowTable1 || order_list.length !== 0 || parentBabyOrder.length !== 0) ? (
+                                <>
+                                    <AddproductTable number={lineItemsData.order_list_extra[0].order_number} setToastMessage={setToastMessage} />
+                                </>
+
+                            ) : (
+                                <>
+                                    <div style={{
+                                        fontSize: '24px', // Adjust the font size as needed
+                                        fontWeight: 'bold', // Make the text bold
+                                        color: 'red', // Change the text color
+                                        textAlign: 'center', // Center-align the text
+                                        marginTop: '20px', // Add some top margin for spacing
+                                    }}>
+                                        No Products Selected
+                                    </div>
+                                </>
+                            )}
+                        </Grid.Cell>
                         <div id="toast-message">
                             <Frame>
                                 {toastMarkup}
