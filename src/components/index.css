@@ -5,9 +5,11 @@
     border: none;
     cursor: pointer;
 }
+
 .Polaris-Checkbox__Backdrop::after {
     pointer-events: painted;
 }
+
 #baby-new-hide thead .Polaris-Checkbox {
     display: none;
 }
@@ -17,7 +19,7 @@
 }
 
 #testhideid .Polaris-IndexTable__ColumnHeaderCheckboxWrapper {
-    display: none   ;
+    display: none;
 }
 
 #mother-order .Polaris-Checkbox {
@@ -26,31 +28,36 @@
 
 /* Styles for the transition effect */
 .collpse {
-  overflow: hidden;
-  transition:  0.3s ease-in-out; /* Adjust the duration as needed */
+    overflow: hidden;
+    transition: 0.3s ease-in-out;
+    /* Adjust the duration as needed */
 }
 
 .collpse {
-  max-height: none;
-  overflow: auto;
-  transition: 0.3s ease-in-out; /* Adjust the duration as needed */
+    max-height: none;
+    overflow: auto;
+    transition: 0.3s ease-in-out;
+    /* Adjust the duration as needed */
 }
-.error-message{
+
+.error-message {
     color: red;
 }
-@media (min-width: 48em){
-.Polaris-Text--heading2xl {
-    font-size: var(--p-font-size-500);
-    line-height: var(--p-font-line-height-5);
-    margin: 0 20px;
+
+@media (min-width: 48em) {
+    .Polaris-Text--heading2xl {
+        font-size: var(--p-font-size-500);
+        line-height: var(--p-font-line-height-5);
+        margin: 0 20px;
+    }
 }
-}
-@media (min-width: 48em){
-.Polaris-Text--heading3xl {
-    font-size: var(--p-font-size-600);
-    line-height: var(--p-font-line-height-6);
-    margin: 0 20px;
-}
+
+@media (min-width: 48em) {
+    .Polaris-Text--heading3xl {
+        font-size: var(--p-font-size-600);
+        line-height: var(--p-font-line-height-6);
+        margin: 0 20px;
+    }
 }
 
 #testhideid .Polaris-Checkbox {
@@ -58,9 +65,37 @@
 }
 
 #toast-message .Polaris-Frame {
-   min-height: 0ch;
+    min-height: 0ch;
 }
 
-#baby-new-hide .Polaris-LegacyCard{
-  width: 110%;
+#baby-new-hide .Polaris-LegacyCard {
+    width: 110%;
+}
+
+#mother-html .Polaris-IndexTable-ScrollContainer {
+    overflow-x: scroll !important;
+}
+
+#mother-html .Polaris-IndexTable-ScrollContainer {
+    overflow-x: scroll !important;
+}
+#mother-html .Polaris-IndexTable-ScrollContainer::-webkit-scrollbar {
+  width: 9px;
+    display: block !important;
+}
+
+#mother-html .Polaris-IndexTable-ScrollContainer::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+#mother-html .Polaris-IndexTable-ScrollContainer::-webkit-scrollbar-thumb {
+  background: #888;
+border-radius: 0.5rem;
+}
+
+/* Handle on hover */
+#mother-html .Polaris-IndexTable-ScrollContainer::-webkit-scrollbar-thumb:hover {
+  background: #abb1ba;
+  border-radius: 0.5rem;
 }

@@ -101,6 +101,9 @@ const MotherOrderIndexTable = () => {
             if (response.data.success === "Mother order is deleted") {
                 setAPIMessage("Mother order is deleted");
                 setIsDeleteModalOpen(false);
+                setTestIndex1(null);
+                setTestIndex(null);
+                setCountBaby(0)
                 fetchAllBabyOrderlist('yes', 'mother-delete');
             }
         };
@@ -119,7 +122,7 @@ const MotherOrderIndexTable = () => {
             const shouldAddLineBreak = (index + 1) % 4 === 0;
             return (
                 <React.Fragment key={index}>
-                    {namesArray.length > 1 ? `${name},` : `${name}`}&nbsp;
+                    {namesArray.length > 1 ? `#${name},` : `#${name}`}&nbsp;
                     {shouldAddLineBreak && <br />}
                 </React.Fragment>
             );
@@ -143,6 +146,25 @@ const MotherOrderIndexTable = () => {
 
     const [openPranetList, setOpenParentList] = useState(false);
 
+    const [isScrolling, setIsScrolling] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsScrolling(window.innerWidth < 823);
+        };
+
+        // Set initial state
+        handleResize();
+
+        // Add event listener for window resize
+        window.addEventListener('resize', handleResize);
+
+        // Clean up the event listener when the component unmounts
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     return (
         <Page>
             {loading && (
@@ -160,17 +182,17 @@ const MotherOrderIndexTable = () => {
                 </div>
             )}
             {paginatedData.length > 0 && !loading && (
-                <div className="Polaris-LegacyCard" style={{ width: "110%" }}>
+                <div id='mother-html' className="Polaris-LegacyCard" style={{ width: isScrolling ? 'auto' : '117%' }}>
                     <div className="Polaris-LegacyCard__Header" ><h2 className="Polaris-Text--root Polaris-Text--headingMd">Mother Order Lists</h2></div>
                     <div className="Polaris-IndexTable">
                         <div className="Polaris-IndexTable__IndexTableWrapper Polaris-IndexTable__IndexTableWrapper--scrollBarHidden">
                             <div className="Polaris-IndexTable-ScrollContainer">
-                                <table className="Polaris-IndexTable__Table Polaris-IndexTable__Table--sticky">
+                                <table className={`Polaris-IndexTable__Table Polaris-IndexTable__Table--sticky Polaris-IndexTable__Table--scrolling`}>
                                     <thead>
                                         <tr>
-                                            <th className="Polaris-IndexTable__TableHeading Polaris-IndexTable__TableHeading--first" data-index-table-heading="true">
-                                                {/* Add header content */}
-                                            </th>
+                                            {/* <th className="Polaris-IndexTable__TableHeading Polaris-IndexTable__TableHeading--first" data-index-table-heading="true">
+                                                
+                                            </th> */}
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Mother Order Number</th>
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Babies Details</th>
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
@@ -181,14 +203,14 @@ const MotherOrderIndexTable = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {paginatedData && paginatedData.reverse().map((datas, index) => {
+                                        {paginatedData && paginatedData.map((datas, index) => {
                                             return (
                                                 <>
                                                     <tr id={index} className="Polaris-IndexTable__TableRow">
-                                                        <td className="Polaris-IndexTable__TableCell Polaris-IndexTable__TableHeading--first">
-                                                            {/* Add row content */}
-                                                        </td>
-                                                        <td className="Polaris-IndexTable__TableCell">{datas.mother_order_id}</td>
+                                                        {/* <td className="Polaris-IndexTable__TableCell Polaris-IndexTable__TableHeading--first">
+                                                            
+                                                        </td> */}
+                                                        <td className="Polaris-IndexTable__TableCell">#{datas.mother_order_id}</td>
                                                         <td className="Polaris-IndexTable__TableCell">{renderNames(datas.mother_order_number)}</td>
                                                         <td className="Polaris-IndexTable__TableCell">{datas.mother_order_date}</td>
                                                         <td className="Polaris-IndexTable__TableCell">{datas.price === null ? "0$" : datas.price}</td>
@@ -284,7 +306,7 @@ const MotherOrderIndexTable = () => {
                                                                                         {/* Add row content */}
                                                                                     </td>
                                                                                     <td className="Polaris-IndexTable__TableCell">#{data1.parent_order_number}</td>
-                                                                                    <td className="Polaris-IndexTable__TableCell">{data1.parent_baby_order_id}</td>
+                                                                                    <td className="Polaris-IndexTable__TableCell">#{data1.parent_baby_order_id}</td>
                                                                                     <td className="Polaris-IndexTable__TableCell">{data1.parent_baby_order_number}</td>
                                                                                     <td className="Polaris-IndexTable__TableCell">{data1.parent_baby_order_date}</td>
                                                                                     <td className="Polaris-IndexTable__TableCell">{data1.price}</td>
@@ -348,7 +370,7 @@ const MotherOrderIndexTable = () => {
                                                                                                             {/* Add header content */}
                                                                                                         </th>
                                                                                                         <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Baby Number</th>
-                                                                                                        <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Title</th>
+                                                                                                        {/* <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Title</th> */}
                                                                                                         <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
                                                                                                         <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
                                                                                                         <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Actions</th>
@@ -357,12 +379,12 @@ const MotherOrderIndexTable = () => {
                                                                                                 </thead>
                                                                                                 <tbody>
                                                                                                     {data1.baby_order_data.map((data1, indexs) =>
-                                                                                                        <tr style={{ backgroundColor: "#ebebeb" }} id={indexs} className="Polaris-IndexTable__TableRow">
+                                                                                                        <tr style={{ backgroundColor: "white" }} id={indexs} className="Polaris-IndexTable__TableRow">
                                                                                                             <td className="Polaris-IndexTable__TableCell  Polaris-IndexTable__TableHeading--first">
                                                                                                                 {/* Add row content */}
                                                                                                             </td>
                                                                                                             <td className="Polaris-IndexTable__TableCell">#{data1.baby_ID}</td>
-                                                                                                            <td className="Polaris-IndexTable__TableCell">{data1.baby_title}</td>
+                                                                                                            {/* <td className="Polaris-IndexTable__TableCell">{data1.baby_title}</td> */}
                                                                                                             <td className="Polaris-IndexTable__TableCell">{data1.baby_date}</td>
                                                                                                             <td className="Polaris-IndexTable__TableCell">{data1.baby_total}</td>
                                                                                                             <td className="Polaris-IndexTable__TableCell">
@@ -418,7 +440,7 @@ const MotherOrderIndexTable = () => {
                                 </table>
                             </div>
                             <div className="Polaris-IndexTable__TableRow"></div>
-                            {paginatedData.length > 9 && <div style={{ display: "flex", justifyContent: "center", paddingBottom: "10px", paddingTop: "10px" }}>
+                            {motherorder.length > 9 && <div style={{ display: "flex", justifyContent: "center", paddingBottom: "10px", paddingTop: "10px" }}>
                                 <Pagination
                                     hasPrevious={currentPage > 1}
                                     hasNext={currentPage < totalPages}

@@ -164,21 +164,8 @@ function AddproductTable({ number }) {
             });
     };
 
-    // delete parent baby orderdelete_specific_parent_baby_order/
-    const deleteParentBabyorder = async (Id) => {
-        const formData = new FormData();
-        formData.append("shop_name", shop);
-        formData.append("parent_baby_order_id", Id);
-        setIsLoading(true);
-        const response = await axios.post(`https://${BaseURl}/delete_specific_parent_baby_order`, new URLSearchParams(formData));
-        if (response.status === 200) {
-            console.log(response.data, "delete parent baby..");
-            fetchLineItems();
-        }
-    };
-
     const rowMarkup = paginatedData && paginatedData.map(
-        ({ baby_ID, baby_order_number, baby_date, baby_title, line_items }, index) => (
+        ({ baby_ID, baby_date, item_quantity, line_items }, index) => (
             <>
                 <IndexTable.Row
                     id={index + 10}
@@ -188,8 +175,8 @@ function AddproductTable({ number }) {
                     onClick={() => setToggle(!toggle)}
                 >
                     <IndexTable.Cell>#{number}</IndexTable.Cell>
-                    <IndexTable.Cell>{baby_ID}</IndexTable.Cell>
-                    <IndexTable.Cell>{baby_title}</IndexTable.Cell>
+                    <IndexTable.Cell>#{baby_ID}</IndexTable.Cell>
+                    {/* <IndexTable.Cell>{baby_title}</IndexTable.Cell> */}
                     <IndexTable.Cell>{baby_date}</IndexTable.Cell>
                     <IndexTable.Cell>
                         <div onClick={(e) => handleTrackModalClick(e, index)}>
@@ -207,7 +194,7 @@ function AddproductTable({ number }) {
                                 onClick={(e) => { e.stopPropagation(); handleCardClick(index); toggleActive2(); }}
                                 style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
                             >
-                                {Object.keys(line_items).length} items
+                                {item_quantity} items
                                 <Icon source={DropdownMinor} color="base" />
                             </div>} onClose={toggleActive2}>
                                 
@@ -255,7 +242,7 @@ function AddproductTable({ number }) {
                 selected={motherTrue}
                 position={index}
             >
-                <IndexTable.Cell>{mother_order_id} </IndexTable.Cell>
+                <IndexTable.Cell>#{mother_order_id} </IndexTable.Cell>
                 <IndexTable.Cell>{mother_order_number}</IndexTable.Cell>
                 <IndexTable.Cell>{mother_order_date}</IndexTable.Cell>
                 <IndexTable.Cell>${price}</IndexTable.Cell>
@@ -309,6 +296,7 @@ function AddproductTable({ number }) {
 
     return (
         <>
+
             {order_list.length > 0 && <div>
                 <LegacyCard title="Baby Order Lists">
                     <div id='testhideid'>
@@ -323,9 +311,11 @@ function AddproductTable({ number }) {
                             headings={[
                                 { title: 'Order Number' },
                                 { title: 'Baby Id' },
-                                { title: 'Products Details' },
+                                // { title: 'Products Details' },
                                 { title: 'Date' },
-                                { title: 'Options' }
+                                { title: 'Options' },
+                                { title: 'action' },
+                                { title: 'items' }
                             ]}
                         >
                             {rowMarkup}
@@ -345,7 +335,6 @@ function AddproductTable({ number }) {
                     </div>
                 </LegacyCard>
             </div>}
-
 
             {parentBabyOrder.length > 0 && <div style={{ marginTop: "10px" }}>
                 <LegacyCard title="Parent Baby Order Lists">
@@ -383,6 +372,7 @@ function AddproductTable({ number }) {
                     </div>
                 </LegacyCard>
             </div>}
+            <br/><br/><br/>
 
         </>
     );

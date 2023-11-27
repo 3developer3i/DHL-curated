@@ -24,7 +24,7 @@ function App() {
   return (
     <div className="App">
       {state === "" && <Table />}
-      {state === "mother" && <MotherOrderIndexTable />}
+      {state === "mother" && <MotherOrderIndexTable />} 
       {state === "baby" && <TestBabyOrderList />}
       {state === "address" && <AddressPage />}
     </div>

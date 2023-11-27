@@ -56,6 +56,7 @@ export default function TestBabyOrderList() {
     const [shipmenttrackingnumber1, setShipmenttrackingnumber1] = useState("");
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [babynumber, setBabyNumber] = useState("");
+
     const [formData, setFormData] = useState({
         fullName: "BBX DEPARTMENT",
         email: "test210@gmail.com",
@@ -71,6 +72,7 @@ export default function TestBabyOrderList() {
         state: ".",
         country: "."
     });
+
     const [shipperformData, setShipperFormData] = useState({
         shipperfullName: "The Curated AS",
         shipperemail: "email@email.com",
@@ -87,6 +89,7 @@ export default function TestBabyOrderList() {
         shipperstate: ".",
         shippercountry: "."
     });
+
     const [commercialForm, setCommercialForm] = useState({
         REFERENCE_NUMBER: ".",
         SHIPPER_EXPORT_REFERENCES: ".",
@@ -102,6 +105,13 @@ export default function TestBabyOrderList() {
         consignee_state: "",
         consignee_country: "",
         consignee_pincode: "",
+        consignee_email: ".",
+        consignee_mobile_number: ".",
+        consignee_phone: ".",
+        consignee_addressLine2: ".",
+        consignee_countryCode: ".",
+        consignee_provincecode: ".",
+        consignee_city: ".",
         EORI_Id: "",
         tax_id: "",
         REPRESENTATIVE_NAME: "",
@@ -125,6 +135,7 @@ export default function TestBabyOrderList() {
         }
         return true; // Return true if all values are non-empty
     };
+
     const validateShipperFormData = (shipperformData) => {
         for (const key in shipperformData) {
             if (shipperformData.hasOwnProperty(key) && shipperformData[key].trim() === '') {
@@ -133,6 +144,7 @@ export default function TestBabyOrderList() {
         }
         return true; // Return true if all values are non-empty
     };
+    
     const validateCommercialForm = (commercialForm) => {
         for (const key in commercialForm) {
             if (commercialForm.hasOwnProperty(key) && commercialForm[key].trim() === '') {
@@ -220,6 +232,13 @@ export default function TestBabyOrderList() {
                         consignee_country: res.data.commercial_data.consignee_country,
                         consignee_pincode: res.data.commercial_data.consignee_postalcode,
                         consignee_state: res.data.commercial_data.consignee_state,
+                        consignee_email: res.data.commercial_data.consignee_email,
+                        consignee_mobile_number: res.data.commercial_data.consignee_mobile_number,
+                        consignee_phone: res.data.commercial_data.consignee_phone,
+                        consignee_addressLine2: res.data.commercial_data.consignee_addressLine2,
+                        consignee_countryCode: res.data.commercial_data.consignee_countryCode,
+                        consignee_provincecode: res.data.commercial_data.consignee_provincecode,
+                        consignee_city: res.data.commercial_data.consignee_city,
                         tax_id: res.data.commercial_data.tax_id,
                         EORI_Id: res.data.commercial_data.eori_id,
                         REPRESENTATIVE_NAME: res.data.commercial_data.representative_fullname,
@@ -764,7 +783,25 @@ export default function TestBabyOrderList() {
     };
 
     const [deleteParentId, setDeleteParentId] = useState('');
-    console.log(deleteParentId);
+
+    const [isScrolling, setIsScrolling] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsScrolling(window.innerWidth < 1145);
+        };
+
+        // Set initial state
+        handleResize();
+
+        // Add event listener for window resize
+        window.addEventListener('resize', handleResize);
+
+        // Clean up the event listener when the component unmounts
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     return (
         <Page>
@@ -855,7 +892,7 @@ export default function TestBabyOrderList() {
                                                             />
                                                         </div>
                                                         <div className="form-field">
-                                                            <label>email</label>
+                                                            <label>Email</label>
                                                             <TextField
                                                                 error={(formData.email ? '' : 'This Field Is Required')}
                                                                 type="text"
@@ -874,7 +911,7 @@ export default function TestBabyOrderList() {
                                                             )}
                                                         </div>
                                                         <div className="form-field">
-                                                            <label>mobile number</label>
+                                                            <label>Mobile Number</label>
                                                             <TextField
                                                                 error={
                                                                     formData.mobileNumber
@@ -897,7 +934,7 @@ export default function TestBabyOrderList() {
                                                             )}
                                                         </div>
                                                         <div className="form-field">
-                                                            <label>phone</label>
+                                                            <label>Phone</label>
                                                             <TextField
                                                                 error={formData.phone ? "" : "This Field Is Required"}
                                                                 type="text"
@@ -917,7 +954,7 @@ export default function TestBabyOrderList() {
                                                         </div>
 
                                                         <div className="form-field">
-                                                            <label>addressLine1</label>
+                                                            <label>Address Line1</label>
                                                             <TextField
                                                                 error={
                                                                     formData.addressLine1
@@ -941,7 +978,7 @@ export default function TestBabyOrderList() {
                                                         </div>
 
                                                         <div className="form-field">
-                                                            <label>addressLine2</label>
+                                                            <label>Address Line2</label>
                                                             <TextField
                                                                 error={
                                                                     formData.addressLine2
@@ -965,7 +1002,7 @@ export default function TestBabyOrderList() {
                                                         </div>
 
                                                         <div className="form-field">
-                                                            <label>postalCode </label>
+                                                            <label>Postal Code</label>
                                                             <TextField
                                                                 error={
                                                                     formData.fullName ? "" : "This Field Is Required"
@@ -987,7 +1024,7 @@ export default function TestBabyOrderList() {
                                                         </div>
 
                                                         <div className="form-field">
-                                                            <label>countryCode </label>
+                                                            <label>Country Code </label>
                                                             <TextField
                                                                 error={
                                                                     formData.countryCode ? "" : "This Field Is Required"
@@ -1008,7 +1045,7 @@ export default function TestBabyOrderList() {
                                                             )}
                                                         </div>
                                                         <div className="form-field">
-                                                            <label>provincecode</label>
+                                                            <label>Province Code</label>
                                                             <TextField
                                                                 error={
                                                                     formData.provinceCode
@@ -1031,7 +1068,7 @@ export default function TestBabyOrderList() {
                                                             )}
                                                         </div>
                                                         <div className="form-field">
-                                                            <label>city</label>
+                                                            <label>City</label>
                                                             <TextField
                                                                 error={formData.city ? "" : "This Field Is Required"}
                                                                 type="text"
@@ -1048,7 +1085,7 @@ export default function TestBabyOrderList() {
                                                             )}
                                                         </div>
                                                         <div className="form-field">
-                                                            <label>state</label>
+                                                            <label>State</label>
                                                             <TextField
                                                                 error={formData.state ? "" : "This Field Is Required"}
                                                                 type="text"
@@ -1058,7 +1095,7 @@ export default function TestBabyOrderList() {
                                                             />
                                                         </div>
                                                         <div className="form-field">
-                                                            <label>country</label>
+                                                            <label>Country</label>
                                                             <TextField
                                                                 error={
                                                                     formData.country ? "" : "This Field Is Required"
@@ -1068,6 +1105,20 @@ export default function TestBabyOrderList() {
                                                                 value={formData.country}
                                                                 onChange={(value) =>
                                                                     handleChangethree("country", value)
+                                                                }
+                                                            />
+                                                        </div>
+                                                        <div className="form-field">
+                                                            <label>Company Name</label>
+                                                            <TextField
+                                                                error={
+                                                                    formData.companyName ? "" : "This Field Is Required"
+                                                                }
+                                                                type="text"
+                                                                name="country"
+                                                                value={formData.companyName}
+                                                                onChange={(value) =>
+                                                                    handleChangethree("companyName", value)
                                                                 }
                                                             />
                                                         </div>
@@ -1428,7 +1479,7 @@ export default function TestBabyOrderList() {
                                                                 }
                                                             />
                                                         </div>
-                                                        <div className="form-field">
+                                                        {/* <div className="form-field">
                                                             <label>Shipper</label>
                                                             <TextField
                                                                 error={
@@ -1443,7 +1494,7 @@ export default function TestBabyOrderList() {
                                                                     handleChangethree("SHIPPER", value)
                                                                 }
                                                             />
-                                                        </div>
+                                                        </div> */}
 
                                                         <div className="form-field">
                                                             <label>Country Of Export</label>
@@ -1461,7 +1512,7 @@ export default function TestBabyOrderList() {
                                                                 }
                                                             />
                                                         </div>
-                                                        <div className="form-field">
+                                                        {/* <div className="form-field">
                                                             <label>Importer</label>
                                                             <TextField
                                                                 error={
@@ -1476,8 +1527,8 @@ export default function TestBabyOrderList() {
                                                                     handleChangethree("IMPORTER", value)
                                                                 }
                                                             />
-                                                        </div>
-                                                        <div className="form-field">
+                                                        </div> */}
+                                                        {/* <div className="form-field">
                                                             <label>Indirect Representative </label>
                                                             <TextField
                                                                 error={
@@ -1492,7 +1543,7 @@ export default function TestBabyOrderList() {
                                                                     handleChangethree("INDIRECT_REPRESENTATIVE", value)
                                                                 }
                                                             />
-                                                        </div>
+                                                        </div> */}
                                                         <div className="form-field">
                                                             <label>Reason For Export </label>
                                                             <TextField
@@ -1571,16 +1622,6 @@ export default function TestBabyOrderList() {
                                                     </div>
                                                     <FormLayout.Group>
                                                         <div className="form-field">
-                                                            <label>Company Name</label>
-                                                            <TextField
-                                                                error={commercialForm.consignee_companyName ? "" : "This Field Is Required"}
-                                                                type="text"
-                                                                name="companyName"
-                                                                value={commercialForm.consignee_companyName}
-                                                                onChange={(value) => handleChangethree("consignee_companyName", value)}
-                                                            />
-                                                        </div>
-                                                        <div className="form-field">
                                                             <label>Full Name</label>
                                                             <TextField
                                                                 error={commercialForm.consignee_fullName ? "" : "This Field Is Required"}
@@ -1591,6 +1632,37 @@ export default function TestBabyOrderList() {
                                                             />
                                                         </div>
                                                         <div className="form-field">
+                                                            <label>Email</label>
+                                                            <TextField
+                                                                error={commercialForm.consignee_email ? "" : "This Field Is Required"}
+                                                                type="text"
+                                                                name="email"
+                                                                value={commercialForm.consignee_email}
+                                                                onChange={(value) => handleChangethree("consignee_email", value)}
+                                                            />
+                                                        </div>
+                                                        <div className="form-field">
+                                                            <label>Mobile Number</label>
+                                                            <TextField
+                                                                error={commercialForm.consignee_mobile_number ? "" : "This Field Is Required"}
+                                                                type="text"
+                                                                name="mobile_number"
+                                                                value={commercialForm.consignee_mobile_number}
+                                                                onChange={(value) => handleChangethree("consignee_mobile_number", value)}
+                                                            />
+                                                        </div>
+                                                        <div className="form-field">
+                                                            <label>Phone</label>
+                                                            <TextField
+                                                                error={commercialForm.consignee_phone ? "" : "This Field Is Required"}
+                                                                type="text"
+                                                                name="phone"
+                                                                value={commercialForm.consignee_phone}
+                                                                onChange={(value) => handleChangethree("consignee_phone", value)}
+                                                            />
+                                                        </div>
+
+                                                        <div className="form-field">
                                                             <label>Address</label>
                                                             <TextField
                                                                 error={commercialForm.consignee_address ? "" : "This Field Is Required"}
@@ -1598,6 +1670,46 @@ export default function TestBabyOrderList() {
                                                                 name="address"
                                                                 value={commercialForm.consignee_address}
                                                                 onChange={(value) => handleChangethree("consignee_address", value)}
+                                                            />
+                                                        </div>
+                                                        <div className="form-field">
+                                                            <label>Address Line 2</label>
+                                                            <TextField
+                                                                error={commercialForm.consignee_addressLine2 ? "" : "This Field Is Required"}
+                                                                type="text"
+                                                                name="addressLine2"
+                                                                value={commercialForm.consignee_addressLine2}
+                                                                onChange={(value) => handleChangethree("consignee_addressLine2", value)}
+                                                            />
+                                                        </div>
+                                                        <div className="form-field">
+                                                            <label>PinCode</label>
+                                                            <TextField
+                                                                error={commercialForm.consignee_pincode ? "" : "This Field Is Required"}
+                                                                type="text"
+                                                                name="pincode"
+                                                                value={commercialForm.consignee_pincode}
+                                                                onChange={(value) => handleChangethree("consignee_pincode", value)}
+                                                            />
+                                                        </div>
+                                                        <div className="form-field">
+                                                            <label>Country Code</label>
+                                                            <TextField
+                                                                error={commercialForm.consignee_countryCode ? "" : "This Field Is Required"}
+                                                                type="text"
+                                                                name="countryCode"
+                                                                value={commercialForm.consignee_countryCode}
+                                                                onChange={(value) => handleChangethree("consignee_countryCode", value)}
+                                                            />
+                                                        </div>
+                                                        <div className="form-field">
+                                                            <label>Province Code</label>
+                                                            <TextField
+                                                                error={commercialForm.consignee_provincecode ? "" : "This Field Is Required"}
+                                                                type="text"
+                                                                name="provincecode"
+                                                                value={commercialForm.consignee_provincecode}
+                                                                onChange={(value) => handleChangethree("consignee_provincecode", value)}
                                                             />
                                                         </div>
                                                         <div className="form-field">
@@ -1621,13 +1733,23 @@ export default function TestBabyOrderList() {
                                                             />
                                                         </div>
                                                         <div className="form-field">
-                                                            <label>PinCode</label>
+                                                            <label>City</label>
                                                             <TextField
-                                                                error={commercialForm.consignee_pincode ? "" : "This Field Is Required"}
+                                                                error={commercialForm.consignee_city ? "" : "This Field Is Required"}
                                                                 type="text"
-                                                                name="pincode"
-                                                                value={commercialForm.consignee_pincode}
-                                                                onChange={(value) => handleChangethree("consignee_pincode", value)}
+                                                                name="city"
+                                                                value={commercialForm.consignee_city}
+                                                                onChange={(value) => handleChangethree("consignee_city", value)}
+                                                            />
+                                                        </div>
+                                                        <div className="form-field">
+                                                            <label>Company Name</label>
+                                                            <TextField
+                                                                error={commercialForm.consignee_companyName ? "" : "This Field Is Required"}
+                                                                type="text"
+                                                                name="companyName"
+                                                                value={commercialForm.consignee_companyName}
+                                                                onChange={(value) => handleChangethree("consignee_companyName", value)}
                                                             />
                                                         </div>
 
@@ -1679,7 +1801,7 @@ export default function TestBabyOrderList() {
                                                             />
                                                         </div>
                                                         <div className="form-field">
-                                                            <label>PinCode</label>
+                                                            <label>Postal Code</label>
                                                             <TextField
                                                                 error={commercialForm.REPRESENTATIVE_ZIPCODE ? "" : "This Field Is Required"}
                                                                 type="text"
@@ -1733,17 +1855,17 @@ export default function TestBabyOrderList() {
             <br />
             {parentBabyOrder.length === 0 ? (
                 <div style={{ marginLeft: "20px", marginBottom: "10px" }}>
-                    <Banner title="Baby Order Lists">
-                        <p>no baby order created yet ...!!</p>
+                    <Banner title="Parent Baby Order Lists">
+                        <p>No Parent baby order created yet ...!!</p>
                     </Banner>
                 </div>
             ) : (
-                <div className="Polaris-LegacyCard" style={{ width: "110%" }}>
+                <div className="Polaris-LegacyCard" style={{ width: isScrolling ? 'auto' : '117%' }}>
                     <div className="Polaris-LegacyCard__Header" ><h2 className="Polaris-Text--root Polaris-Text--headingMd">Parent Baby Order Lists</h2></div>
                     <div className="Polaris-IndexTable">
                         <div className="Polaris-IndexTable__IndexTableWrapper Polaris-IndexTable__IndexTableWrapper--scrollBarHidden">
                             <div className="Polaris-IndexTable-ScrollContainer">
-                                <table className="Polaris-IndexTable__Table Polaris-IndexTable__Table--sticky">
+                                <table className={`Polaris-IndexTable__Table Polaris-IndexTable__Table--sticky ${isScrolling ? 'Polaris-IndexTable__Table--scrolling' : ''}`}>
                                     <thead>
                                         <tr>
                                             <th className="Polaris-IndexTable__TableHeading Polaris-IndexTable__TableHeading--first" data-index-table-heading="true">
@@ -1780,7 +1902,7 @@ export default function TestBabyOrderList() {
                                                             />
                                                         </td>
                                                         <td className="Polaris-IndexTable__TableCell">#{datas.parent_order_number}</td>
-                                                        <td className="Polaris-IndexTable__TableCell">{datas.parent_baby_order_id}</td>
+                                                        <td className="Polaris-IndexTable__TableCell">#{datas.parent_baby_order_id}</td>
                                                         <td className="Polaris-IndexTable__TableCell">{datas.parent_baby_order_number}</td>
                                                         <td className="Polaris-IndexTable__TableCell">{datas.parent_baby_order_date}</td>
                                                         <td className="Polaris-IndexTable__TableCell">{datas.price}</td>
@@ -1859,7 +1981,7 @@ export default function TestBabyOrderList() {
 
                                                                             </th>
                                                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Baby Number</th>
-                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Title</th>
+                                                                            {/* <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Title</th> */}
                                                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
                                                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
                                                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Actions</th>
@@ -1872,8 +1994,8 @@ export default function TestBabyOrderList() {
                                                                                 <td className="Polaris-IndexTable__TableCell  Polaris-IndexTable__TableHeading--first">
 
                                                                                 </td>
-                                                                                <td className="Polaris-IndexTable__TableCell">{data1.baby_ID}</td>
-                                                                                <td className="Polaris-IndexTable__TableCell">{data1.baby_title}</td>
+                                                                                <td className="Polaris-IndexTable__TableCell">#{data1.baby_ID}</td>
+                                                                                {/* <td className="Polaris-IndexTable__TableCell">{data1.baby_title}</td> */}
                                                                                 <td className="Polaris-IndexTable__TableCell">{data1.baby_date}</td>
                                                                                 <td className="Polaris-IndexTable__TableCell">{data1.baby_total}</td>
                                                                                 <td className="Polaris-IndexTable__TableCell">
@@ -1952,6 +2074,7 @@ export default function TestBabyOrderList() {
                             </div>
                         </div>
                     </div>
+                    {/* <div class="Polaris-IndexTable__ScrollBarContainer"><div class="Polaris-IndexTable__ScrollBar" style={{'--pc-index-table-scroll-bar-content-width': '635px'}}><div class="Polaris-IndexTable__ScrollBarContent"></div></div></div> */}
                     {parentBabyOrder.length > 9 && <div style={{ display: "flex", justifyContent: "center", paddingBottom: "10px", paddingTop: "10px" }}>
                         <Pagination
                             hasPrevious={currentPage > 1}
