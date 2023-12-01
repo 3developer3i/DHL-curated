@@ -6,7 +6,7 @@ import AddressPage from './pages/tableAddressPage';
 
 function App() {
 
-  const [state, setState] = useState("");
+  const [state, setState] = useState("mother");
 
   useEffect(() => {
     const currentPath = window.location.pathname;

@@ -99,3 +99,7 @@ border-radius: 0.5rem;
   background: #abb1ba;
   border-radius: 0.5rem;
 }
+
+#mother-html tr {
+    height: 37px  !important;
+}
