@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { Popover, Icon, Grid, Thumbnail, LegacyCard, Badge, Text } from '@shopify/polaris';
 import { DropdownMinor } from '@shopify/polaris-icons';
 
-function ActionListInPopoverExample({ itemsdata }) {
+function ActionListInPopoverExample({quantity,  itemsdata }) {
     const [active, setActive] = useState(false);
 
     const toggleActive = useCallback(() => {
@@ -14,7 +14,7 @@ function ActionListInPopoverExample({ itemsdata }) {
             onClick={toggleActive}
             style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
         >
-            {Object.keys(itemsdata).length} items 
+            {quantity} items 
             <Icon source={DropdownMinor} color="base" />
         </div>
     );

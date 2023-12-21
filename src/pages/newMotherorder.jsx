@@ -211,47 +211,49 @@ const MotherOrderIndexTable = () => {
                                                             
                                                         </td> */}
                                                         <td className="Polaris-IndexTable__TableCell">#{datas.mother_order_id}</td>
-                                                        <td className="Polaris-IndexTable__TableCell">{renderNames(datas.mother_order_number)}</td>
+                                                        <td className="Polaris-IndexTable__TableCell">{renderNames(datas.mother_order_number)} <br />{datas.PID} <br />{datas.SID} </td>
                                                         <td className="Polaris-IndexTable__TableCell">{datas.mother_order_date}</td>
                                                         <td className="Polaris-IndexTable__TableCell">{datas.price === null ? "0$" : datas.price}</td>
                                                         <td className="Polaris-IndexTable__TableCell">
-                                                            <ButtonGroup>
-                                                                <Tooltip content="Package Slip">
-                                                                    <div onClick={() => {
-                                                                        window.open(datas.filePath, "_blank")
-                                                                    }}>
-                                                                        <Icon
-                                                                            source={ReceiptMajor}
-                                                                            tone="base"
-                                                                            color='base'
-                                                                        />
-                                                                    </div>
-                                                                </Tooltip>
-                                                                <Tooltip content="Commercial Invoice">
-                                                                    <div onClick={() => {
-                                                                        window.open(datas.comercial_mother_pdf, "_blank")
-                                                                    }}>
-                                                                        <Icon
-                                                                            source={LegalMajor}
-                                                                            tone="base"
-                                                                            color='subdued'
-                                                                        />
-                                                                    </div>
-                                                                </Tooltip>
-                                                                <Tooltip content="Tracking Info">
-                                                                    <div onClick={() => {
-                                                                        setIsModalOpen(true);
-                                                                        setAddTracking(datas.trackingnumber);
-                                                                        setShipmenttrackingnumber(datas.shipmenttrackingnumber);
-                                                                    }}>
-                                                                        <Icon
-                                                                            source={LocationsMinor}
-                                                                            tone="base"
-                                                                            color='success'
-                                                                        />
-                                                                    </div>
-                                                                </Tooltip>
-                                                            </ButtonGroup>
+                                                            <div id='zero-action'>
+                                                                <ButtonGroup>
+                                                                    <Tooltip content="Package Slip">
+                                                                        <div onClick={() => {
+                                                                            window.open(datas.filePath, "_blank")
+                                                                        }}>
+                                                                            <Icon
+                                                                                source={ReceiptMajor}
+                                                                                tone="base"
+                                                                                color='base'
+                                                                            />
+                                                                        </div>
+                                                                    </Tooltip>
+                                                                    <Tooltip content="Commercial Invoice">
+                                                                        <div onClick={() => {
+                                                                            window.open(datas.comercial_mother_pdf, "_blank")
+                                                                        }}>
+                                                                            <Icon
+                                                                                source={LegalMajor}
+                                                                                tone="base"
+                                                                                color='subdued'
+                                                                            />
+                                                                        </div>
+                                                                    </Tooltip>
+                                                                    <Tooltip content="Tracking Info">
+                                                                        <div onClick={() => {
+                                                                            setIsModalOpen(true);
+                                                                            setAddTracking(datas.trackingnumber);
+                                                                            setShipmenttrackingnumber(datas.shipmenttrackingnumber);
+                                                                        }}>
+                                                                            <Icon
+                                                                                source={LocationsMinor}
+                                                                                tone="base"
+                                                                                color='success'
+                                                                            />
+                                                                        </div>
+                                                                    </Tooltip>
+                                                                </ButtonGroup>
+                                                            </div>
                                                         </td>
                                                         <td className="Polaris-IndexTable__TableCell">
                                                             <Tooltip content="delete">
@@ -283,153 +285,171 @@ const MotherOrderIndexTable = () => {
                                                                 height: testIndex == index && `${((datas.parent_baby_order_data.length + 1) * 37) + countBaby}px`
                                                             }}>
                                                             <div className="Polaris-LegacyCard" style={{ display: "contents" }}>
-                                                                <table style={{ position: "absolute" }} className="Polaris-IndexTable__Table Polaris-IndexTable__Table--sticky">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th className="Polaris-IndexTable__TableHeading Polaris-IndexTable__TableHeading--first" data-index-table-heading="true">
-                                                                                {/* Add header content */}
-                                                                            </th>
-                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Order Number</th>
-                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Parent Baby Number</th>
-                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Baby Details</th>
-                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
-                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
-                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Actions</th>
-                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true"></th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        {datas.parent_baby_order_data.map((data1, indexs) =>
-                                                                            <>
-                                                                                <tr style={{ backgroundColor: "#ebebeb" }} id={indexs} className="Polaris-IndexTable__TableRow">
-                                                                                    <td className="Polaris-IndexTable__TableCell  Polaris-IndexTable__TableHeading--first">
-                                                                                        {/* Add row content */}
-                                                                                    </td>
-                                                                                    <td className="Polaris-IndexTable__TableCell">#{data1.parent_order_number}</td>
-                                                                                    <td className="Polaris-IndexTable__TableCell">#{data1.parent_baby_order_id}</td>
-                                                                                    <td className="Polaris-IndexTable__TableCell">{data1.parent_baby_order_number}</td>
-                                                                                    <td className="Polaris-IndexTable__TableCell">{data1.parent_baby_order_date}</td>
-                                                                                    <td className="Polaris-IndexTable__TableCell">{data1.price}</td>
-                                                                                    <td className="Polaris-IndexTable__TableCell">
-                                                                                        <ButtonGroup>
-                                                                                            <Tooltip content="Package Slip">
-                                                                                                <div onClick={() => {
-                                                                                                    window.open(data1.filePath, "_blank")
-                                                                                                }}>
-                                                                                                    <Icon
-                                                                                                        source={ReceiptMajor}
-                                                                                                        tone="base"
-                                                                                                        color='base'
-                                                                                                    />
-                                                                                                </div>
-                                                                                            </Tooltip>
-                                                                                            <Tooltip content="Tracking Info">
-                                                                                                <div onClick={() => {
-                                                                                                    setIsModalOpen1(true);
-                                                                                                    setAddTracking1(data1.trackingnumber);
-                                                                                                    setShipmenttrackingnumber1(data1.shipmenttrackingnumber);
-                                                                                                }}>
-                                                                                                    <Icon
-                                                                                                        source={LocationsMinor}
-                                                                                                        tone="base"
-                                                                                                        color='success'
-                                                                                                    />
-                                                                                                </div>
-                                                                                            </Tooltip>
-                                                                                        </ButtonGroup>
-                                                                                    </td>
-                                                                                    <td onClick={() => {
-                                                                                        if (testIndex == index) {
-                                                                                            // setCountBaby(datas.parent_baby_order_data.length == 1 ? 222 : (index == 0 ? ((datas.parent_baby_order_data.length === 3 ? 258 : 222) + (data1.baby_order_data.length > 2 ? (37 * (indexs + (data1.baby_order_data.length > 2 ? 0 : 2))) : (37 * index))) : (222 + (data1.baby_order_data.length > 2 ? (37 * (indexs == 0 ? (data1.baby_order_data.length - 1) : indexs)) : (data1.baby_order_data.length > 2 ? 37 : (datas.parent_baby_order_data.length > 2 ? 37 : 0) * (data1.baby_order_data.length - 1))))));
-                                                                                            // setCountBaby1(datas.parent_baby_order_data.length == 1 ? (data1.baby_order_data.length > 0 ? 185 : 222) : (indexs == 0 ? (222 + (37 * (indexs + 2))) + (data1.baby_order_data.length > 2 ? 0 : 37) : 296))
-                                                                                            setCountBaby((data1.baby_order_data.length + 1) * 37)
-                                                                                            setOpenParentList(!openPranetList);
-                                                                                        }
-                                                                                        toggleCollapsible1(indexs, datas);
-                                                                                    }} className="Polaris-IndexTable__TableCell">
-                                                                                        {testIndex1 == indexs ? <Icon
-                                                                                            source={ChevronUpMinor}
-                                                                                            tone="base"
-                                                                                        /> : <Icon
-                                                                                            source={ChevronDownMinor}
-                                                                                            tone="base"
-                                                                                        />}
-                                                                                    </td>
-                                                                                </tr>
-                                                                                {testIndex1 == indexs &&
-                                                                                    <tr className={`Polaris-IndexTable__TableRow ${testIndex1 == indexs ? 'collapsible-open' : ''
-                                                                                        }`} style={{
-                                                                                            // height: testIndex1 == indexs && `${datas.parent_baby_order_data.length == 1 ? "" : (data1.baby_order_data.length < 3 ? 111 : 148)}px` 
-                                                                                            height: `${(data1.baby_order_data.length + 1) * 37}px`
-                                                                                        }}>
-                                                                                        <div className="Polaris-LegacyCard" style={{ display: "contents" }}>
-                                                                                            <table style={{ position: "absolute" }} className="Polaris-IndexTable__Table Polaris-IndexTable__Table--sticky">
-                                                                                                <thead>
-                                                                                                    <tr>
-                                                                                                        <th className="Polaris-IndexTable__TableHeading Polaris-IndexTable__TableHeading--first" data-index-table-heading="true">
-                                                                                                            {/* Add header content */}
-                                                                                                        </th>
-                                                                                                        <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Baby Number</th>
-                                                                                                        {/* <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Title</th> */}
-                                                                                                        <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
-                                                                                                        <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
-                                                                                                        <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Actions</th>
-                                                                                                        <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Items</th>
-                                                                                                    </tr>
-                                                                                                </thead>
-                                                                                                <tbody>
-                                                                                                    {data1.baby_order_data.map((data1, indexs) =>
-                                                                                                        <tr style={{ backgroundColor: "white" }} id={indexs} className="Polaris-IndexTable__TableRow">
-                                                                                                            <td className="Polaris-IndexTable__TableCell  Polaris-IndexTable__TableHeading--first">
-                                                                                                                {/* Add row content */}
-                                                                                                            </td>
-                                                                                                            <td className="Polaris-IndexTable__TableCell">#{data1.baby_ID}</td>
-                                                                                                            {/* <td className="Polaris-IndexTable__TableCell">{data1.baby_title}</td> */}
-                                                                                                            <td className="Polaris-IndexTable__TableCell">{data1.baby_date}</td>
-                                                                                                            <td className="Polaris-IndexTable__TableCell">{data1.baby_total}</td>
-                                                                                                            <td className="Polaris-IndexTable__TableCell">
-                                                                                                                <ButtonGroup>
-                                                                                                                    <Tooltip content="Package Slip">
-                                                                                                                        <div onClick={() => {
-                                                                                                                            window.open(data1.filePath, "_blank")
-                                                                                                                        }}>
-                                                                                                                            <Icon
-                                                                                                                                source={ReceiptMajor}
-                                                                                                                                tone="base"
-                                                                                                                                color='base'
-                                                                                                                            />
-                                                                                                                        </div>
-                                                                                                                    </Tooltip>
-                                                                                                                    <Tooltip content="Tracking Info">
-                                                                                                                        <div onClick={() => {
-                                                                                                                            setIsModalOpen2(true);
-                                                                                                                            setAddTracking2(data1.trackingnumber);
-                                                                                                                            setShipmenttrackingnumber2(data1.shipmenttrackingnumber);
-                                                                                                                        }}>
-                                                                                                                            <Icon
-                                                                                                                                source={LocationsMinor}
-                                                                                                                                tone="base"
-                                                                                                                                color='success'
-                                                                                                                            />
-                                                                                                                        </div>
-                                                                                                                    </Tooltip>
-                                                                                                                </ButtonGroup>
-                                                                                                            </td>
-                                                                                                            <td className="clasPolaris-IndexTable__TableCell">
-                                                                                                                <ActionListInPopoverExample fulfillmentStatus={[]}
-                                                                                                                    itemsdata={data1.line_items}
-                                                                                                                    Item='ITEMS' />
-                                                                                                            </td>
-                                                                                                        </tr>)}
-                                                                                                </tbody>
-                                                                                            </table>
-                                                                                        </div>
+                                                                <div className="Polaris-IndexTable-ScrollContainer">
+                                                                    <table style={{ position: "absolute" }} className="Polaris-IndexTable__Table Polaris-IndexTable__Table--sticky Polaris-IndexTable__Table--scrolling">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                {/* <th className="Polaris-IndexTable__TableHeading Polaris-IndexTable__TableHeading--first" data-index-table-heading="true">
+                                                                                
+                                                                            </th> */}
+                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Order Number</th>
+                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Parent Baby Number</th>
+                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Baby Details</th>
+                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
+                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
+                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Actions</th>
+                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true"></th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            {datas.parent_baby_order_data.map((data1, indexs) =>
+                                                                                <>
+                                                                                    <tr style={{ backgroundColor: "#ebebeb" }} id={indexs} className="Polaris-IndexTable__TableRow">
+                                                                                        {/* <td className="Polaris-IndexTable__TableCell  Polaris-IndexTable__TableHeading--first">
+                                                                                       
+                                                                                    </td> */}
+                                                                                        <td className="Polaris-IndexTable__TableCell">#{data1.parent_order_number}</td>
+                                                                                        <td className="Polaris-IndexTable__TableCell">#{data1.parent_baby_order_id}</td>
+                                                                                        <td className="Polaris-IndexTable__TableCell">
+                                                                                            {
+                                                                                                data1.parent_baby_order_number.split(',').map((numbers, index) => {
+                                                                                                    return `#${numbers.trim()}, `
+                                                                                                }
+                                                                                                )
+                                                                                            }
+                                                                                        </td>
+                                                                                        <td className="Polaris-IndexTable__TableCell">{data1.parent_baby_order_date}</td>
+                                                                                        <td className="Polaris-IndexTable__TableCell">{data1.price}</td>
+                                                                                        <td className="Polaris-IndexTable__TableCell">
+                                                                                            <div id='first-action'>
+                                                                                                <ButtonGroup>
+                                                                                                    <Tooltip content="Package Slip">
+                                                                                                        <div onClick={() => {
+                                                                                                            window.open(data1.filePath, "_blank")
+                                                                                                        }}>
+                                                                                                            <Icon
+                                                                                                                source={ReceiptMajor}
+                                                                                                                tone="base"
+                                                                                                                color='base'
+                                                                                                            />
+                                                                                                        </div>
+                                                                                                    </Tooltip>
+                                                                                                    <Tooltip content="Tracking Info">
+                                                                                                        <div onClick={() => {
+                                                                                                            setIsModalOpen1(true);
+                                                                                                            setAddTracking1(data1.trackingnumber);
+                                                                                                            setShipmenttrackingnumber1(data1.shipmenttrackingnumber);
+                                                                                                        }}>
+                                                                                                            <Icon
+                                                                                                                source={LocationsMinor}
+                                                                                                                tone="base"
+                                                                                                                color='success'
+                                                                                                            />
+                                                                                                        </div>
+                                                                                                    </Tooltip>
+                                                                                                </ButtonGroup>
+                                                                                            </div>
+                                                                                        </td>
+                                                                                        <td onClick={() => {
+                                                                                            if (testIndex == index) {
+                                                                                                // setCountBaby(datas.parent_baby_order_data.length == 1 ? 222 : (index == 0 ? ((datas.parent_baby_order_data.length === 3 ? 258 : 222) + (data1.baby_order_data.length > 2 ? (37 * (indexs + (data1.baby_order_data.length > 2 ? 0 : 2))) : (37 * index))) : (222 + (data1.baby_order_data.length > 2 ? (37 * (indexs == 0 ? (data1.baby_order_data.length - 1) : indexs)) : (data1.baby_order_data.length > 2 ? 37 : (datas.parent_baby_order_data.length > 2 ? 37 : 0) * (data1.baby_order_data.length - 1))))));
+                                                                                                // setCountBaby1(datas.parent_baby_order_data.length == 1 ? (data1.baby_order_data.length > 0 ? 185 : 222) : (indexs == 0 ? (222 + (37 * (indexs + 2))) + (data1.baby_order_data.length > 2 ? 0 : 37) : 296))
+                                                                                                setCountBaby((data1.baby_order_data.length + 1) * 37)
+                                                                                                setOpenParentList(!openPranetList);
+                                                                                            }
+                                                                                            toggleCollapsible1(indexs, datas);
+                                                                                        }} className="Polaris-IndexTable__TableCell">
+                                                                                            {testIndex1 == indexs ? <Icon
+                                                                                                source={ChevronUpMinor}
+                                                                                                tone="base"
+                                                                                            /> : <Icon
+                                                                                                source={ChevronDownMinor}
+                                                                                                tone="base"
+                                                                                            />}
+                                                                                        </td>
                                                                                     </tr>
-                                                                                }
-                                                                            </>
-                                                                        )}
-                                                                    </tbody>
-                                                                </table>
+                                                                                    {testIndex1 == indexs &&
+                                                                                        <tr className={`Polaris-IndexTable__TableRow ${testIndex1 == indexs ? 'collapsible-open' : ''
+                                                                                            }`} style={{
+                                                                                                // height: testIndex1 == indexs && `${datas.parent_baby_order_data.length == 1 ? "" : (data1.baby_order_data.length < 3 ? 111 : 148)}px` 
+                                                                                                height: `${(data1.baby_order_data.length + 1) * 37}px`
+                                                                                            }}>
+                                                                                            <div className="Polaris-LegacyCard" style={{ display: "contents" }}>
+                                                                                                <div className="Polaris-IndexTable-ScrollContainer">
+                                                                                                    <table style={{ position: "absolute" }} className="Polaris-IndexTable__Table Polaris-IndexTable__Table--sticky Polaris-IndexTable__Table--scrolling">
+                                                                                                        <thead>
+                                                                                                            <tr>
+                                                                                                                {/* <th className="Polaris-IndexTable__TableHeading Polaris-IndexTable__TableHeading--first" data-index-table-heading="true">
+                                                                                                            
+                                                                                                        </th> */}
+                                                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Baby Number</th>
+                                                                                                                {/* <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Title</th> */}
+                                                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
+                                                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Box</th>
+                                                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
+                                                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Actions</th>
+                                                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Items</th>
+                                                                                                            </tr>
+                                                                                                        </thead>
+                                                                                                        <tbody>
+                                                                                                            {data1.baby_order_data.map((data1, indexs) =>
+                                                                                                                <tr style={{ backgroundColor: "white" }} id={indexs} className="Polaris-IndexTable__TableRow">
+                                                                                                                    {/* <td className="Polaris-IndexTable__TableCell  Polaris-IndexTable__TableHeading--first">
+                                                                                                            </td> */}
+                                                                                                                    <td className="Polaris-IndexTable__TableCell">#{data1.baby_ID}</td>
+                                                                                                                    {/* <td className="Polaris-IndexTable__TableCell">{data1.baby_title}</td> */}
+                                                                                                                    <td className="Polaris-IndexTable__TableCell">{data1.baby_date}</td>
+                                                                                                                    <td className="Polaris-IndexTable__TableCell">{data1.box_type}</td>
+                                                                                                                    <td className="Polaris-IndexTable__TableCell">{data1.baby_total}</td>
+                                                                                                                    <td className="Polaris-IndexTable__TableCell">
+                                                                                                                        <div id='second-action'>
+                                                                                                                            <ButtonGroup>
+                                                                                                                                <Tooltip content="Package Slip">
+                                                                                                                                    <div onClick={() => {
+                                                                                                                                        window.open(data1.filePath, "_blank")
+                                                                                                                                    }}>
+                                                                                                                                        <Icon
+                                                                                                                                            source={ReceiptMajor}
+                                                                                                                                            tone="base"
+                                                                                                                                            color='base'
+                                                                                                                                        />
+                                                                                                                                    </div>
+                                                                                                                                </Tooltip>
+                                                                                                                                <Tooltip content="Tracking Info">
+                                                                                                                                    <div onClick={() => {
+                                                                                                                                        setIsModalOpen2(true);
+                                                                                                                                        setAddTracking2(data1.trackingnumber);
+                                                                                                                                        setShipmenttrackingnumber2(data1.shipmenttrackingnumber);
+                                                                                                                                    }}>
+                                                                                                                                        <Icon
+                                                                                                                                            source={LocationsMinor}
+                                                                                                                                            tone="base"
+                                                                                                                                            color='success'
+                                                                                                                                        />
+                                                                                                                                    </div>
+                                                                                                                                </Tooltip>
+                                                                                                                            </ButtonGroup>
+                                                                                                                        </div>
+                                                                                                                    </td>
+                                                                                                                    <td className="clasPolaris-IndexTable__TableCell">
+                                                                                                                        <ActionListInPopoverExample fulfillmentStatus={[]}
+                                                                                                                            itemsdata={data1.line_items}
+                                                                                                                            quantity={data1.item_quantity}
+                                                                                                                            Item='ITEMS' />
+                                                                                                                    </td>
+                                                                                                                </tr>)}
+                                                                                                        </tbody>
+                                                                                                    </table>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="Polaris-IndexTable__TableRow"></div>
+                                                                                        </tr>
+                                                                                    }
+                                                                                </>
+                                                                            )}
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
                                                             </div>
                                                         </tr>
                                                     }

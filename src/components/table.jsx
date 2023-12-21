@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
     Page,
     IndexTable,
@@ -8,6 +8,9 @@ import {
     Badge,
     Pagination,
     Banner,
+    Button,
+    Toast,
+    Frame,
 } from '@shopify/polaris';
 import OpenModal from './openmodal';
 import ActionListInPopoverExample from './items';
@@ -20,7 +23,7 @@ import axios from 'axios';
 
 function Table() {
 
-    const { setUniqOrderId, setOrder_List, order_list, setSelectedItems, setMotherOrderData, setShowtable, setParentBabyOrder, setLineItemsData, lineItemsData, setTableData } = useContext(ModalContext);
+    const { setUniqOrderId, setOrder_List, order_list, setSelectedItems, setMotherOrderData, setShowtable, setParentBabyOrder, setLineItemsData, lineItemsData, setTableData, setIdentifiersData } = useContext(ModalContext);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
@@ -28,6 +31,7 @@ function Table() {
     const [isLoading, setIsLoading] = useState(true);
     const [isLoading1, setIsLoading1] = useState(false);
     const [active, setActive] = useState(false);
+    const [genrateIdentifierMessage, setGenrateIdentifiersMessage] = useState('Message sent');
 
     // babyorder available
 
@@ -38,7 +42,7 @@ function Table() {
 
     // Function to fetch line items data
 
-    const fetchLineItems = (orderId) => {
+    const fetchLineItems = async (orderId) => {
         setIsLoading(true);
         setIsLoading1(true);
 
@@ -46,56 +50,82 @@ function Table() {
         const apiUrl = `https://${BaseURl}/get_baby_order?shop_name=${shop}&order_id=${orderId}`;
 
         // Use Axios to make the HTTP request
-        axios.get(apiUrl)
-            .then((response) => {
-                const data = response.data;
-                if (data.parent_baby_order_list) {
-                    setParentBabyOrder(data.parent_baby_order_list);
-                }
-                if (data.order_list) {
-                    setOrder_List(data.order_list);
-                }
-                if (data.order_list_extra[0].line_items) {
-                    setTableData(data.order_list_extra[0].line_items);
-                }
-                console.log(data, "line items ..");
-                setLineItemsData(data);
-                setShowtable(true);
+        const response = await axios.get(apiUrl)
+        try {
+            const data = response.data;
+            console.log(data, "get baby order");
+            if (data.status == 500) {
                 setIsLoading(false);
                 setIsLoading1(false);
-            })
-            .catch((error) => {
-                console.error('Error fetching line items data:', error);
-            });
+                setGenrateIdentifiersMessage(data.msg);
+                return toggleActive();
+            }
+            if (data.parent_baby_order_list) {
+                setParentBabyOrder(data.parent_baby_order_list);
+            }
+            if (data.order_list) {
+                setOrder_List(data.order_list);
+            }
+            if (data.order_list_extra[0].line_items) {
+                // Function to replicate items based on quantity
+                const replicateItems = (array) => {
+                    return array.reduce((result, item) => {
+                        // Replicate the item based on quantity
+                        for (let i = 0; i < item.quantity; i++) {
+                            result.push({ ...item });
+                        }
+                        return result;
+                    }, []);
+                };
+
+                // Call the function with the input array
+                const resultArray = replicateItems(data.order_list_extra[0].line_items);
+                setTableData(data.order_list_extra[0].line_items);
+            }
+            console.log(data, "line items ..");
+            setIdentifiersData(data.identifier_Data);
+            setLineItemsData(data);
+            setIsModalOpen(true);
+            setIsLoading(false);
+            setIsLoading1(false);
+            setShowtable(true);
+        } catch {
+            console.error('Error fetching line items data:');
+        }
     };
 
     const openModal = (order) => {
         setSelectedOrder(order);
         setUniqOrderId(order.order_id);
         fetchLineItems(order.order_id);
-        setIsModalOpen(true);
         setActive(!active);
         setSelectedItems([]);
+        // setTimeout(() => {
+        //     setIsModalOpen(true);
+        // }, 1000);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
     };
 
+    const fetchGetOrderList = () => {
+        fetch(`https://${BaseURl}/Get_order_list?shop_name=${shop}`)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                setOrders(data.order_list);
+                setIsLoading(false);
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+                setIsLoading(true);
+            });
+    };
+
     useEffect(() => {
         if (BaseURl && shop) {
-            // Fetch data from your API
-            fetch(`https://${BaseURl}/Get_order_list?shop_name=${shop}`)
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log(data);
-                    setOrders(data.order_list);
-                    setIsLoading(false);
-                })
-                .catch((error) => {
-                    console.error('Error fetching data:', error);
-                    setIsLoading(true);
-                });
+            fetchGetOrderList(BaseURl, shop)
         }
     }, [BaseURl, shop]);
 
@@ -122,7 +152,7 @@ function Table() {
                         style={{ cursor: "pointer" }}
                         onClick={() => openModal(order)}
                     >
-                        {order.order_number}
+                        #{order.order_number}
                     </a>
                 </Text>
             </IndexTable.Cell>
@@ -169,8 +199,40 @@ function Table() {
         }
     }, []);
 
+    const [toastactive, setToastActive] = useState(false);
+    const toggleActive = useCallback(() => setToastActive((active) => !active), []);
+    const toastMarkup = toastactive ? (
+        <Toast content={genrateIdentifierMessage} onDismiss={toggleActive} />
+    ) : null;
+
+    const fetchGenrateIdentifiersData = async () => {
+        setIsLoading(true);
+        const formData = new FormData();
+        formData.append("shop", shop);
+        // Define your API endpoint
+        const apiUrl = `https://${BaseURl}/generate_identifier`;
+
+        // Use Axios to make the HTTP request
+        const response = await axios.post(apiUrl, formData);
+        console.log(response.data, "get identifiers");
+        if (response.status == 200) {
+            setGenrateIdentifiersMessage(response.data.msg);
+            setIsLoading(false);
+            setTimeout(() => {
+                toggleActive()
+            }, 2000);
+        } else {
+            setIsLoading(false);
+        }
+    }
+
     return (
         <>
+            {isLoading &&
+                <div className="spinner">
+                    <div className="spinner-inner"></div>
+                </div>
+            }
             {isModalOpen ? (
                 <OpenModal
                     order={selectedOrder}
@@ -183,21 +245,22 @@ function Table() {
                     alreadybabyorder={order_list}
                 />
             ) : (
-                <Page title='Orders Lists'>
-                    {orders.length === 0 && (
+                <div id='align-identi'>
+                    <Page title={<div style={{ display: "flex", justifyContent: "space-between" }}><div>Orders Lists</div><div><Button onClick={() => fetchGenrateIdentifiersData()} pressed>Generate Identifiers</Button></div></div>}>
+                        {orders.length === 0 && (
 
-                        <div style={{ marginLeft: "20px", marginBottom: "10px" }}>
-                            <Banner title="Order Lists">
-                                <p>no order created yet ...!!</p>
-                            </Banner>
-                        </div>
-                    )}
-                    <LegacyCard>
-                        {isLoading ? (
+                            <div style={{ marginLeft: "20px", marginBottom: "10px" }}>
+                                <Banner title="Order Lists">
+                                    <p>no order created yet ...!!</p>
+                                </Banner>
+                            </div>
+                        )}
+                        {orders.length > 0 && <LegacyCard>
+                            {/* {isLoading ? (
                             <div className="spinner">
                                 <div className="spinner-inner"></div>
                             </div>
-                        ) : (
+                        ) : ( */}
                             <>
                                 <IndexTable
                                     selectable={false}
@@ -226,10 +289,16 @@ function Table() {
                                     />
                                 </div>
                             </>
-                        )}
-                    </LegacyCard>
-                </Page>
+                            {/* )} */}
+                        </LegacyCard>}
+                    </Page>
+                </div>
             )}
+            <div>
+                <Frame>
+                    {toastMarkup}
+                </Frame>
+            </div>
         </>
     );
 }

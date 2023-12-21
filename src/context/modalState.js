@@ -39,8 +39,10 @@ export default function ModalState(props) {
     const [isLoading, setIsLoading] = useState(false);
     const [ShowTable1, setShowtable] = useState(false);
 
+    const [identifiersData, setIdentifiersData] = useState([]);
+
     return (
-        <ModalContext.Provider value={{ callApiParentBaby, babyOrderIDs, setBabyOrderIDs, babyIDs, setBabyIDs, setCallApiParentBaby, parentBabyOrder, setParentBabyOrder, setDeleteIndex, ShowTable1, setShowtable, isLoading, setIsLoading, deleteIndex, setOrderLength, setExtraData, extraData, run, setRun, motherOrderData, setTableData, tableData, lineItemsData, setLineItemsData, setMotherOrderData, setOpenTable, opentable, orderlength, setSub_order, sub_order, openmotherorder, setMotherOrder, setOrder_List, trackingId, setTrackingId, order_list, setUniqOrderId, uniqOrderId, setTrackingNumbers, setBabyorderlists, setRemainsproducts, deselectitem, setDeselectitem, babyorderlists, trackingNumbers, selectedItems, remainsproducts, setSelectedItems, setBabyOrderData, babyorderdata, babyordernumber, setBabyOrderNumber }}>
+        <ModalContext.Provider value={{identifiersData, setIdentifiersData, callApiParentBaby, babyOrderIDs, setBabyOrderIDs, babyIDs, setBabyIDs, setCallApiParentBaby, parentBabyOrder, setParentBabyOrder, setDeleteIndex, ShowTable1, setShowtable, isLoading, setIsLoading, deleteIndex, setOrderLength, setExtraData, extraData, run, setRun, motherOrderData, setTableData, tableData, lineItemsData, setLineItemsData, setMotherOrderData, setOpenTable, opentable, orderlength, setSub_order, sub_order, openmotherorder, setMotherOrder, setOrder_List, trackingId, setTrackingId, order_list, setUniqOrderId, uniqOrderId, setTrackingNumbers, setBabyorderlists, setRemainsproducts, deselectitem, setDeselectitem, babyorderlists, trackingNumbers, selectedItems, remainsproducts, setSelectedItems, setBabyOrderData, babyorderdata, babyordernumber, setBabyOrderNumber }}>
             {props.children}
         </ModalContext.Provider>
     );

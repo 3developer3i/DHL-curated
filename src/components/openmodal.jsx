@@ -25,7 +25,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
     };
 
     const modalcontext = useContext(ModalContext)
-    const { uniqOrderId, setMotherOrderData, isLoading, ShowTable1, setShowtable, setIsLoading, setSelectedItems, selectedItems, setBabyOrderData, setTableData, tableData, setParentBabyOrder, setOpenTable, setOrder_List, setCallApiParentBaby, callApiParentBaby, order_list, setMotherOrder, babyIDs, babyOrderIDs, setBabyOrderNumber, openmotherorder, setSub_order, sub_order, parentBabyOrder } = modalcontext;
+    const { uniqOrderId, setMotherOrderData, isLoading, ShowTable1, setShowtable, setIsLoading, setSelectedItems, selectedItems, setBabyOrderData, setTableData, tableData, setParentBabyOrder, setOpenTable, setOrder_List, setCallApiParentBaby, callApiParentBaby, order_list, setMotherOrder, babyIDs, babyOrderIDs, setBabyOrderNumber, openmotherorder, setSub_order, identifiersData, parentBabyOrder, setIdentifiersData } = modalcontext;
 
     const [isModalClose, setIsModalClose] = useState(false);
     const closeModal = () => { setIsModalClose(true); };
@@ -82,6 +82,16 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
 
     const [popoverActive, setPopoverActive] = useState(false);
     const [tagValue, setTagValue] = useState('');
+    const [identifierId, setIdentifiersId] = useState('');
+    const [identifiersSelect, setIdentifiersSelect] = useState('');
+
+    // Convert ID key to value
+    const convertedData = identifiersData && identifiersData.map(item => ({ value: item.ID, label: `PID : ${item.PID} | SID : ${item.SID}` }));
+    const arrayOfStrings = convertedData.map(obj => obj.label);
+
+    useEffect(() => {
+        setIdentifiersSelect(convertedData[0].label);
+    }, []);
 
     const fetchLineItems = async (checkIt) => {
         if (checkIt !== "parent") {
@@ -91,9 +101,23 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
             .then((response) => response.json())
             .then((data) => {
                 setShowtable(true);
-                console.log(data, "data..................");
+                console.log(data, "order list create baby..................");
+                // Function to replicate items based on quantity
+                const replicateItems = (array) => {
+                    return array.reduce((result, item) => {
+                        // Replicate the item based on quantity
+                        for (let i = 0; i < item.quantity; i++) {
+                            result.push({ ...item });
+                        }
+                        return result;
+                    }, []);
+                };
+
+                // Call the function with the input array
+                const resultArray = replicateItems(data.order_list_extra[0].line_items);
                 setTableData(data.order_list_extra[0].line_items);
                 setOrder_List(data.order_list);
+                setIdentifiersData(data.identifier_Data);
                 setParentBabyOrder(data.parent_baby_order_list);
                 setIsModalOpen(true);
                 setSelectedItems([]);
@@ -110,12 +134,21 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
     const fetchData = () => {
         setIsLoading(true); // Set loading to true before making the request
         const newOrderNumber = generateOrderNumber();
+        // Get variant_ids based on indices
+        // Get variant_ids based on values
+        const variantIdsToRetrieve = selectedItems.map(value => {
+            const matchingItem = tableData.find(item => item.name.includes(`#${value}`));
+            return matchingItem?.variant_id;
+        });
+        const foundObject = convertedData.find(obj => obj.label === identifiersSelect);
+
         const formData = new FormData();
         formData.append("order_id", lineItemsData.order_list_extra[0].order_id);
-        formData.append("variant_id", selectedItems);
+        formData.append("variant_id", variantIdsToRetrieve);
         formData.append("shop_name", shop);
         formData.append("order_number", lineItemsData.order_list_extra[0].order_number);
         formData.append("select_box_size", getselctId);
+        formData.append("identifier", foundObject.value);
         setIsLoading(true);
 
         axios.post(`https://${BaseURl}/create_baby_order`, new URLSearchParams(formData))
@@ -246,18 +279,30 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
         formData.append("shipperselect", "1");
         setIsLoading(true);
         axios.post(`https://${BaseURl}/create_parent_baby_order`, new URLSearchParams(formData)).then((res) => {
+            console.log(res.data, "parent baby......");
             if (res.status === 200) {
-                console.log(res.data, "parent baby......");
-                fetchLineItems('parent');
+                setTimeout(() => {
+                    fetchLineItems('parent');
+                }, 500);
                 setCallApiParentBaby(true);
             }
         }).catch((err) => console.log(err))
     };
 
-    function parsePrice(price) {
-        const parsed = parseFloat(price);
-        return parsed;
-    }
+    const fetchGetUniqId = (names) => {
+        const productName = names;
+        const match = productName.match(/#(\d+)/);
+
+        let id;
+
+        if (match) {
+            // The match[1] captures the digits within the parentheses
+            id = parseInt(match[1], 10);
+        }
+
+        return id
+
+    };
 
     return (
         <>
@@ -281,12 +326,12 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                             <Icon color='base' source={MobileBackArrowMajor} />
                                         </a>
                                         <div style={{ display: 'flex', marginLeft: "10Px", alignItems: 'center', fontWeight: "bold" }}>
-                                            {lineItemsData && lineItemsData.order_list_extra[0].order_number && lineItemsData.order_list_extra[0].order_number}
+                                            #{lineItemsData && lineItemsData.order_list_extra[0].order_number && lineItemsData.order_list_extra[0].order_number}
                                         </div>
                                         <div style={{ marginLeft: "25%" }}>
                                             <Popover
                                                 active={popoverActive}
-                                                activator={<Button size='slim' primary onClick={() => togglePopoverActive()} disabled={createbabyorder && !openmotherorder ? false : true}>CREATE BABY ORDER</Button>}
+                                                activator={<Button size='slim' primary onClick={() => togglePopoverActive()} disabled={createbabyorder && !openmotherorder ? false : true}>CREATE PARCEL</Button>}
                                                 onClose={togglePopoverActive}
                                                 ariaHaspopup={false}
                                                 sectioned
@@ -294,7 +339,9 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                                 <FormLayout>
                                                     <Select value={selectedBoxSize}
                                                         onChange={handleSelectChange} label="Box Sizes:" options={['COAT BOXES - 40 x 26 x 10', 'SWEATER BOXES - 37 x 30 x 6', 'SHOULDER BAG BOXES - 36 x 22 x 11', 'MINI BAG BOX - 28 x 20 x 8']} />
-                                                    <Button primary size="slim" onClick={ShowTable}>Add Baby Order</Button>
+                                                    <Select value={identifiersSelect}
+                                                        onChange={(label) => { console.log(label); setIdentifiersId(label); setIdentifiersSelect(label) }} label="Select Identifiers:" options={arrayOfStrings} />
+                                                    <Button primary size="slim" onClick={ShowTable}>Add to baby order</Button>
                                                 </FormLayout>
                                             </Popover>
                                         </div>
@@ -331,13 +378,13 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                                                 <ResourceList
                                                                     resourceName={{ singular: 'product', plural: 'products' }}
                                                                     selectedItems={selectedItems}
-                                                                    onSelectionChange={(selectedId, dataId) => {
+                                                                    onSelectionChange={(selectedId) => {
+                                                                        console.log(selectedId, "selectedId..");
                                                                         setSelectedItems(selectedId);
-
                                                                     }}
                                                                     selectable
                                                                     items={paginatedData}
-                                                                    idForItem={(item) => item.variant_id}
+                                                                    idForItem={(item, index) => fetchGetUniqId(item.name)}
                                                                     renderItem={(item, index) => {
                                                                         return (
                                                                             <>
@@ -355,7 +402,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                                                                     <Text variant="bodyMd" fontWeight="bold" as="h3">
                                                                                         <><div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                                                             <div>
-                                                                                                <button style={{ background: 'none', border: 'none', padding: '0', cursor: 'pointer', width:"15vh" }}>
+                                                                                                <button style={{ background: 'none', border: 'none', padding: '0', cursor: 'pointer', width: "15vh" }}>
                                                                                                     <span>{item.name}</span>
                                                                                                 </button>
                                                                                             </div>
@@ -395,7 +442,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                                             textAlign: 'center', // Center-align the text
                                                             marginTop: '20px', // Add some top margin for spacing
                                                         }}>
-                                                            All Products are Created Baby Order
+                                                            No more products to allocate
                                                         </div>}
                                                     </div>
                                                 </LegacyCard.Section>
@@ -531,7 +578,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                     </>
                                 )}
                             </Grid.Cell>
-                            <div id="toast-message">
+                            <div id="toast-message" style={{ minHeight: "0px" }}>
                                 <Frame>
                                     {toastMarkup}
                                 </Frame>

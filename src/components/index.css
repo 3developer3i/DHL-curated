@@ -64,8 +64,8 @@
     display: none;
 }
 
-#toast-message .Polaris-Frame {
-    min-height: 0ch;
+.Polaris-Frame {
+    min-height: 0px !important;
 }
 
 #baby-new-hide .Polaris-LegacyCard {
@@ -79,27 +79,39 @@
 #mother-html .Polaris-IndexTable-ScrollContainer {
     overflow-x: scroll !important;
 }
+
 #mother-html .Polaris-IndexTable-ScrollContainer::-webkit-scrollbar {
-  width: 9px;
+    width: 9px;
     display: block !important;
 }
 
 #mother-html .Polaris-IndexTable-ScrollContainer::-webkit-scrollbar-track {
-  background: #f1f1f1;
+    background: #f1f1f1;
 }
 
 /* Handle */
 #mother-html .Polaris-IndexTable-ScrollContainer::-webkit-scrollbar-thumb {
-  background: #888;
-border-radius: 0.5rem;
+    background: #888;
+    border-radius: 0.5rem;
 }
 
 /* Handle on hover */
 #mother-html .Polaris-IndexTable-ScrollContainer::-webkit-scrollbar-thumb:hover {
-  background: #abb1ba;
-  border-radius: 0.5rem;
+    background: #abb1ba;
+    border-radius: 0.5rem;
 }
 
-#mother-html tr {
+/* #mother-html tr {
     height: 37px  !important;
+} */
+
+#mother-html #zero-action .Polaris-ButtonGroup {
+    width: 84px !important;
+}
+
+#mother-html #first-action .Polaris-ButtonGroup {
+    width: 56px !important;
+}
+#align-identi .Polaris-Page-Header__Row {
+    display: block;
 }

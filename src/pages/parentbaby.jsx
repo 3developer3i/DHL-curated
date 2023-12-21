@@ -144,7 +144,7 @@ export default function TestBabyOrderList() {
         }
         return true; // Return true if all values are non-empty
     };
-    
+
     const validateCommercialForm = (commercialForm) => {
         for (const key in commercialForm) {
             if (commercialForm.hasOwnProperty(key) && commercialForm[key].trim() === '') {
@@ -803,6 +803,35 @@ export default function TestBabyOrderList() {
         };
     }, []);
 
+    const [identifiersMatched, setIdentifiersMatched] = useState(false);
+
+    useEffect(() => {
+
+        const selectedResourcesTest = selectedResources;
+        let isOk = true;
+
+        for (let i = 1; i < selectedResourcesTest.length; i++) {
+            const currentIndex = selectedResourcesTest[i];
+            const previousIndex = selectedResourcesTest[i - 1];
+
+            if (
+                currentIndex < paginatedData.length &&
+                previousIndex < paginatedData.length &&
+                paginatedData[currentIndex]?.identifierID !== paginatedData[previousIndex]?.identifierID
+            ) {
+                isOk = false;
+                break; // Exit the loop early if a mismatch is found
+            }
+        }
+
+        if (isOk) {
+            setIdentifiersMatched(false)
+        } else {
+            setIdentifiersMatched(true);
+        }
+    }, [paginatedData, selectedResources])
+
+
     return (
         <Page>
             {loading && (
@@ -840,7 +869,7 @@ export default function TestBabyOrderList() {
                                     <div>
                                         <Popover
                                             active={""}
-                                            activator={<Button pressed onClick={() => handleSubmit()} disabled={(parentBabyOrder.length === 0 || selectedResources.length === 0) ? true : false}>CREATE MOTHER ORDER</Button>}
+                                            activator={<Button pressed onClick={() => handleSubmit()} disabled={((parentBabyOrder.length === 0 || selectedResources.length === 0 ||  identifiersMatched)) ? true : false}>CREATE MOTHER ORDER</Button>}
                                             onClose={togglePopoverActive}
                                             ariaHaspopup={false}
                                             sectioned
@@ -1150,7 +1179,7 @@ export default function TestBabyOrderList() {
                                                             />
                                                         </div>
                                                         <div className="form-field">
-                                                            <label>email</label>
+                                                            <label>Email</label>
                                                             <TextField
                                                                 error={
                                                                     shipperformData.shipperemail
@@ -1173,7 +1202,7 @@ export default function TestBabyOrderList() {
                                                             )}
                                                         </div>
                                                         <div className="form-field">
-                                                            <label>mobile number</label>
+                                                            <label>Mobile Number</label>
                                                             <TextField
                                                                 error={
                                                                     shipperformData.shippermobileNumber
@@ -1196,7 +1225,7 @@ export default function TestBabyOrderList() {
                                                             )}
                                                         </div>
                                                         <div className="form-field">
-                                                            <label>phone</label>
+                                                            <label>Phone</label>
                                                             <TextField
                                                                 error={
                                                                     shipperformData.shipperphone
@@ -1220,7 +1249,7 @@ export default function TestBabyOrderList() {
                                                         </div>
 
                                                         <div className="form-field">
-                                                            <label>addressLine1</label>
+                                                            <label>Address Line1</label>
                                                             <TextField
                                                                 error={
                                                                     shipperformData.shipperaddressLine1
@@ -1244,7 +1273,7 @@ export default function TestBabyOrderList() {
                                                         </div>
 
                                                         <div className="form-field">
-                                                            <label>addressLine2</label>
+                                                            <label>Address Line2</label>
                                                             <TextField
                                                                 error={
                                                                     shipperformData.shipperaddressLine2
@@ -1268,7 +1297,7 @@ export default function TestBabyOrderList() {
                                                         </div>
 
                                                         <div className="form-field">
-                                                            <label>postalCode </label>
+                                                            <label>Postal Code </label>
                                                             <TextField
                                                                 error={
                                                                     shipperformData.shipperpostalCode
@@ -1292,7 +1321,7 @@ export default function TestBabyOrderList() {
                                                         </div>
 
                                                         <div className="form-field">
-                                                            <label>countryCode </label>
+                                                            <label>Country Code </label>
                                                             <TextField
                                                                 error={
                                                                     shipperformData.shippercountryCode
@@ -1316,7 +1345,7 @@ export default function TestBabyOrderList() {
                                                         </div>
 
                                                         <div className="form-field">
-                                                            <label>provincecode</label>
+                                                            <label>Province Code</label>
                                                             <TextField
                                                                 error={
                                                                     shipperformData.shipperprovinceCode
@@ -1340,7 +1369,7 @@ export default function TestBabyOrderList() {
                                                         </div>
 
                                                         <div className="form-field">
-                                                            <label>city</label>
+                                                            <label>City</label>
                                                             <TextField
                                                                 error={
                                                                     shipperformData.shippercity
@@ -1364,7 +1393,7 @@ export default function TestBabyOrderList() {
                                                         </div>
 
                                                         <div className="form-field">
-                                                            <label>state</label>
+                                                            <label>State</label>
                                                             <TextField
                                                                 error={shipperformData.shipperstate ? "" : "This Field Is Required"}
                                                                 type="text"
@@ -1375,7 +1404,7 @@ export default function TestBabyOrderList() {
                                                         </div>
 
                                                         <div className="form-field">
-                                                            <label>country</label>
+                                                            <label>Country</label>
                                                             <TextField
                                                                 error={
                                                                     shipperformData.shippercountry ? "" : "This Field Is Required"
@@ -1390,7 +1419,7 @@ export default function TestBabyOrderList() {
                                                         </div>
 
                                                         <div className="form-field">
-                                                            <label>companyName</label>
+                                                            <label>FROM BBX COMPANY</label>
                                                             <TextField
                                                                 error={
                                                                     shipperformData.shippercompanyName
@@ -1861,7 +1890,7 @@ export default function TestBabyOrderList() {
                 </div>
             ) : (
                 <div className="Polaris-LegacyCard" style={{ width: isScrolling ? 'auto' : '117%' }}>
-                    <div className="Polaris-LegacyCard__Header" ><h2 className="Polaris-Text--root Polaris-Text--headingMd">Parent Baby Order Lists</h2></div>
+                    <div className="Polaris-LegacyCard__Header" ><h2 className="Polaris-Text--root Polaris-Text--headingMd">Master Baby order Lists</h2></div>
                     <div className="Polaris-IndexTable">
                         <div className="Polaris-IndexTable__IndexTableWrapper Polaris-IndexTable__IndexTableWrapper--scrollBarHidden">
                             <div className="Polaris-IndexTable-ScrollContainer">
@@ -1878,7 +1907,7 @@ export default function TestBabyOrderList() {
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Options</th>
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Action</th>
-                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true"></th>
+                                            {/* <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true"></th> */}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1903,7 +1932,7 @@ export default function TestBabyOrderList() {
                                                         </td>
                                                         <td className="Polaris-IndexTable__TableCell">#{datas.parent_order_number}</td>
                                                         <td className="Polaris-IndexTable__TableCell">#{datas.parent_baby_order_id}</td>
-                                                        <td className="Polaris-IndexTable__TableCell">{datas.parent_baby_order_number}</td>
+                                                        <td className="Polaris-IndexTable__TableCell">{datas.parent_baby_order_number} <br />{datas.PID} <br />{datas.SID} </td>
                                                         <td className="Polaris-IndexTable__TableCell">{datas.parent_baby_order_date}</td>
                                                         <td className="Polaris-IndexTable__TableCell">{datas.price}</td>
                                                         <td className="Polaris-IndexTable__TableCell">
@@ -1954,7 +1983,7 @@ export default function TestBabyOrderList() {
                                                             </Tooltip>
 
                                                         </td>
-                                                        <td onClick={() => {
+                                                        {/* <td onClick={() => {
                                                             toggleCollapsible(index);
                                                         }} className="Polaris-IndexTable__TableCell">
                                                             {collapsibleStates[index] ? <Icon
@@ -1964,81 +1993,84 @@ export default function TestBabyOrderList() {
                                                                 source={ChevronDownMinor}
                                                                 tone="base"
                                                             />}
-                                                        </td>
+                                                        </td> */}
 
                                                     </tr>
-                                                    {collapsibleStates[index] &&
-                                                        <tr className={`Polaris-IndexTable__TableRow ${collapsibleStates[index] ? 'collapsible-open' : ''
-                                                            }`} style={{
-                                                                // height: datas.baby_order_data.length < 4 ? datas.baby_order_data.length === 1 ? `${datas.baby_order_data.length * 73}px` : `${datas.baby_order_data.length * 55}px` : `${datas.baby_order_data.length * 42.4285714286}px` 
-                                                                height: `${(datas.baby_order_data.length + 1) * 37}px`
-                                                            }}>
-                                                            <div className="Polaris-LegacyCard" style={{ display: "contents" }}>
-                                                                <table style={{ position: "absolute" }} className="Polaris-IndexTable__Table Polaris-IndexTable__Table--sticky">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th className="Polaris-IndexTable__TableHeading Polaris-IndexTable__TableHeading--first" data-index-table-heading="true">
+                                                    {/* {collapsibleStates[index] && */}
+                                                    <tr className={`Polaris-IndexTable__TableRow ${collapsibleStates[index] ? 'collapsible-open' : ''
+                                                        }`} style={{
+                                                            // height: datas.baby_order_data.length < 4 ? datas.baby_order_data.length === 1 ? `${datas.baby_order_data.length * 73}px` : `${datas.baby_order_data.length * 55}px` : `${datas.baby_order_data.length * 42.4285714286}px` 
+                                                            height: `${(datas.baby_order_data.length + 1) * 37}px`
+                                                        }}>
+                                                        <div className="Polaris-LegacyCard" style={{ display: "contents" }}>
+                                                            <table style={{ position: "absolute" }} className="Polaris-IndexTable__Table Polaris-IndexTable__Table--sticky">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th className="Polaris-IndexTable__TableHeading Polaris-IndexTable__TableHeading--first" data-index-table-heading="true">
 
-                                                                            </th>
-                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Baby Number</th>
-                                                                            {/* <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Title</th> */}
-                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
-                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
-                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Actions</th>
-                                                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Items</th>
+                                                                        </th>
+                                                                        <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Baby Number</th>
+                                                                        {/* <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Title</th> */}
+                                                                        <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
+                                                                        <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
+                                                                        <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Box</th>
+                                                                        <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Actions</th>
+                                                                        <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Items</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {datas.baby_order_data.map((data1, indexs) =>
+                                                                        <tr style={{ backgroundColor: "#ebebeb" }} id={indexs} className="Polaris-IndexTable__TableRow">
+                                                                            <td className="Polaris-IndexTable__TableCell  Polaris-IndexTable__TableHeading--first">
+
+                                                                            </td>
+                                                                            <td className="Polaris-IndexTable__TableCell">#{data1.baby_ID}</td>
+                                                                            {/* <td className="Polaris-IndexTable__TableCell">{data1.baby_title}</td> */}
+                                                                            <td className="Polaris-IndexTable__TableCell">{data1.baby_date}</td>
+                                                                            <td className="Polaris-IndexTable__TableCell">{data1.baby_total}</td>
+                                                                            <td className="Polaris-IndexTable__TableCell">{data1.box_type}</td>
+                                                                            <td className="Polaris-IndexTable__TableCell">
+                                                                                <ButtonGroup>
+                                                                                    <Tooltip content="Package Slip">
+                                                                                        <div onClick={() => {
+                                                                                            window.open(data1.filePath, "_blank")
+                                                                                        }}>
+                                                                                            <Icon
+                                                                                                source={ReceiptMajor}
+                                                                                                tone="base"
+                                                                                                color='base'
+                                                                                            />
+                                                                                        </div>
+                                                                                    </Tooltip>
+                                                                                    <Tooltip content="Tracking Info">
+                                                                                        <div onClick={() => {
+                                                                                            setIsModalOpen1(true);
+                                                                                            setAddTracking1(data1.trackingnumber);
+                                                                                            setShipmenttrackingnumber1(data1.shipmenttrackingnumber);
+                                                                                        }}>
+                                                                                            <Icon
+                                                                                                source={LocationsMinor}
+                                                                                                tone="base"
+                                                                                                color='success'
+                                                                                            />
+                                                                                        </div>
+                                                                                    </Tooltip>
+                                                                                </ButtonGroup>
+                                                                            </td>
+                                                                            <td className="clasPolaris-IndexTable__TableCell">
+                                                                                <ActionListInPopoverExample fulfillmentStatus={[]}
+                                                                                    itemsdata={data1.line_items}
+                                                                                    quantity={data1.item_quantity}
+                                                                                    Item='ITEMS' />
+                                                                            </td>
+
                                                                         </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        {datas.baby_order_data.map((data1, indexs) =>
-                                                                            <tr style={{ backgroundColor: "#ebebeb" }} id={indexs} className="Polaris-IndexTable__TableRow">
-                                                                                <td className="Polaris-IndexTable__TableCell  Polaris-IndexTable__TableHeading--first">
-
-                                                                                </td>
-                                                                                <td className="Polaris-IndexTable__TableCell">#{data1.baby_ID}</td>
-                                                                                {/* <td className="Polaris-IndexTable__TableCell">{data1.baby_title}</td> */}
-                                                                                <td className="Polaris-IndexTable__TableCell">{data1.baby_date}</td>
-                                                                                <td className="Polaris-IndexTable__TableCell">{data1.baby_total}</td>
-                                                                                <td className="Polaris-IndexTable__TableCell">
-                                                                                    <ButtonGroup>
-                                                                                        <Tooltip content="Package Slip">
-                                                                                            <div onClick={() => {
-                                                                                                window.open(data1.filePath, "_blank")
-                                                                                            }}>
-                                                                                                <Icon
-                                                                                                    source={ReceiptMajor}
-                                                                                                    tone="base"
-                                                                                                    color='base'
-                                                                                                />
-                                                                                            </div>
-                                                                                        </Tooltip>
-                                                                                        <Tooltip content="Tracking Info">
-                                                                                            <div onClick={() => {
-                                                                                                setIsModalOpen1(true);
-                                                                                                setAddTracking1(data1.trackingnumber);
-                                                                                                setShipmenttrackingnumber1(data1.shipmenttrackingnumber);
-                                                                                            }}>
-                                                                                                <Icon
-                                                                                                    source={LocationsMinor}
-                                                                                                    tone="base"
-                                                                                                    color='success'
-                                                                                                />
-                                                                                            </div>
-                                                                                        </Tooltip>
-                                                                                    </ButtonGroup>
-                                                                                </td>
-                                                                                <td className="clasPolaris-IndexTable__TableCell">
-                                                                                    <ActionListInPopoverExample fulfillmentStatus={[]}
-                                                                                        itemsdata={data1.line_items}
-                                                                                        Item='ITEMS' />
-                                                                                </td>
-
-                                                                            </tr>
-                                                                        )}
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        </tr>
-                                                    }
+                                                                    )}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </tr>
+                                                    {/* } */}
                                                 </>
                                             )
                                         })}

@@ -165,7 +165,7 @@ function AddproductTable({ number }) {
     };
 
     const rowMarkup = paginatedData && paginatedData.map(
-        ({ baby_ID, baby_date, item_quantity, line_items }, index) => (
+        ({ baby_ID, baby_date, item_quantity, line_items, box_type, PID, SID }, index) => (
             <>
                 <IndexTable.Row
                     id={index + 10}
@@ -178,16 +178,17 @@ function AddproductTable({ number }) {
                     <IndexTable.Cell>#{baby_ID}</IndexTable.Cell>
                     {/* <IndexTable.Cell>{baby_title}</IndexTable.Cell> */}
                     <IndexTable.Cell>{baby_date}</IndexTable.Cell>
+                    <IndexTable.Cell>{box_type} <br />{PID} <br />{SID} </IndexTable.Cell>
                     <IndexTable.Cell>
                         <div onClick={(e) => handleTrackModalClick(e, index)}>
                             <TrackModalExample trackingId={index} sub_order={order_list} />
                         </div>
                     </IndexTable.Cell>
-                    <IndexTable.Cell>
+                    {parentBabyOrder.length > 0 ? '' : <IndexTable.Cell>
                         <div onClick={handleTrackModalClick}>
                             <DeletePopup baby_order_number={baby_ID} />
                         </div>
-                    </IndexTable.Cell>
+                    </IndexTable.Cell>}
                     <IndexTable.Cell>
                         <div>
                             <Popover active={openCardIndex === index} activator={<div
@@ -197,31 +198,31 @@ function AddproductTable({ number }) {
                                 {item_quantity} items
                                 <Icon source={DropdownMinor} color="base" />
                             </div>} onClose={toggleActive2}>
-                                
-                                    {openCardIndex === index &&
-                                        <div>
-                                            <LegacyCard sectioned style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                                                <Badge progress="complete">Item List</Badge>
-                                                {line_items.map((item, i) => (
-                                                    <div key={i}>
-                                                        <div style={{ display: 'flex', marginTop: '15px', alignItems: 'center' }}>
-                                                            <div style={{ marginLeft: '8px' }}>
-                                                                <Thumbnail
-                                                                    source={item.product_images}
-                                                                    alt="Black choker necklace"
-                                                                />
-                                                            </div>
-                                                            <div style={{ marginLeft: '8px', whiteSpace: 'normal' }}>
-                                                                <Text style={{ whiteSpace: 'normal' }}>
-                                                                    {item.name} <br /><Text>price: {item.quantity} x {item.price}</Text>
-                                                                </Text>
-                                                            </div>
+
+                                {openCardIndex === index &&
+                                    <div>
+                                        <LegacyCard sectioned style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                                            <Badge progress="complete">Item List</Badge>
+                                            {line_items.map((item, i) => (
+                                                <div key={i}>
+                                                    <div style={{ display: 'flex', marginTop: '15px', alignItems: 'center' }}>
+                                                        <div style={{ marginLeft: '8px' }}>
+                                                            <Thumbnail
+                                                                source={item.product_images}
+                                                                alt="Black choker necklace"
+                                                            />
+                                                        </div>
+                                                        <div style={{ marginLeft: '8px', whiteSpace: 'normal' }}>
+                                                            <Text style={{ whiteSpace: 'normal' }}>
+                                                                {item.name} <br /><Text>price: {item.quantity} x ${item.price}</Text>
+                                                            </Text>
                                                         </div>
                                                     </div>
-                                                ))}
-                                            </LegacyCard>
-                                        </div>
-                                    }
+                                                </div>
+                                            ))}
+                                        </LegacyCard>
+                                    </div>
+                                }
                             </Popover>
                         </div>
                     </IndexTable.Cell>
@@ -234,7 +235,7 @@ function AddproductTable({ number }) {
 
     const rowMarkups = paginatedData1.length > 0 && paginatedData1.map(
         ({ price, mother_order_id
-            , mother_order_date, mother_order_number
+            , mother_order_date, mother_order_number, PID, SID
         }, index) => (
             <IndexTable.Row
                 id={index + 100}
@@ -243,7 +244,7 @@ function AddproductTable({ number }) {
                 position={index}
             >
                 <IndexTable.Cell>#{mother_order_id} </IndexTable.Cell>
-                <IndexTable.Cell>{mother_order_number}</IndexTable.Cell>
+                <IndexTable.Cell>{mother_order_number} <br />{PID} <br />{SID}</IndexTable.Cell>
                 <IndexTable.Cell>{mother_order_date}</IndexTable.Cell>
                 <IndexTable.Cell>${price}</IndexTable.Cell>
                 <IndexTable.Cell>
@@ -294,11 +295,30 @@ function AddproductTable({ number }) {
         setBabyOrderIDs(extractedBabyOrderIDs)
     }, [order_list]);
 
+    const avaialbleHedings = [
+        { title: 'Order Number' },
+        { title: 'Baby Id' },
+        { title: 'Date' },
+        { title: 'Box' },
+        { title: 'Options' },
+        { title: 'action' },
+        { title: 'items' }
+    ];
+
+    const avaialbleNotHedings = [
+        { title: 'Order Number' },
+        { title: 'Baby Id' },
+        { title: 'Date' },
+        { title: 'Box' },
+        { title: 'Options' },
+        { title: 'items' }
+    ];
+
     return (
         <>
 
             {order_list.length > 0 && <div>
-                <LegacyCard title="Baby Order Lists">
+                <LegacyCard title="Overview parcels">
                     <div id='testhideid'>
                         <IndexTable
                             resourceName={resourceName}
@@ -308,15 +328,7 @@ function AddproductTable({ number }) {
                             }
                             selectable
                             onSelectionChange={handleSelectionChange}
-                            headings={[
-                                { title: 'Order Number' },
-                                { title: 'Baby Id' },
-                                // { title: 'Products Details' },
-                                { title: 'Date' },
-                                { title: 'Options' },
-                                { title: 'action' },
-                                { title: 'items' }
-                            ]}
+                            headings={parentBabyOrder.length > 0 ? avaialbleNotHedings : avaialbleHedings}
                         >
                             {rowMarkup}
                         </IndexTable>
@@ -337,7 +349,7 @@ function AddproductTable({ number }) {
             </div>}
 
             {parentBabyOrder.length > 0 && <div style={{ marginTop: "10px" }}>
-                <LegacyCard title="Parent Baby Order Lists">
+                <LegacyCard title="Baby order">
                     <div id='testhideid'>
                         <IndexTable
                             resourceName={resourceName}
@@ -372,7 +384,7 @@ function AddproductTable({ number }) {
                     </div>
                 </LegacyCard>
             </div>}
-            <br/><br/><br/>
+            <br /><br /><br />
 
         </>
     );

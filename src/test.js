@@ -1,2434 +1,474 @@
-export default function Test() {
+import { ButtonGroup, Tooltip, Page, Icon, Button, Banner, Modal, FormLayout, TextField, TextContainer, Frame, Toast, Pagination } from '@shopify/polaris';
+import axios from 'axios';
+import React, { useEffect, useState, useCallback } from 'react';
+import {
+    ReceiptMajor, LegalMajor, PrintMajor, LocationsMinor,
+    ChevronDownMinor, ChevronUpMinor, DeleteMajor
+} from '@shopify/polaris-icons';
+import DeletePopup from '../components/popopdelete';
+import { BaseURl, shop } from '../contant'
+import ActionListInPopoverExample from '../components/items';
 
-  return (
-    <>
-      <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
-      <title>file_1696484113564</title>
-      <style
-        type="text/css"
-        dangerouslySetInnerHTML={{
-          __html:
-            "\n        * {\n            margin: 0;\n            padding: 0;\n            text-indent: 0;\n        }\n\n        h1 {\n            color: #333;\n            font-family: Arial, sans-serif;\n            font-style: normal;\n            font-weight: bold;\n            text-decoration: none;\n            font-size: 13.5pt;\n        }\n\n        .s1 {\n            color: #333;\n            font-family: Arial, sans-serif;\n            font-style: normal;\n            font-weight: bold;\n            text-decoration: none;\n            font-size: 9.5pt;\n        }\n\n        .s2 {\n            color: #333;\n            font-family: Arial, sans-serif;\n            font-style: normal;\n            font-weight: normal;\n            text-decoration: none;\n            font-size: 9pt;\n        }\n\n        .s3 {\n            color: #333;\n            font-family: Arial, sans-serif;\n            font-style: normal;\n            font-weight: normal;\n            text-decoration: none;\n            font-size: 9.5pt;\n        }\n\n        .s4 {\n            color: #333;\n            font-family: Arial, sans-serif;\n            font-style: normal;\n            font-weight: normal;\n            text-decoration: none;\n            font-size: 6pt;\n        }\n\n        .s5 {\n            color: #333;\n            font-family: Arial, sans-serif;\n            font-style: normal;\n            font-weight: bold;\n            text-decoration: none;\n            font-size: 10.5pt;\n        }\n\n        .s6 {\n            color: #333;\n            font-family: Arial, sans-serif;\n            font-style: normal;\n            font-weight: bold;\n            text-decoration: none;\n            font-size: 6pt;\n        }\n\n        .s7 {\n            color: #333;\n            font-family: Arial, sans-serif;\n            font-style: normal;\n            font-weight: normal;\n            text-decoration: none;\n            font-size: 6pt;\n            vertical-align: -3pt;\n        }\n\n        p {\n            color: #333;\n            font-family: Arial, sans-serif;\n            font-style: normal;\n            font-weight: bold;\n            text-decoration: none;\n            font-size: 10.5pt;\n            margin: 0pt;\n        }\n\n        table,\n        tbody {\n            vertical-align: top;\n            overflow: visible;\n        }\n    "
-        }}
-      />
-      <h1
-        style={{
-          paddingTop: "3pt",
-          paddingLeft: "7pt",
-          textIndent: "0pt",
-          textAlign: "left"
-        }}
-      >
-        Commercial invoice
-      </h1>
-      <p style={{ textIndent: "0pt", textAlign: "left" }}>
-        <br />
-      </p>
-      <p style={{ textIndent: "0pt", textAlign: "left" }}>
-        <br />
-      </p>
-      <table
-        style={{ borderCollapse: "collapse", marginLeft: "6.34646pt" }}
-        cellSpacing={0}
-      >
-        <tbody>
-          <tr style={{ height: "28pt" }}>
-            <td
-              style={{
-                width: "279pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-              colSpan={6}
-            >
-              <p
-                className="s1"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  lineHeight: "11pt",
-                  textAlign: "left"
-                }}
-              >
-                REFERENCE NUMBER
-              </p>
-              <p
-                className="s2"
-                style={{
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  lineHeight: "10pt",
-                  textAlign: "left"
-                }}
-              >
-                8553100953
-              </p>
-            </td>
-            <td
-              style={{
-                width: "259pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-              colSpan={5}
-            >
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-            </td>
-          </tr>
-          <tr style={{ height: "28pt" }}>
-            <td
-              style={{
-                width: "279pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-              colSpan={6}
-            >
-              <p
-                className="s1"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  lineHeight: "11pt",
-                  textAlign: "left"
-                }}
-              >
-                DATE OF EXPORTATION
-              </p>
-              <p
-                className="s2"
-                style={{
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  lineHeight: "10pt",
-                  textAlign: "left"
-                }}
-              >
-                May 20, 2023
-              </p>
-            </td>
-            <td
-              style={{
-                width: "259pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-              colSpan={5}
-            >
-              <p
-                className="s1"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  lineHeight: "11pt",
-                  textAlign: "left"
-                }}
-              >
-                SHIPPER'S EXPORT REFERENCES
-              </p>
-              <p
-                className="s2"
-                style={{
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  lineHeight: "10pt",
-                  textAlign: "left"
-                }}
-              >
-                Invoice No. 8553100953
-              </p>
-            </td>
-          </tr>
-          <tr style={{ height: "87pt" }}>
-            <td
-              style={{
-                width: "279pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-              colSpan={6}
-            >
-              <p
-                className="s1"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "4pt",
-                  paddingRight: "43pt",
-                  textIndent: "0pt",
-                  textAlign: "left"
-                }}
-              >
-                SHIPPER / EXPORTER{" "}
-                <span className="s2">
-                  The Curated AS c/o Floship The Curated AS
-                </span>
-              </p>
-              <p
-                className="s2"
-                style={{
-                  paddingLeft: "4pt",
-                  paddingRight: "169pt",
-                  textIndent: "0pt",
-                  textAlign: "left"
-                }}
-              >
-                6/F YKK Building Phase 3 No. 7 San Ping Circuit Tuen Mun
-              </p>
-              <p
-                className="s2"
-                style={{
-                  paddingLeft: "4pt",
-                  paddingRight: "211pt",
-                  textIndent: "0pt",
-                  textAlign: "left"
-                }}
-              >
-                New Territories 00000
-              </p>
-              <p
-                className="s2"
-                style={{
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  lineHeight: "10pt",
-                  textAlign: "left"
-                }}
-              >
-                Hong Kong
-              </p>
-            </td>
-            <td
-              style={{
-                width: "259pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-              colSpan={5}
-            >
-              <p
-                className="s1"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  textAlign: "left"
-                }}
-              >
-                CONSIGNEE
-                <span className="s2">
-                  The Curated AS c/o DHL HUB LEIPZIG GmbH The Curated AS
-                </span>
-              </p>
-              <p
-                className="s2"
-                style={{
-                  paddingLeft: "4pt",
-                  paddingRight: "140pt",
-                  textIndent: "0pt",
-                  textAlign: "left"
-                }}
-              >
-                Hermann Koehl Str. 1 Schkeuditz
-              </p>
-              <p
-                className="s2"
-                style={{
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  lineHeight: "10pt",
-                  textAlign: "left"
-                }}
-              >
-                04435
-              </p>
-              <p
-                className="s2"
-                style={{
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  lineHeight: "10pt",
-                  textAlign: "left"
-                }}
-              >
-                Germany
-              </p>
-            </td>
-          </tr>
-          <tr style={{ height: "116pt" }}>
-            <td
-              style={{
-                width: "279pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-              colSpan={6}
-            >
-              <p
-                className="s3"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  textAlign: "left"
-                }}
-              >
-                COUNTRY OF EXPORT
-              </p>
-              <p
-                className="s2"
-                style={{
-                  paddingTop: "1pt",
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  textAlign: "left"
-                }}
-              >
-                Hong Kong
-              </p>
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-              <p
-                style={{
-                  paddingLeft: "2pt",
-                  textIndent: "0pt",
-                  lineHeight: "1pt",
-                  textAlign: "left"
-                }}
-              ></p>
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-              <p
-                className="s1"
-                style={{
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  lineHeight: "11pt",
-                  textAlign: "left"
-                }}
-              >
-                INDIRECT REPRESENTATIVE
-              </p>
-              <p
-                className="s2"
-                style={{
-                  paddingLeft: "4pt",
-                  paddingRight: "169pt",
-                  textIndent: "0pt",
-                  textAlign: "left"
-                }}
-              >
-                The Curated ApS Christian IXs Gade 10 Kopenhagen
-              </p>
-              <p
-                className="s2"
-                style={{
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  lineHeight: "10pt",
-                  textAlign: "left"
-                }}
-              >
-                1111
-              </p>
-              <p
-                className="s2"
-                style={{
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  lineHeight: "10pt",
-                  textAlign: "left"
-                }}
-              >
-                Denmark
-              </p>
-            </td>
-            <td
-              style={{
-                width: "259pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-              colSpan={5}
-            >
-              <p
-                className="s1"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  textAlign: "left"
-                }}
-              >
-                IMPORTER - IF OTHER THEN CONSIGNEE{" "}
-                <span className="s2">The Curated AS</span>
-              </p>
-              <p
-                className="s2"
-                style={{
-                  paddingLeft: "4pt",
-                  paddingRight: "172pt",
-                  textIndent: "0pt",
-                  textAlign: "left"
-                }}
-              >
-                The Curated AS Orreleiken 12 Borgen
-              </p>
-              <p
-                className="s2"
-                style={{
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  lineHeight: "10pt",
-                  textAlign: "left"
-                }}
-              >
-                1388
-              </p>
-              <p
-                className="s2"
-                style={{
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  lineHeight: "10pt",
-                  textAlign: "left"
-                }}
-              >
-                Norway
-              </p>
-              <p
-                className="s2"
-                style={{
-                  paddingLeft: "4pt",
-                  paddingRight: "140pt",
-                  textIndent: "0pt",
-                  textAlign: "left"
-                }}
-              >
-                Tax id: DE 924 366 893 EORI XI028358704000
-              </p>
-            </td>
-          </tr>
-          <tr style={{ height: "28pt" }}>
-            <td
-              style={{
-                width: "279pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-              colSpan={6}
-            >
-              <p
-                className="s3"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  lineHeight: "11pt",
-                  textAlign: "left"
-                }}
-              >
-                REASON FOR EXPORT
-              </p>
-              <p
-                className="s2"
-                style={{
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  lineHeight: "10pt",
-                  textAlign: "left"
-                }}
-              >
-                Purchase - Permanent export
-              </p>
-            </td>
-            <td
-              style={{
-                width: "259pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-              colSpan={5}
-            >
-              <p
-                className="s1"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  lineHeight: "11pt",
-                  textAlign: "left"
-                }}
-              >
-                COUNTRY OF ULTIMATE DESTINATION
-              </p>
-              <p
-                className="s2"
-                style={{
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  lineHeight: "10pt",
-                  textAlign: "left"
-                }}
-              >
-                Germany
-              </p>
-            </td>
-          </tr>
-          <tr style={{ height: "27pt" }}>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-              <p
-                className="s4"
-                style={{
-                  paddingLeft: "10pt",
-                  paddingRight: "9pt",
-                  textIndent: "0pt",
-                  lineHeight: "90%",
-                  textAlign: "left"
-                }}
-              >
-                COUNTRY OF ORIGIN
-              </p>
-            </td>
-            <td
-              style={{
-                width: "40pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-              <p className="s4" style={{ textIndent: "0pt", textAlign: "left" }}>
-                MARKS/NO'S.
-              </p>
-            </td>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-              <p
-                className="s4"
-                style={{
-                  paddingLeft: "8pt",
-                  paddingRight: "5pt",
-                  textIndent: "5pt",
-                  lineHeight: "90%",
-                  textAlign: "left"
-                }}
-              >
-                TYPE OF PACKAGING
-              </p>
-            </td>
-            <td
-              style={{
-                width: "51pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-              <p
-                className="s4"
-                style={{ textIndent: "5pt", lineHeight: "90%", textAlign: "left" }}
-              >
-                COUNTRY OF MANUFACTURER
-              </p>
-            </td>
-            <td
-              style={{
-                width: "43pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "3pt",
-                  paddingLeft: "1pt",
-                  textIndent: "0pt",
-                  lineHeight: "90%",
-                  textAlign: "center"
-                }}
-              >
-                FULL DESCRIPTION OF GOODS
-              </p>
-            </td>
-            <td
-              style={{
-                width: "41pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-              <p
-                className="s4"
-                style={{
-                  paddingLeft: "6pt",
-                  paddingRight: "3pt",
-                  textIndent: "-1pt",
-                  lineHeight: "90%",
-                  textAlign: "left"
-                }}
-              >
-                CONTAINS BATTERY
-              </p>
-            </td>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-              <p
-                className="s4"
-                style={{
-                  paddingLeft: "11pt",
-                  paddingRight: "10pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                HS CODE
-              </p>
-            </td>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-              <p
-                className="s4"
-                style={{
-                  paddingLeft: "11pt",
-                  paddingRight: "10pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                QTY.
-              </p>
-            </td>
-            <td
-              style={{
-                width: "51pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-              <p
-                className="s4"
-                style={{
-                  paddingLeft: "19pt",
-                  paddingRight: "5pt",
-                  textIndent: "-12pt",
-                  lineHeight: "90%",
-                  textAlign: "left"
-                }}
-              >
-                NET WEIGHT (KG)
-              </p>
-            </td>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-              <p
-                className="s4"
-                style={{
-                  paddingLeft: "17pt",
-                  paddingRight: "6pt",
-                  textIndent: "-9pt",
-                  lineHeight: "90%",
-                  textAlign: "left"
-                }}
-              >
-                UNIT VALUE (EUR)
-              </p>
-            </td>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-              <p
-                className="s4"
-                style={{
-                  paddingLeft: "10pt",
-                  paddingRight: "6pt",
-                  textIndent: "-1pt",
-                  lineHeight: "90%",
-                  textAlign: "left"
-                }}
-              >
-                TOTAL (Excl. D&amp;T) (EUR)
-              </p>
-            </td>
-          </tr>
-          <tr style={{ height: "27pt" }}>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingRight: "17pt",
-                  textIndent: "0pt",
-                  textAlign: "right"
-                }}
-              >
-                China
-              </p>
-            </td>
-            <td
-              style={{
-                width: "40pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "3pt",
-                  paddingLeft: "5pt",
-                  textIndent: "10pt",
-                  lineHeight: "91%",
-                  textAlign: "left"
-                }}
-              >
-                As Addressed
-              </p>
-            </td>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingRight: "20pt",
-                  textIndent: "0pt",
-                  textAlign: "right"
-                }}
-              >
-                CP
-              </p>
-            </td>
-            <td
-              style={{
-                width: "51pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "17pt",
-                  paddingRight: "16pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                China
-              </p>
-            </td>
-            <td
-              style={{
-                width: "43pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "3pt",
-                  paddingLeft: "1pt",
-                  textIndent: "0pt",
-                  lineHeight: "91%",
-                  textAlign: "center"
-                }}
-              >
-                WOMEN'S CASHMERE MINI SKIRT
-              </p>
-            </td>
-            <td
-              style={{
-                width: "41pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "15pt",
-                  paddingRight: "14pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                NO
-              </p>
-            </td>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "11pt",
-                  paddingRight: "10pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                611012
-              </p>
-            </td>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "1pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                1
-              </p>
-            </td>
-            <td
-              style={{
-                width: "51pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "18pt",
-                  textIndent: "0pt",
-                  textAlign: "left"
-                }}
-              >
-                0.500
-              </p>
-            </td>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "11pt",
-                  paddingRight: "10pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                120.87
-              </p>
-            </td>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "11pt",
-                  paddingRight: "10pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                120.87
-              </p>
-            </td>
-          </tr>
-          <tr style={{ height: "27pt" }}>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingRight: "17pt",
-                  textIndent: "0pt",
-                  textAlign: "right"
-                }}
-              >
-                China
-              </p>
-            </td>
-            <td
-              style={{
-                width: "40pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "3pt",
-                  paddingLeft: "5pt",
-                  textIndent: "10pt",
-                  lineHeight: "91%",
-                  textAlign: "left"
-                }}
-              >
-                As Addressed
-              </p>
-            </td>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingRight: "20pt",
-                  textIndent: "0pt",
-                  textAlign: "right"
-                }}
-              >
-                CP
-              </p>
-            </td>
-            <td
-              style={{
-                width: "51pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "17pt",
-                  paddingRight: "16pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                China
-              </p>
-            </td>
-            <td
-              style={{
-                width: "43pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "3pt",
-                  paddingLeft: "1pt",
-                  textIndent: "0pt",
-                  lineHeight: "91%",
-                  textAlign: "center"
-                }}
-              >
-                WOMEN'S CASHMERE TOP
-              </p>
-            </td>
-            <td
-              style={{
-                width: "41pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "15pt",
-                  paddingRight: "14pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                NO
-              </p>
-            </td>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "11pt",
-                  paddingRight: "10pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                611012
-              </p>
-            </td>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "1pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                1
-              </p>
-            </td>
-            <td
-              style={{
-                width: "51pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "18pt",
-                  textIndent: "0pt",
-                  textAlign: "left"
-                }}
-              >
-                0.500
-              </p>
-            </td>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "11pt",
-                  paddingRight: "10pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                237.50
-              </p>
-            </td>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "11pt",
-                  paddingRight: "10pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                237.50
-              </p>
-            </td>
-          </tr>
-          <tr style={{ height: "33pt" }}>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingRight: "17pt",
-                  textIndent: "0pt",
-                  textAlign: "right"
-                }}
-              >
-                China
-              </p>
-            </td>
-            <td
-              style={{
-                width: "40pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "3pt",
-                  paddingLeft: "5pt",
-                  textIndent: "10pt",
-                  lineHeight: "91%",
-                  textAlign: "left"
-                }}
-              >
-                As Addressed
-              </p>
-            </td>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingRight: "20pt",
-                  textIndent: "0pt",
-                  textAlign: "right"
-                }}
-              >
-                CP
-              </p>
-            </td>
-            <td
-              style={{
-                width: "51pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "17pt",
-                  paddingRight: "16pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                China
-              </p>
-            </td>
-            <td
-              style={{
-                width: "43pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "3pt",
-                  paddingLeft: "7pt",
-                  paddingRight: "6pt",
-                  textIndent: "0pt",
-                  lineHeight: "91%",
-                  textAlign: "center"
-                }}
-              >
-                WOMEN'S COTTON TRENCH COAT
-              </p>
-            </td>
-            <td
-              style={{
-                width: "41pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "15pt",
-                  paddingRight: "14pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                NO
-              </p>
-            </td>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "11pt",
-                  paddingRight: "10pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                620212
-              </p>
-            </td>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "1pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                1
-              </p>
-            </td>
-            <td
-              style={{
-                width: "51pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "18pt",
-                  textIndent: "0pt",
-                  textAlign: "left"
-                }}
-              >
-                1.500
-              </p>
-            </td>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "11pt",
-                  paddingRight: "10pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                289.26
-              </p>
-            </td>
-            <td
-              style={{
-                width: "52pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "11pt",
-                  paddingRight: "10pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                289.26
-              </p>
-            </td>
-          </tr>
-          <tr style={{ height: "26pt" }}>
-            <td
-              style={{
-                width: "383pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-              colSpan={8}
-              rowSpan={2}
-            >
-              <p
-                className="s5"
-                style={{
-                  paddingTop: "1pt",
-                  paddingLeft: "4pt",
-                  textIndent: "0pt",
-                  textAlign: "left"
-                }}
-              >
-                CUSTOMS COMMENTS:
-              </p>
-            </td>
-            <td
-              style={{
-                width: "51pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-              <p
-                className="s6"
-                style={{
-                  paddingLeft: "6pt",
-                  paddingRight: "5pt",
-                  textIndent: "8pt",
-                  lineHeight: "90%",
-                  textAlign: "left"
-                }}
-              >
-                GROSS WEIGHT (KG)
-              </p>
-            </td>
-            <td
-              style={{
-                width: "104pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-              colSpan={2}
-              rowSpan={2}
-            >
-              <p
-                className="s6"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "10pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                Currency
-                <span className="s4">EUR</span>
-              </p>
-              <p
-                className="s6"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "4pt",
-                  paddingRight: "14pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                Insurance Value <span className="s4">0.00</span>
-              </p>
-              <p
-                className="s6"
-                style={{
-                  paddingTop: "3pt",
-                  paddingLeft: "10pt",
-                  paddingRight: "7pt",
-                  textIndent: "0pt",
-                  lineHeight: "57%",
-                  textAlign: "center"
-                }}
-              >
-                Total Product <span className="s7">647.63</span>
-              </p>
-              <p
-                className="s6"
-                style={{
-                  paddingLeft: "7pt",
-                  paddingRight: "14pt",
-                  textIndent: "0pt",
-                  lineHeight: "5pt",
-                  textAlign: "center"
-                }}
-              >
-                Value
-              </p>
-              <p
-                className="s6"
-                style={{
-                  paddingTop: "1pt",
-                  paddingLeft: "10pt",
-                  paddingRight: "2pt",
-                  textIndent: "0pt",
-                  textAlign: "center"
-                }}
-              >
-                Grand Total <span className="s4">647.63</span>
-              </p>
-            </td>
-          </tr>
-          <tr style={{ height: "20pt" }}>
-            <td
-              style={{
-                width: "51pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p
-                className="s4"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "18pt",
-                  textIndent: "0pt",
-                  textAlign: "left"
-                }}
-              >
-                2.500
-              </p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <p
-        style={{
-          paddingTop: "7pt",
-          paddingLeft: "16pt",
-          textIndent: "0pt",
-          textAlign: "left"
-        }}
-      >
-        Terms Of Trade: DAP
-      </p>
-      <p style={{ textIndent: "0pt", textAlign: "left" }}>
-        <br />
-      </p>
-      <table
-        style={{ borderCollapse: "collapse", marginLeft: "6.34646pt" }}
-        cellSpacing={0}
-      >
-        <tbody>
-          <tr style={{ height: "79pt" }}>
-            <td
-              style={{
-                width: "356pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-              colSpan={2}
-            >
-              <p
-                className="s1"
-                style={{
-                  paddingTop: "8pt",
-                  paddingLeft: "10pt",
-                  paddingRight: "18pt",
-                  textIndent: "0pt",
-                  lineHeight: "93%",
-                  textAlign: "left"
-                }}
-              >
-                I DECLARE ALL THE INFORMATION CONTAINED IN THE INVOICE TO BE TRUE
-                AND CORRECT
-              </p>
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-              <p
-                style={{
-                  paddingLeft: "10pt",
-                  textIndent: "0pt",
-                  lineHeight: "1pt",
-                  textAlign: "left"
-                }}
-              ></p>
-              <p
-                className="s1"
-                style={{
-                  paddingTop: "2pt",
-                  paddingLeft: "10pt",
-                  textIndent: "0pt",
-                  textAlign: "left"
-                }}
-              >
-                SIGNATURE OF SHIPPER/EXPORTER
-              </p>
-            </td>
-            <td
-              style={{
-                width: "177pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-            </td>
-          </tr>
-          <tr style={{ height: "120pt" }}>
-            <td
-              style={{
-                width: "178pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-              <p
-                className="s1"
-                style={{
-                  paddingTop: "8pt",
-                  paddingLeft: "10pt",
-                  textIndent: "0pt",
-                  textAlign: "left"
-                }}
-              >
-                NAME (PLEASE PRINT)
-              </p>
-            </td>
-            <td
-              style={{
-                width: "178pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-              <p
-                className="s1"
-                style={{
-                  paddingTop: "8pt",
-                  paddingLeft: "10pt",
-                  textIndent: "0pt",
-                  textAlign: "left"
-                }}
-              >
-                TITLE (PLEASE PRINT)
-              </p>
-            </td>
-            <td
-              style={{
-                width: "177pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-              <p
-                className="s1"
-                style={{
-                  paddingTop: "9pt",
-                  paddingLeft: "10pt",
-                  textIndent: "0pt",
-                  textAlign: "left"
-                }}
-              >
-                DATE
-              </p>
-            </td>
-          </tr>
-          <tr style={{ height: "69pt" }}>
-            <td
-              style={{
-                width: "178pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-              <p
-                className="s3"
-                style={{
-                  paddingTop: "9pt",
-                  paddingLeft: "10pt",
-                  textIndent: "0pt",
-                  lineHeight: "11pt",
-                  textAlign: "left"
-                }}
-              >
-                2023-05-18
-              </p>
-              <p
-                className="s1"
-                style={{
-                  paddingLeft: "10pt",
-                  textIndent: "0pt",
-                  lineHeight: "10pt",
-                  textAlign: "left"
-                }}
-              >
-                (SIGNATURE DATE)
-              </p>
-            </td>
-            <td
-              style={{
-                width: "178pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-              <p
-                className="s3"
-                style={{
-                  paddingTop: "9pt",
-                  paddingLeft: "10pt",
-                  textIndent: "0pt",
-                  lineHeight: "11pt",
-                  textAlign: "left"
-                }}
-              >
-                HAZEL WOO
-              </p>
-              <p
-                className="s1"
-                style={{
-                  paddingLeft: "10pt",
-                  textIndent: "0pt",
-                  lineHeight: "10pt",
-                  textAlign: "left"
-                }}
-              >
-                (SIGNATURE NAME)
-              </p>
-            </td>
-            <td
-              style={{
-                width: "177pt",
-                borderTopStyle: "solid",
-                borderTopWidth: "1pt",
-                borderTopColor: "#4D4D4D",
-                borderLeftStyle: "solid",
-                borderLeftWidth: "1pt",
-                borderLeftColor: "#4D4D4D",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1pt",
-                borderBottomColor: "#4D4D4D",
-                borderRightStyle: "solid",
-                borderRightWidth: "1pt",
-                borderRightColor: "#4D4D4D"
-              }}
-            >
-              <p style={{ textIndent: "0pt", textAlign: "left" }}>
-                <br />
-              </p>
-              <p
-                style={{ paddingLeft: "5pt", textIndent: "0pt", textAlign: "left" }}
-              >
-                <span></span>
-              </p>
-              <table border={0} cellSpacing={0} cellPadding={0}>
-                <tbody>
-                  <tr>
-                    <td>
-                      <img
-                        width={72}
-                        height={68}
-                        src="data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCABEAEgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9Usewox7CjFFABj2FJ+VLkV8o/H79qfV7vx1H8Ivg5brr3j+6Oy+1BPmttIj/AImdum4Dr2HA5PFAHrPxj/aD0H4Qm3sHtrzxB4lvBiz0LSYjNczEnAyB90ZIGTXjOs+Bf2j/AI/XS3V34qg+DHhS5jC/2Tp4FzqQGAwdpMDaxPBAYY6YPf3n4WfB3TPhrBLdNc3Ot+IrtEF9rWov5lxMQOQD/CmcnaOK9CwMUAfDnxM8JfFf9jbwXqfxFsPirqvxE0TTZka80PxFEpItS+CVlByXGQM4Ga+wfh/4ug8f+BtA8S20TQ2+r2MN9HG/3lWRAwB/OvFv+CgZ3fsl+OodpY3EcFuuP7zzxqP1Net/CPw9N4S+FvhLRbhFSfT9KtraRUbcoZI1U4PfpQB2GPaijFFABkUEijmvG/2qvj9Z/s6fCW+8RyRvPqly4sdLgWPeJLt1PlhuR8owSfYetAHOfG34z6lrHj21+D3gF2bxXqUBk1HVYTuTR7Y8GRsdJMdAcdV9RXoHwb+AnhD4HaKLPw5pkcd7KgF7qkoDXV6+SS8snViSSfbNcN+xz8INY+HXw9udc8WzJe+N/FlydY1WdoAksbSKCICcZwnPHQEtivoDmgAyKCRRzRzQB4d+0j4X8YeN9T+HWj+HtMkutDTxDbajrlyLhERLeBw4jeNjlwzYPGcbOle4DAAA4xS4o5oAMiijmigBMj0r4512+tf2i/24oPCV/ZveeE/hxYm/dNoltbnUJNm0SdsqG4B5BRuxNfVHjvxH/wAIh4L13XPL8z+zrKa62E4zsQtjPOOlfOv/AATz8NTSfB+/+IGqlJ/EXjfU7jVby4a3EUgXzGVEOOq8Mw6AbzxQB9TgBQABgDgAUZHpTu1eRftKftHeHf2bfAj67rJe5vrhvI0/TbcbprqY/dVV9M4yfegD0PxX4z0HwLpE2q+IdWtNG06IZe4vJhGo/Pr+FVfA/wAR/C/xL0r+0vC2uWOu2PQzWUwcD69x+NfKHwq/ZUu/2gbO2+I/x+nvtW1TUQbi18KzTNHY6dCfuKYxjLY659axv2Wfh3YeBv2xPiHb/CyaNPhjbWUUOp2qTloI708hYhnBYYPPIGWHcUAfdeR6UZHpS7hS0ANyPSinUUAc/wCO9DHiXwTr2lMARe2M1uQenzIR/WvIf2IvGEfij9njw5avexXWo6Mr6XdxJgNA0TlFVgOnyBSPavfCMg5AxXx38Q/hn4v/AGYPifqvxU+HFs2t+D9WlWbxL4UiRnmZi4BltkUHLfNu7YweooA+xM18MfH/AEnw54k/4KA/DmPxxfR2GhaXorX1hHeyBbe5uhI2BzxkcH8BXb6v/wAFNfgjo1nbSyalq1zPKPntLXTXeWI9wwOPpXg/7RnhXxL/AMFKvDGnX3w48Ix6NpWj3DC28ReI5mtZbkHO9IkAOV4GSeh4B64APWvj58d/Gfxk8Zn4QfBK3S5W6iMeseL0Ym10+M8OqOONwB7HPIA5r3L4Y/D7wR+yh8KEsTeWmk2Fun2nUtSupdn2u4EY8yY7mPzNsztH4CvDfgH8M/j3+zz8NLbwh4d8CeAhFFmR7t9YuC9xMQA0snyck4HA6AAVZ8HfsceMvid46tfG3x+8UQeJp7f/AFHhSwU/2ZFgMoLDgMRkMCADknOaANWX9srxLf8AifRdSsfhtqll8KprjZdeLdSGz92dwEixjkRn5DuPOM8d6+mtP8XaHqtgl7aavY3Fo6hlmjnQqR9c1ak0ezl006dJaQPYGPyjbNGDHsxjbt6Yx2rzW2/ZX+FVlA0Nv4J0+GFjkxxmRVP4BsUAej6fr+m6tPNDY31veSwgGRYJA+0HOM4PfB/KioPD3hPSPCdklno+m22nW6qFCW8YXgdMnqfxooA1smmnp9aKKAOdPw78LnxAddPh7TDrBg+ym++yJ5vlbt2zdjOM84rdt7eK1iWOGJIYweEjUKB+AoooAnyaTcaKKSAXJoyaKKYBk0UUUAf/2QAA"
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <p />
-              <p
-                className="s1"
-                style={{
-                  paddingLeft: "10pt",
-                  textIndent: "0pt",
-                  lineHeight: "10pt",
-                  textAlign: "left"
-                }}
-              >
-                (SIGNATURE)
-              </p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </>
+const MotherOrderIndexTable = () => {
 
-  )
-}
+    const [loading, setLoading] = useState(false);
+    const [motherorder, setMotherOrder] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [addTracking, setAddTracking] = useState("");
+    const [shipmenttrackingnumber, setShipmenttrackingnumber] = useState("");
+    const [isModalOpen1, setIsModalOpen1] = useState(false);
+    const [addTracking1, setAddTracking1] = useState("");
+    const [shipmenttrackingnumber1, setShipmenttrackingnumber1] = useState("");
+    const [isModalOpen2, setIsModalOpen2] = useState(false);
+    const [addTracking2, setAddTracking2] = useState("");
+    const [shipmenttrackingnumber2, setShipmenttrackingnumber2] = useState("");
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [toastmessage, setToastMessage] = useState(false);
+    const [APIMessage, setAPIMessage] = useState("");
+
+    const toggleActive = useCallback(() => setToastMessage((toastmessage) => !toastmessage), []);
+
+    const toastMarkup = toastmessage ? (
+        <Toast content={APIMessage} onDismiss={toggleActive} />
+    ) : null;
+
+    const fetchAllBabyOrderlist = (checkIt, name) => {
+        if (checkIt !== 'yes') {
+            setLoading(true);
+        }
+        axios.get(`https://${BaseURl}/all_mother_order?shop_name=${shop}`)
+            .then((res) => {
+                console.log(res, "mother order.");
+                setMotherOrder(res.data.mother_order_list);
+                if (name === 'mother-delete') {
+                    toggleActive();
+                };
+                setLoading(false)
+            })
+            .catch((err) => console.log(err));
+    };
+
+    useEffect(() => {
+        fetchAllBabyOrderlist();
+    }, []);
+
+    const [collapsibleStates, setCollapsibleStates] = useState(
+        motherorder.map(() => false)
+    );
+
+    const [testIndex, setTestIndex] = useState(null);
+    const [testIndex1, setTestIndex1] = useState(null);
+    const [countBaby, setCountBaby] = useState(0);
+    const [countBaby1, setCountBaby1] = useState(73);
+
+    const toggleCollapsible = (index, datas) => {
+        if (testIndex == index) {
+            setTestIndex(null);
+            setCountBaby1(73)
+            // setCountBaby(0)
+            console.log("outside");
+        } else {
+            setTestIndex(index);
+            if (testIndex1 != null) {
+                setTestIndex1(null);
+                setCountBaby1(0)
+                setCountBaby(0)
+            }
+        }
+    };
+
+    const [collapsibleStates1, setCollapsibleStates1] = useState(
+        motherorder.map(() => false)
+    );
+
+    const toggleCollapsible1 = (index, datas) => {
+        if (testIndex1 == index) {
+            setTestIndex1(null);
+            setCountBaby1(73)
+            setCountBaby(0)
+        } else {
+            setTestIndex1(index);
+        }
+    };
+
+    const DeleteSpecificMother = async (mother_order_id) => {
+        const formData = new FormData();
+        formData.append("shop_name", shop);
+        formData.append("mother_order_id", mother_order_id)
+        setLoading(true);
+        const response = await axios.post(`https://${BaseURl}/delete_specific_mother_order`, new URLSearchParams(formData));
+        if (response.status === 200) {
+            if (response.data.success === "Mother order is deleted") {
+                setAPIMessage("Mother order is deleted");
+                setIsDeleteModalOpen(false);
+                setTestIndex1(null);
+                setTestIndex(null);
+                setCountBaby(0)
+                fetchAllBabyOrderlist('yes', 'mother-delete');
+            }
+        };
+    };
+
+    const [mothernumber, setMotherNumber] = useState("");
+
+    const closeModal = () => {
+        setIsModalOpen(!isModalOpen)
+    };
+
+    function renderNames(names) {
+        const namesArray = names.split(',');
+
+        return namesArray.map((name, index) => {
+            const shouldAddLineBreak = (index + 1) % 4 === 0;
+            return (
+                <React.Fragment key={index}>
+                    {namesArray.length > 1 ? `#${name},` : `#${name}`}&nbsp;
+                    {shouldAddLineBreak && <br />}
+                </React.Fragment>
+            );
+        });
+    }
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 10;
+
+    const paginatedData = motherorder.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
+
+    const totalItems = motherorder.length;
+    const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
+    const [openPranetList, setOpenParentList] = useState(false);
+
+    const [isScrolling, setIsScrolling] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsScrolling(window.innerWidth < 823);
+        };
+
+        // Set initial state
+        handleResize();
+
+        // Add event listener for window resize
+        window.addEventListener('resize', handleResize);
+
+        // Clean up the event listener when the component unmounts
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    return (
+        <Page>
+            {loading && (
+
+                <div className="spinner">
+                    <div className="spinner-inner"></div>
+                </div>
+            )}
+            {motherorder.length === 0 && (
+
+                <div style={{ marginLeft: "20px", marginBottom: "10px" }}>
+                    <Banner title="Mother Order Lists">
+                        <p>no mother order created yet ...!!</p>
+                    </Banner>
+                </div>
+            )}
+            {paginatedData.length > 0 && !loading && (
+                <div id='mother-html' className="Polaris-LegacyCard" style={{ width: isScrolling ? 'auto' : '117%' }}>
+                    <div className="Polaris-LegacyCard__Header" ><h2 className="Polaris-Text--root Polaris-Text--headingMd">Mother Order Lists</h2></div>
+                    <div className="Polaris-IndexTable">
+                        <div className="Polaris-IndexTable__IndexTableWrapper Polaris-IndexTable__IndexTableWrapper--scrollBarHidden">
+                        <div className="horizontal-scroll-container" style={{ overflowX: 'auto' }}>
+                            <div className="Polaris-IndexTable-ScrollContainer">
+                                <table className={`Polaris-IndexTable__Table Polaris-IndexTable__Table--sticky Polaris-IndexTable__Table--scrolling`}>
+                                    <thead>
+                                        <tr>
+                                            {/* <th className="Polaris-IndexTable__TableHeading Polaris-IndexTable__TableHeading--first" data-index-table-heading="true">
+                                                
+                                            </th> */}
+                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Mother Order Number</th>
+                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Babies Details</th>
+                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
+                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
+                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Add Tracking</th>
+                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Action</th>
+                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {paginatedData && paginatedData.map((datas, index) => {
+                                            return (
+                                                <>
+                                                    <tr id={index} className="Polaris-IndexTable__TableRow">
+                                                        {/* <td className="Polaris-IndexTable__TableCell Polaris-IndexTable__TableHeading--first">
+                                                            
+                                                        </td> */}
+                                                        <td className="Polaris-IndexTable__TableCell">#{datas.mother_order_id}</td>
+                                                        <td className="Polaris-IndexTable__TableCell">{renderNames(datas.mother_order_number)}</td>
+                                                        <td className="Polaris-IndexTable__TableCell">{datas.mother_order_date}</td>
+                                                        <td className="Polaris-IndexTable__TableCell">{datas.price === null ? "0$" : datas.price}</td>
+                                                        <td className="Polaris-IndexTable__TableCell">
+                                                            
+                                                        </td>
+                                                        <td className="Polaris-IndexTable__TableCell">
+                                                            
+                                                        </td>
+                                                        <td onClick={() => {
+                                                            // setCountBaby(datas.parent_baby_order_data.length > 2 ? 148 : 111); 
+                                                            toggleCollapsible(index, datas)
+                                                        }} className="Polaris-IndexTable__TableCell">
+                                                            
+                                                        </td>
+                                                    </tr>
+
+                                                    {testIndex == index &&
+                                                        <tr className={`Polaris-IndexTable__TableRow ${testIndex == index ? 'collapsible-open' : ''
+                                                            }`} style={{
+                                                                // height: testIndex == index ? `${datas.parent_baby_order_data.length == 1 ? countBaby1 : countBaby}px` : `${countBaby}px`
+                                                                height: testIndex == index && `${((datas.parent_baby_order_data.length + 1) * 37) + countBaby}px`
+                                                            }}>
+                                                            <div className="Polaris-LegacyCard" style={{ display: "contents" }}>
+                                                                <div className="Polaris-IndexTable-ScrollContainer">
+                                                                    <table style={{ position: "absolute" }} className="Polaris-IndexTable__Table Polaris-IndexTable__Table--sticky Polaris-IndexTable__Table--scrolling">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                {/* <th className="Polaris-IndexTable__TableHeading Polaris-IndexTable__TableHeading--first" data-index-table-heading="true">
+                                                                                
+                                                                            </th> */}
+                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Order Number</th>
+                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Parent Baby Number</th>
+                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Baby Details</th>
+                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
+                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
+                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Actions</th>
+                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true"></th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            {datas.parent_baby_order_data.map((data1, indexs) =>
+                                                                                <>
+                                                                                    <tr style={{ backgroundColor: "#ebebeb" }} id={indexs} className="Polaris-IndexTable__TableRow">
+                                                                                        
+                                                                                        <td className="Polaris-IndexTable__TableCell">#{data1.parent_order_number}</td>
+                                                                                        <td className="Polaris-IndexTable__TableCell">#{data1.parent_baby_order_id}</td>
+                                                                                        <td className="Polaris-IndexTable__TableCell">
+                                                                                           sa
+                                                                                        </td>
+                                                                                        <td className="Polaris-IndexTable__TableCell">{data1.parent_baby_order_date}</td>
+                                                                                        <td className="Polaris-IndexTable__TableCell">{data1.price}</td>
+                                                                                        <td className="Polaris-IndexTable__TableCell">
+                                                                                            
+                                                                                        </td>
+                                                                                        <td onClick={() => {
+                                                                                           
+                                                                                            toggleCollapsible1(indexs, datas);
+                                                                                        }} className="Polaris-IndexTable__TableCell">
+                                                                                            {testIndex1 == indexs ? <Icon
+                                                                                                source={ChevronUpMinor}
+                                                                                                tone="base"
+                                                                                            /> : <Icon
+                                                                                                source={ChevronDownMinor}
+                                                                                                tone="base"
+                                                                                            />}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    {testIndex1 == indexs &&
+                                                                                        <tr className={`Polaris-IndexTable__TableRow ${testIndex1 == indexs ? 'collapsible-open' : ''
+                                                                                            }`} >
+                                                                                            <div className="Polaris-LegacyCard" style={{ display: "contents" }}>
+                                                                                                <div className="Polaris-IndexTable-ScrollContainer">
+                                                                                                    <table style={{ position: "absolute" }} className="Polaris-IndexTable__Table Polaris-IndexTable__Table--sticky Polaris-IndexTable__Table--scrolling">
+                                                                                                        <thead>
+                                                                                                            <tr>
+                                                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Baby Number</th>
+                                                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
+                                                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Box</th>
+                                                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
+                                                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Actions</th>
+                                                                                                                <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Items</th>
+                                                                                                            </tr>
+                                                                                                        </thead>
+                                                                                                        <tbody>
+                                                                                                            {data1.baby_order_data.map((data1, indexs) =>
+                                                                                                                <tr style={{ backgroundColor: "white" }} id={indexs} className="Polaris-IndexTable__TableRow">
+                                                                                                                    
+                                                                                                                    <td className="Polaris-IndexTable__TableCell">#{data1.baby_ID}</td>
+                                                                                                                    <td className="Polaris-IndexTable__TableCell">{data1.baby_date}</td>
+                                                                                                                    <td className="Polaris-IndexTable__TableCell">{data1.box_type}</td>
+                                                                                                                    <td className="Polaris-IndexTable__TableCell">{data1.baby_total}</td>
+                                                                                                                    <td className="Polaris-IndexTable__TableCell">
+                                                                                                                        
+                                                                                                                    </td>
+                                                                                                                    <td className="clasPolaris-IndexTable__TableCell">
+                                                                                                                        <ActionListInPopoverExample fulfillmentStatus={[]}
+                                                                                                                            itemsdata={data1.line_items}
+                                                                                                                            quantity={data1.item_quantity}
+                                                                                                                            Item='ITEMS' />
+                                                                                                                    </td>
+                                                                                                                </tr>)}
+                                                                                                        </tbody>
+                                                                                                    </table>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="Polaris-IndexTable__TableRow"></div>
+                                                                                        </tr>
+                                                                                    }
+                                                                                </>
+                                                                            )}
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </tr>
+                                                    }
+                                                </>
+                                            )
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                            </div>
+                            <div className="Polaris-IndexTable__TableRow"></div>
+                            {motherorder.length > 9 && <div style={{ display: "flex", justifyContent: "center", paddingBottom: "10px", paddingTop: "10px" }}>
+                                <Pagination
+                                    hasPrevious={currentPage > 1}
+                                    hasNext={currentPage < totalPages}
+                                    label={`${paginatedData.length} of ${motherorder.length}`}
+                                    onPrevious={() => handlePageChange(currentPage - 1)}
+                                    onNext={() => handlePageChange(currentPage + 1)}
+                                />
+                            </div>}
+                        </div>
+                    </div>
+                </div>
+            )}
+            <Modal
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                title="Add Tracking"
+                secondaryActions={[
+                    {
+                        content: 'Close',
+                        onAction: closeModal,
+                    },
+                ]}
+            >
+                <Modal.Section>
+                    <FormLayout>
+                        <FormLayout.Group>
+                            <TextField
+                                type="text"
+                                label="Tracking number"
+                                autoComplete="off"
+                                value={shipmenttrackingnumber}
+                            />
+                            <TextField
+                                type="text"
+                                label="Shipping carrier"
+                                autoComplete="off"
+                                value={addTracking}
+                            />
+                        </FormLayout.Group>
+                    </FormLayout>
+                </Modal.Section>
+            </Modal>
+            <Modal
+                open={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(!isDeleteModalOpen)}
+                title="Delete Confirmation"
+                primaryAction={{
+                    content: 'Delete',
+                    onAction: () => DeleteSpecificMother(mothernumber),
+                }}
+                secondaryActions={[
+                    {
+                        content: 'Cancel',
+                        onAction: () => setIsDeleteModalOpen(!isDeleteModalOpen),
+                    },
+                ]}
+                size="small"
+            >
+                <Modal.Section>
+                    <TextContainer>
+                        <p style={{ fontSize: '15px', fontWeight: 'bold' }}>Are you sure you want to delete the mother_order_date order #{mothernumber}?</p>
+                    </TextContainer>
+                </Modal.Section>
+            </Modal>
+            <Modal
+                open={isModalOpen1}
+                onClose={() => setIsModalOpen1(false)}
+                title="Add Tracking"
+                secondaryActions={[
+                    {
+                        content: 'Close',
+                        onAction: () => setIsModalOpen1(false),
+                    },
+                ]}
+            >
+                <Modal.Section>
+                    <FormLayout>
+                        <FormLayout.Group>
+                            <TextField
+                                type="text"
+                                label="Tracking number"
+                                autoComplete="off"
+                                value={shipmenttrackingnumber1}
+                            />
+                            <TextField
+                                type="text"
+                                label="Shipping carrier"
+                                autoComplete="off"
+                                value={addTracking1}
+                            />
+                        </FormLayout.Group>
+                    </FormLayout>
+                </Modal.Section>
+            </Modal>
+            <Modal
+                open={isModalOpen2}
+                onClose={() => setIsModalOpen2(false)}
+                title="Add Tracking"
+                secondaryActions={[
+                    {
+                        content: 'Close',
+                        onAction: () => setIsModalOpen2(),
+                    },
+                ]}
+            >
+                <Modal.Section>
+                    <FormLayout>
+                        <FormLayout.Group>
+                            <TextField
+                                type="text"
+                                label="Tracking number"
+                                autoComplete="off"
+                                value={shipmenttrackingnumber2}
+                            />
+                            <TextField
+                                type="text"
+                                label="Shipping carrier"
+                                autoComplete="off"
+                                value={addTracking2}
+                            />
+                        </FormLayout.Group>
+                    </FormLayout>
+                </Modal.Section>
+            </Modal>
+            <div id="toast-message">
+                <Frame>
+                    {toastMarkup}
+                </Frame>
+            </div>
+        </Page>
+    );
+};
+
+export default MotherOrderIndexTable;
