@@ -11,6 +11,7 @@ import {
     Button,
     Toast,
     Frame,
+    Tooltip, Icon, Scrollable
 } from '@shopify/polaris';
 import OpenModal from './openmodal';
 import ActionListInPopoverExample from './items';
@@ -19,6 +20,9 @@ import { shop } from '../contant';
 import { BaseURl } from '../contant';
 import { useContext } from 'react';
 import { ModalContext } from '../context/modalContext';
+import {
+    DropdownMinor
+} from '@shopify/polaris-icons';
 import axios from 'axios';
 
 function Table() {
@@ -32,6 +36,7 @@ function Table() {
     const [isLoading1, setIsLoading1] = useState(false);
     const [active, setActive] = useState(false);
     const [genrateIdentifierMessage, setGenrateIdentifiersMessage] = useState('Message sent');
+    const [identifierDataList, setIdentifiersList] = useState([]);
 
     // babyorder available
 
@@ -115,6 +120,7 @@ function Table() {
             .then((data) => {
                 console.log(data);
                 setOrders(data.order_list);
+                setIdentifiersList(data.identifierList);
                 setIsLoading(false);
             })
             .catch((error) => {
@@ -224,7 +230,27 @@ function Table() {
         } else {
             setIsLoading(false);
         }
-    }
+    };
+
+    const Identifiers = ({ identifierData }) => {
+        return (
+            <div>
+                {identifierData.slice(0, 3).map((item, i) => (
+                    <div key={i}>
+                        <div style={{ display: '', marginTop: '15px', alignItems: 'center' }}>
+                            <div style={{ marginLeft: '8px', whiteSpace: 'normal' }}>
+                                <Text style={{ whiteSpace: 'normal' }}>
+                                    <Text fontWeight='bold'>{`Identifier ${item.ID} (0${item.created_parcel}/15)`}</Text>
+                                    <Text>PID : {item.PID}</Text>
+                                    <Text>SID : {item.SID}</Text>
+                                </Text>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        );
+    };
 
     return (
         <>
@@ -246,7 +272,17 @@ function Table() {
                 />
             ) : (
                 <div id='align-identi'>
-                    <Page title={<div style={{ display: "flex", justifyContent: "space-between" }}><div>Orders Lists</div><div><Button onClick={() => fetchGenrateIdentifiersData()} pressed>Generate Identifiers</Button></div></div>}>
+                    <Page title={
+                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                            <div>Orders Lists</div>
+                            <div>
+                                <Tooltip content={<Identifiers
+                                    identifierData={identifierDataList}
+                                    Item='ITEMS' />}>
+                                    <Button onClick={() => fetchGenrateIdentifiersData()} pressed><span style={{ display: "flex", alignItems: 'center' }}> <p>Generate Identifiers ({`${identifierDataList.length}`})</p> <p><Icon source={DropdownMinor} /></p></span></Button>
+                                </Tooltip>
+                            </div>
+                        </div>}>
                         {orders.length === 0 && (
 
                             <div style={{ marginLeft: "20px", marginBottom: "10px" }}>

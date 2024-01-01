@@ -366,7 +366,6 @@ export default function TestBabyOrderList() {
 
     // items
     const [active2, setActive2] = useState(false);
-
     const [openCardIndex, setOpenCardIndex] = useState(null);
 
     // paginmation
@@ -829,8 +828,7 @@ export default function TestBabyOrderList() {
         } else {
             setIdentifiersMatched(true);
         }
-    }, [paginatedData, selectedResources])
-
+    }, [paginatedData, selectedResources]);
 
     return (
         <Page>
@@ -869,7 +867,7 @@ export default function TestBabyOrderList() {
                                     <div>
                                         <Popover
                                             active={""}
-                                            activator={<Button pressed onClick={() => handleSubmit()} disabled={((parentBabyOrder.length === 0 || selectedResources.length === 0 ||  identifiersMatched)) ? true : false}>CREATE MOTHER ORDER</Button>}
+                                            activator={<Button pressed onClick={() => handleSubmit()} disabled={((parentBabyOrder.length === 0 || selectedResources.length === 0 || identifiersMatched)) ? true : false}>CREATE MOTHER ORDER</Button>}
                                             onClose={togglePopoverActive}
                                             ariaHaspopup={false}
                                             sectioned

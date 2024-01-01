@@ -3,6 +3,7 @@ import { SearchMinor } from '@shopify/polaris-icons';
 import { useState, useCallback, useMemo } from 'react';
 
 function ComboboxExample() {
+    
     const deselectedOptions = useMemo(
         () => [
             { value: 'rustic', label: 'Rustic' },

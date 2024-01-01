@@ -86,7 +86,8 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
     const [identifiersSelect, setIdentifiersSelect] = useState('');
 
     // Convert ID key to value
-    const convertedData = identifiersData && identifiersData.map(item => ({ value: item.ID, label: `PID : ${item.PID} | SID : ${item.SID}` }));
+    // const convertedData = identifiersData && identifiersData.map(item => ({ value: item.ID, label: `PID : ${item.PID} | SID : ${item.SID}`,  }));
+    const convertedData = identifiersData && identifiersData.map((item, index) => ({ value: item.ID, label: `Generate Identifiers ${index + 1} (${item.Created_parcel}/15)` }));
     const arrayOfStrings = convertedData.map(obj => obj.label);
 
     useEffect(() => {
@@ -458,7 +459,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                         title={
                                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                                 <div style={{ display: 'flex', alignItems: 'center', fontWeight: "bold" }}>
-                                                    Notes
+                                                    Used Identifier
                                                 </div>
                                                 <div >
                                                     <Addnote />
@@ -468,9 +469,13 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                         sectioned
                                     >
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'self-end' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <div style={{ display: '', alignItems: 'center' }}>
+                                                <Text fontWeight='semibold'>
+                                                    Identifier 1 (01/15)
+                                                </Text>
                                                 <Text color='subdued'>
-                                                    {notes}
+                                                    PID : JD01469920087 <br />
+                                                    SID : 754624277
                                                 </Text>
                                             </div>
                                         </div>
