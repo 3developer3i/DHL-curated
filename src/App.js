@@ -3,15 +3,14 @@ import Table from './components/table';
 import MotherOrderIndexTable from './pages/newMotherorder';
 import TestBabyOrderList from './pages/parentbaby';
 import AddressPage from './pages/tableAddressPage';
+import { Page } from '@shopify/polaris';
 
 function App() {
 
   const [state, setState] = useState("");
-
   // const currentPath = window.location.pathname;
   useEffect(() => {
     const currentPath = window.location.pathname;
-
     if (currentPath === '/motherorder_page') {
       setState("mother");
     } else if (currentPath === '/babyorder_page') {
@@ -22,12 +21,12 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      {(state === "") && <Table />}
-      {state === "mother" && <MotherOrderIndexTable />} 
-      {state === "baby" && <TestBabyOrderList />}
-      {state === "address" && <AddressPage />}
-    </div>
+      <div className="App">
+        {(state === "") && <Table />}
+        {state === "mother" && <MotherOrderIndexTable />}
+        {state === "baby" && <TestBabyOrderList />}
+        {state === "address" && <AddressPage />}
+      </div>
   );
 }
 

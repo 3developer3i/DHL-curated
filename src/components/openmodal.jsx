@@ -28,7 +28,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
     const { uniqOrderId, setMotherOrderData, isLoading, ShowTable1, setShowtable, setIsLoading, setSelectedItems, selectedItems, setBabyOrderData, setTableData, tableData, setParentBabyOrder, setOpenTable, setOrder_List, setCallApiParentBaby, callApiParentBaby, order_list, setMotherOrder, babyIDs, babyOrderIDs, setBabyOrderNumber, openmotherorder, setSub_order, identifiersData, parentBabyOrder, setIdentifiersData } = modalcontext;
 
     const [isModalClose, setIsModalClose] = useState(false);
-    const closeModal = () => { setIsModalClose(true); };
+    const closeModal = () => { setIsModalOpen(false); };
 
     const [createbabyorder, setcreatebabyorder] = useState(false)
     const [newData, setNewData] = useState([]);
@@ -51,7 +51,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
         if (lineItemsData) {
             // setTableData(lineItemsData.order_list_extra[0].line_items);
             if (lineItemsData.order_list_extra[0].contact_details !== null) {
-                console.log("lineItemsData.order_list_extra[0].contact_details", lineItemsData.order_list_extra[0].contact_details);
+                // console.log("lineItemsData.order_list_extra[0].contact_details", lineItemsData.order_list_extra[0].contact_details);
                 setCustomerData(lineItemsData.order_list_extra[0].contact_details);
             };
         };
@@ -87,17 +87,29 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
 
     // Convert ID key to value
     // const convertedData = identifiersData && identifiersData.map(item => ({ value: item.ID, label: `PID : ${item.PID} | SID : ${item.SID}`,  }));
-    const convertedData = identifiersData && identifiersData.map((item, index) => ({ value: item.ID, label: `Generate Identifiers ${index + 1} (${item.Created_parcel}/15)` }));
+    const convertedData = identifiersData && identifiersData.map((item, index) => ({ value: item.ID, label: `Mother ${item.ID} (${item.Created_parcel}/15)` }));
     const arrayOfStrings = convertedData.map(obj => obj.label);
+    // console.log(arrayOfStrings, "arrayOfStrings...92");
+    // console.log(identifiersData, "identifiersData...93");
+    // console.log(order_list, "order_list...94");
 
     useEffect(() => {
         setIdentifiersSelect(convertedData[0].label);
     }, []);
 
+    useEffect(()=>{
+        const IdentifierElement = document.querySelector("#identifier-icon .Polaris-Select__Icon");
+        if (IdentifierElement && order_list.length > 0 && popoverActive) {
+            IdentifierElement.style.display = "none";
+        } else {
+            return
+        }
+    },[order_list, popoverActive])
+
     const fetchLineItems = async (checkIt) => {
         if (checkIt !== "parent") {
             setIsLoading(true);
-        }
+        };
         fetch(`https://${BaseURl}/get_baby_order?shop_name=${shop}&order_id=${uniqOrderId}`)
             .then((response) => response.json())
             .then((data) => {
@@ -113,11 +125,11 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                         return result;
                     }, []);
                 };
-
                 // Call the function with the input array
                 const resultArray = replicateItems(data.order_list_extra[0].line_items);
                 setTableData(data.order_list_extra[0].line_items);
-                setOrder_List(data.order_list);
+                setOrder_List(data?.order_list);
+                console.log(data.identifier_Data, "delete baby after identifier...");
                 setIdentifiersData(data.identifier_Data);
                 setParentBabyOrder(data.parent_baby_order_list);
                 setIsModalOpen(true);
@@ -135,8 +147,6 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
     const fetchData = () => {
         setIsLoading(true); // Set loading to true before making the request
         const newOrderNumber = generateOrderNumber();
-        // Get variant_ids based on indices
-        // Get variant_ids based on values
         const variantIdsToRetrieve = selectedItems.map(value => {
             const matchingItem = tableData.find(item => item.name.includes(`#${value}`));
             return matchingItem?.variant_id;
@@ -149,7 +159,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
         formData.append("shop_name", shop);
         formData.append("order_number", lineItemsData.order_list_extra[0].order_number);
         formData.append("select_box_size", getselctId);
-        formData.append("identifier", foundObject.value);
+        formData.append("identifier", order_list.length > 0 ? identifiersData[0]?.ID : foundObject?.value);
         setIsLoading(true);
 
         axios.post(`https://${BaseURl}/create_baby_order`, new URLSearchParams(formData))
@@ -307,290 +317,282 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
 
     return (
         <>
-            <Page>
-                {isModalClose ? (
+            {(isLoading1 || isLoading) && (
+                <div className="spinner">
+                    <div className="spinner-inner"></div>
+                </div>
+            )}
+            <Page
+                title={
                     <>
-                        <Table />
-                    </>
-                ) : (
-                    <>
-                        {(isLoading1 || isLoading) && (
-                            <div className="spinner">
-                                <div className="spinner-inner"></div>
+                        <div style={{ display: 'flex', alignItems: 'center' }}  >
+                            <a href='#' onClick={closeModal}>
+                                <Icon color='base' source={MobileBackArrowMajor} />
+                            </a>
+                            <div style={{ display: 'flex', marginLeft: "10Px", alignItems: 'center', fontWeight: "bold" }}>
+                                #{lineItemsData && lineItemsData.order_list_extra[0].order_number && lineItemsData.order_list_extra[0].order_number}
                             </div>
-                        )}
-                        <Page
-                            title={
-                                <>
-                                    <div style={{ display: 'flex', alignItems: 'center' }}  >
-                                        <a href='#' onClick={closeModal}>
-                                            <Icon color='base' source={MobileBackArrowMajor} />
-                                        </a>
-                                        <div style={{ display: 'flex', marginLeft: "10Px", alignItems: 'center', fontWeight: "bold" }}>
-                                            #{lineItemsData && lineItemsData.order_list_extra[0].order_number && lineItemsData.order_list_extra[0].order_number}
+                            <div style={{ marginLeft: "25%" }}>
+                                <Popover
+                                    active={popoverActive}
+                                    activator={<Button size='slim' primary onClick={() => togglePopoverActive()} disabled={createbabyorder && !openmotherorder ? false : true}>CREATE PARCEL</Button>}
+                                    onClose={togglePopoverActive}
+                                    ariaHaspopup={false}
+                                    sectioned
+                                >
+                                    <FormLayout>
+                                        <Select value={selectedBoxSize}
+                                            onChange={handleSelectChange} label="Box Sizes:" options={['COAT BOXES - 40 x 26 x 10', 'SWEATER BOXES - 37 x 30 x 6', 'SHOULDER BAG BOXES - 36 x 22 x 11', 'MINI BAG BOX - 28 x 20 x 8']} />
+                                        <div id='identifier-icon'>
+                                            <Select disabled={order_list.length > 0 ? true : false} value={identifiersSelect}
+                                                onChange={(label) => { console.log(label); setIdentifiersId(label); setIdentifiersSelect(label) }} requiredIndicator={false} options={arrayOfStrings} />
                                         </div>
-                                        <div style={{ marginLeft: "25%" }}>
-                                            <Popover
-                                                active={popoverActive}
-                                                activator={<Button size='slim' primary onClick={() => togglePopoverActive()} disabled={createbabyorder && !openmotherorder ? false : true}>CREATE PARCEL</Button>}
-                                                onClose={togglePopoverActive}
-                                                ariaHaspopup={false}
-                                                sectioned
-                                            >
-                                                <FormLayout>
-                                                    <Select value={selectedBoxSize}
-                                                        onChange={handleSelectChange} label="Box Sizes:" options={['COAT BOXES - 40 x 26 x 10', 'SWEATER BOXES - 37 x 30 x 6', 'SHOULDER BAG BOXES - 36 x 22 x 11', 'MINI BAG BOX - 28 x 20 x 8']} />
-                                                    <Select value={identifiersSelect}
-                                                        onChange={(label) => { console.log(label); setIdentifiersId(label); setIdentifiersSelect(label) }} label="Select Identifiers:" options={arrayOfStrings} />
-                                                    <Button primary size="slim" onClick={ShowTable}>Add to baby order</Button>
-                                                </FormLayout>
-                                            </Popover>
-                                        </div>
-                                        {openmotherorder && <div style={{ marginLeft: "10px" }}>
-                                            <Button size='slim' onClick={() => { fetchMotherData() }} primary disabled={false}>CREATE MOTHER ORDER</Button>
-                                        </div>}
-                                        {(tableData.length === 0 && parentBabyOrder.length == 0) && <div style={{ marginLeft: "10px" }}>
-                                            <Button size='slim' onClick={() => {
-                                                setCallApiParentBaby(true); // Iterate through the data and collect baby_ID values
-                                                createParentBabyOrder();
-                                            }} disabled={parentBabyOrder.length == 0 ? false : true} primary>CREATE PARENT BABY ORDER</Button>
-                                        </div>}
-                                    </div>
-                                </>
-                            }
-                        >
-                            {/* <Grid>
+                                        <Button primary size="slim" onClick={ShowTable}>Add to baby order</Button>
+                                    </FormLayout>
+                                </Popover>
+                            </div>
+                            {openmotherorder && <div style={{ marginLeft: "10px" }}>
+                                <Button size='slim' onClick={() => { fetchMotherData() }} primary disabled={false}>CREATE MOTHER ORDER</Button>
+                            </div>}
+                            {(tableData.length === 0 && parentBabyOrder.length == 0) && <div style={{ marginLeft: "10px" }}>
+                                <Button size='slim' onClick={() => {
+                                    setCallApiParentBaby(true); // Iterate through the data and collect baby_ID values
+                                    createParentBabyOrder();
+                                }} disabled={parentBabyOrder.length == 0 ? false : true} primary>CREATE PARENT BABY ORDER</Button>
+                            </div>}
+                        </div>
+                    </>
+                }
+            >
+                {/* <Grid>
                             <Grid.Cell columnSpan={{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }}> */}
-                            <div style={{ display: window.innerWidth > 630 ? "flex" : "", justifyContent: "space-between" }}>
-                                <div style={{ marginRight: window.innerWidth > 630 ? "10px" : "" }}>
-                                    <LegacyCard sectioned>
-                                        <Layout>
-                                            <Layout.Section oneHalf>
-                                                <LegacyCard.Section>
-                                                    <Text color="subdued" as="span">
-                                                        {lineItemsData && lineItemsData.order_list_extra[0].created_at}
-                                                    </Text>
-                                                    <div style={{ marginTop: '15px' }}>
-                                                        {/* <Text color="subdued" as="span">
+                <div style={{ display: window.innerWidth > 630 ? "flex" : "", justifyContent: "space-between" }}>
+                    <div style={{ marginRight: window.innerWidth > 630 ? "10px" : "" }}>
+                        <LegacyCard sectioned>
+                            <Layout>
+                                <Layout.Section oneHalf>
+                                    <LegacyCard.Section>
+                                        <Text color="subdued" as="span">
+                                            {lineItemsData && lineItemsData.order_list_extra[0].created_at}
+                                        </Text>
+                                        <div style={{ marginTop: '15px' }}>
+                                            {/* <Text color="subdued" as="span">
                                                         Showing {}
                                                     </Text> */}
-                                                        <LegacyCard>
-                                                            <div id="don">
-                                                                <ResourceList
-                                                                    resourceName={{ singular: 'product', plural: 'products' }}
-                                                                    selectedItems={selectedItems}
-                                                                    onSelectionChange={(selectedId) => {
-                                                                        console.log(selectedId, "selectedId..");
-                                                                        setSelectedItems(selectedId);
-                                                                    }}
-                                                                    selectable
-                                                                    items={paginatedData}
-                                                                    idForItem={(item, index) => fetchGetUniqId(item.name)}
-                                                                    renderItem={(item, index) => {
-                                                                        return (
-                                                                            <>
-                                                                                <ResourceItem
-                                                                                    id={index}
-                                                                                    media={(
-                                                                                        <Thumbnail
-                                                                                            source={item.product_images ? item.product_images : ""}
-                                                                                            alt="Tucan scarf"
-                                                                                        />
-                                                                                    )}
-
-                                                                                    accessibilityLabel={`View details for ${item.name}`}
-                                                                                >
-                                                                                    <Text variant="bodyMd" fontWeight="bold" as="h3">
-                                                                                        <><div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                                                            <div>
-                                                                                                <button style={{ background: 'none', border: 'none', padding: '0', cursor: 'pointer', width: "15vh" }}>
-                                                                                                    <span>{item.name}</span>
-                                                                                                </button>
-                                                                                            </div>
-                                                                                            <div>
-                                                                                                <span style={{ marginLeft: '26px' }}> <span style={textStyle}>{item.price} x {item.quantity} </span></span>
-                                                                                            </div>
-                                                                                            <div>
-                                                                                                <span style={{ marginLeft: '26px' }}> <span style={textStyle}>${(parseFloat(item.price.replace(/[^\d.-]/g, '')) * item.quantity).toFixed(2)}</span></span>
-                                                                                            </div>
-                                                                                        </div> </>
-                                                                                    </Text>
-                                                                                </ResourceItem>
-                                                                            </>
-                                                                        );
-                                                                    }}
-                                                                />
-                                                            </div>
-                                                            {tableData.length > 5 &&
+                                            <LegacyCard>
+                                                <div id="don">
+                                                    <ResourceList
+                                                        resourceName={{ singular: 'product', plural: 'products' }}
+                                                        selectedItems={selectedItems}
+                                                        onSelectionChange={(selectedId) => {
+                                                            console.log(selectedId, "selectedId..");
+                                                            setSelectedItems(selectedId);
+                                                        }}
+                                                        selectable
+                                                        items={paginatedData}
+                                                        idForItem={(item, index) => fetchGetUniqId(item.name)}
+                                                        renderItem={(item, index) => {
+                                                            return (
                                                                 <>
-                                                                    <div className="Polaris-IndexTable__TableRow"></div>
-                                                                    <div style={{ display: "flex", justifyContent: "center", paddingBottom: "10px", paddingTop: "10px" }}>
-                                                                        <Pagination
-                                                                            hasPrevious={currentPage > 1}
-                                                                            hasNext={currentPage < totalPages}
-                                                                            label={`${paginatedData.length} of ${tableData.length}`}
-                                                                            onPrevious={() => handlePageChange(currentPage - 1)}
-                                                                            onNext={() => handlePageChange(currentPage + 1)}
-                                                                        />
-                                                                    </div>
+                                                                    <ResourceItem
+                                                                        id={index}
+                                                                        media={(
+                                                                            <Thumbnail
+                                                                                source={item.product_images ? item.product_images : ""}
+                                                                                alt="Tucan scarf"
+                                                                            />
+                                                                        )}
+
+                                                                        accessibilityLabel={`View details for ${item.name}`}
+                                                                    >
+                                                                        <Text variant="bodyMd" fontWeight="bold" as="h3">
+                                                                            <><div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                                                <div>
+                                                                                    <button style={{ background: 'none', border: 'none', padding: '0', cursor: 'pointer', width: "15vh" }}>
+                                                                                        <span>{item.name}</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div>
+                                                                                    <span style={{ marginLeft: '26px' }}> <span style={textStyle}>{item.price} x {item.quantity} </span></span>
+                                                                                </div>
+                                                                                <div>
+                                                                                    <span style={{ marginLeft: '26px' }}> <span style={textStyle}>${(parseFloat(item.price.replace(/[^\d.-]/g, '')) * item.quantity).toFixed(2)}</span></span>
+                                                                                </div>
+                                                                            </div> </>
+                                                                        </Text>
+                                                                    </ResourceItem>
                                                                 </>
-                                                            }
-                                                        </LegacyCard>
-                                                        {tableData.length > 0 ? "" : <div style={{
-                                                            fontSize: '16px', // Adjust the font size as needed
-                                                            fontWeight: 'bold', // Make the text bold
-                                                            color: 'green', // Change the text color
-                                                            textAlign: 'center', // Center-align the text
-                                                            marginTop: '20px', // Add some top margin for spacing
-                                                        }}>
-                                                            No more products to allocate
-                                                        </div>}
-                                                    </div>
-                                                </LegacyCard.Section>
-                                            </Layout.Section>
-                                        </Layout>
-                                    </LegacyCard>
-                                </div>
-                                {/* </Grid.Cell> */}
-                                {/* <Grid.Cell columnSpan={{ xs: 5, sm: 2, md: 2, lg: 3, xl: 4 }}> */}
-                                <br />
-                                <div style={{ display: 'flex', flexDirection: 'column', width: "35%" }}>
-                                    <LegacyCard
-                                        title={
-                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', fontWeight: "bold" }}>
-                                                    Used Identifier
+                                                            );
+                                                        }}
+                                                    />
                                                 </div>
-                                                <div >
-                                                    <Addnote />
-                                                </div>
-                                            </div>
-                                        }
-                                        sectioned
-                                    >
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'self-end' }}>
-                                            <div style={{ display: '', alignItems: 'center' }}>
-                                                <Text fontWeight='semibold'>
-                                                    Identifier 1 (01/15)
-                                                </Text>
-                                                <Text color='subdued'>
-                                                    PID : JD01469920087 <br />
-                                                    SID : 754624277
-                                                </Text>
-                                            </div>
-                                        </div>
-                                    </LegacyCard>
-
-                                    {customerData.map((datas, index) => {
-                                        // Create an array to store the names of missing fields
-
-                                        // Render LegacyCard with missing field messages
-                                        return (
-                                            <LegacyCard
-                                                title={
+                                                {tableData.length > 5 &&
                                                     <>
-                                                        <div style={{ fontWeight: 'bold' }}>Customer</div>
-                                                        <div style={{ marginTop: '5px' }}>
-                                                            <Text color="subdued" as="span">
-                                                                {datas.shipping_address.first_name &&
-                                                                    datas.shipping_address.first_name !== null
-                                                                    ? datas.shipping_address.first_name
-                                                                    : 'no name'}
-                                                                <span style={{ marginLeft: '5px' }}>
-                                                                    {datas.shipping_address.last_name !== null
-                                                                        ? datas.shipping_address.last_name
-                                                                        : ''}
-                                                                </span>
-                                                            </Text>
-                                                        </div><br />
-                                                        <div style={{ fontWeight: 'bold' }}>Contact Information</div>
-                                                        <div>
-                                                            {datas.contact_email !== null ? (
-                                                                <div>{datas.contact_email}</div>
-                                                            ) : (
-                                                                <div style={{ color: 'red' }}>Email: This field is required</div>
-                                                            )}
-                                                        </div>
-                                                        <br /><br />
-                                                        {/* Display email field with required message */}
-                                                        <div style={{ fontWeight: 'bold' }}>Shipping Address</div>
-
-                                                        {/* Include additional fields */}
-                                                        <div>
-                                                            {datas.shipping_address.address1 !== "" ? (
-                                                                <div>{datas.shipping_address.address1}</div>
-                                                            ) : ""}
-                                                        </div>
-                                                        {/* Include additional fields */}
-                                                        <div>
-                                                            {datas.shipping_address.address2 !== "" ? (
-                                                                <div>{datas.shipping_address.address2}</div>
-                                                            ) : ""}
-                                                        </div>
-                                                        {/* Include additional fields */}
-                                                        <div>
-                                                            {datas.shipping_address.city !== "" ? (
-                                                                <div>{datas.shipping_address.city}</div>
-                                                            ) : ""}
-                                                        </div>
-                                                        {/* Include additional fields */}
-                                                        <div>
-                                                            {datas.shipping_address.company !== "" ? (
-                                                                <div>{datas.shipping_address.company}</div>
-                                                            ) : ""}
-                                                        </div>
-                                                        {/* Include additional fields */}
-                                                        <div>
-                                                            {datas.shipping_address.country !== "" ? (
-                                                                <div>{datas.shipping_address.country}</div>
-                                                            ) : ""}
-                                                        </div>
-                                                        <div>
-                                                            {datas.shipping_address.zip !== "" ? (
-                                                                <div>{datas.shipping_address.zip}</div>
-                                                            ) : ""}
+                                                        <div className="Polaris-IndexTable__TableRow"></div>
+                                                        <div style={{ display: "flex", justifyContent: "center", paddingBottom: "10px", paddingTop: "10px" }}>
+                                                            <Pagination
+                                                                hasPrevious={currentPage > 1}
+                                                                hasNext={currentPage < totalPages}
+                                                                label={`${paginatedData.length} of ${tableData.length}`}
+                                                                onPrevious={() => handlePageChange(currentPage - 1)}
+                                                                onNext={() => handlePageChange(currentPage + 1)}
+                                                            />
                                                         </div>
                                                     </>
                                                 }
-                                                sectioned
-                                            >
-                                                {/* Rest of the LegacyCard content */}
                                             </LegacyCard>
-                                        );
-                                    })}
+                                            {tableData.length > 0 ? "" : <div style={{
+                                                fontSize: '16px', // Adjust the font size as needed
+                                                fontWeight: 'bold', // Make the text bold
+                                                color: 'green', // Change the text color
+                                                textAlign: 'center', // Center-align the text
+                                                marginTop: '20px', // Add some top margin for spacing
+                                            }}>
+                                                No more products to allocate
+                                            </div>}
+                                        </div>
+                                    </LegacyCard.Section>
+                                </Layout.Section>
+                            </Layout>
+                        </LegacyCard>
+                    </div>
+                    {/* </Grid.Cell> */}
+                    {/* <Grid.Cell columnSpan={{ xs: 5, sm: 2, md: 2, lg: 3, xl: 4 }}> */}
+                    <br />
+                    <div style={{ display: 'flex', flexDirection: 'column', width: "35%" }}>
+                        {order_list.length > 0 && <LegacyCard
+                            title={
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', fontWeight: "bold" }}>
+                                        Used Identifier
+                                    </div>
+                                    <div >
+                                        <Addnote />
+                                    </div>
+                                </div>
+                            }
+                            sectioned
+                        >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'self-end' }}>
+                                <div style={{ display: '', alignItems: 'center' }}>
+                                    <Text fontWeight='semibold'>
+                                        {`mother ${identifiersData[0]?.ID} (0${identifiersData[0]?.Created_parcel}/15)`}
+                                    </Text>
+                                    <Text color='subdued'>
+                                        PID : {identifiersData[0]?.PID} <br />
+                                        SID : {identifiersData[0]?.SID}
+                                    </Text>
                                 </div>
                             </div>
-                            {/* </Grid.Cell>
-                        </Grid> */}
-                            <br />
-                            <Grid.Cell>
-                                {(ShowTable1 || order_list.length !== 0 || parentBabyOrder.length !== 0) ? (
-                                    <>
-                                        <AddproductTable number={lineItemsData.order_list_extra[0].order_number} setToastMessage={setToastMessage} />
-                                    </>
+                        </LegacyCard>}
 
-                                ) : (
-                                    <>
-                                        <div style={{
-                                            fontSize: '24px', // Adjust the font size as needed
-                                            fontWeight: 'bold', // Make the text bold
-                                            color: 'red', // Change the text color
-                                            textAlign: 'center', // Center-align the text
-                                            marginTop: '20px', // Add some top margin for spacing
-                                        }}>
-                                            No Products Selected
-                                        </div>
-                                    </>
-                                )}
-                            </Grid.Cell>
-                            <div id="toast-message" style={{ minHeight: "0px" }}>
-                                <Frame>
-                                    {toastMarkup}
-                                </Frame>
+                        {customerData.map((datas, index) => {
+                            // Create an array to store the names of missing fields
+
+                            // Render LegacyCard with missing field messages
+                            return (
+                                <LegacyCard
+                                    title={
+                                        <>
+                                            <div style={{ fontWeight: 'bold' }}>Customer</div>
+                                            <div style={{ marginTop: '5px' }}>
+                                                <Text color="subdued" as="span">
+                                                    {datas.shipping_address.first_name &&
+                                                        datas.shipping_address.first_name !== null
+                                                        ? datas.shipping_address.first_name
+                                                        : 'no name'}
+                                                    <span style={{ marginLeft: '5px' }}>
+                                                        {datas.shipping_address.last_name !== null
+                                                            ? datas.shipping_address.last_name
+                                                            : ''}
+                                                    </span>
+                                                </Text>
+                                            </div><br />
+                                            <div style={{ fontWeight: 'bold' }}>Contact Information</div>
+                                            <div>
+                                                {datas.contact_email !== null ? (
+                                                    <div>{datas.contact_email}</div>
+                                                ) : (
+                                                    <div style={{ color: 'red' }}>Email: This field is required</div>
+                                                )}
+                                            </div>
+                                            <br /><br />
+                                            {/* Display email field with required message */}
+                                            <div style={{ fontWeight: 'bold' }}>Shipping Address</div>
+
+                                            {/* Include additional fields */}
+                                            <div>
+                                                {datas.shipping_address.address1 !== "" ? (
+                                                    <div>{datas.shipping_address.address1}</div>
+                                                ) : ""}
+                                            </div>
+                                            {/* Include additional fields */}
+                                            <div>
+                                                {datas.shipping_address.address2 !== "" ? (
+                                                    <div>{datas.shipping_address.address2}</div>
+                                                ) : ""}
+                                            </div>
+                                            {/* Include additional fields */}
+                                            <div>
+                                                {datas.shipping_address.city !== "" ? (
+                                                    <div>{datas.shipping_address.city}</div>
+                                                ) : ""}
+                                            </div>
+                                            {/* Include additional fields */}
+                                            <div>
+                                                {datas.shipping_address.company !== "" ? (
+                                                    <div>{datas.shipping_address.company}</div>
+                                                ) : ""}
+                                            </div>
+                                            {/* Include additional fields */}
+                                            <div>
+                                                {datas.shipping_address.country !== "" ? (
+                                                    <div>{datas.shipping_address.country}</div>
+                                                ) : ""}
+                                            </div>
+                                            <div>
+                                                {datas.shipping_address.zip !== "" ? (
+                                                    <div>{datas.shipping_address.zip}</div>
+                                                ) : ""}
+                                            </div>
+                                        </>
+                                    }
+                                    sectioned
+                                >
+                                    {/* Rest of the LegacyCard content */}
+                                </LegacyCard>
+                            );
+                        })}
+                    </div>
+                </div>
+                {/* </Grid.Cell>
+                        </Grid> */}
+                <br />
+                <Grid.Cell>
+                    {(ShowTable1 || order_list.length !== 0 || parentBabyOrder.length !== 0) ? (
+                        <>
+                            <AddproductTable number={lineItemsData.order_list_extra[0].order_number} setToastMessage={setToastMessage} />
+                        </>
+
+                    ) : (
+                        <>
+                            <div style={{
+                                fontSize: '24px', // Adjust the font size as needed
+                                fontWeight: 'bold', // Make the text bold
+                                color: 'red', // Change the text color
+                                textAlign: 'center', // Center-align the text
+                                marginTop: '20px', // Add some top margin for spacing
+                            }}>
+                                No Products Selected
                             </div>
-                        </Page>
-                    </>
-                )}
+                        </>
+                    )}
+                </Grid.Cell>
+                <div id="toast-message" style={{ minHeight: "0px" }}>
+                    <Frame>
+                        {toastMarkup}
+                    </Frame>
+                </div>
             </Page>
         </>
 

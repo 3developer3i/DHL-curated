@@ -9,7 +9,7 @@ import {
 
 function DeletePopup({ baby_order_number, mother_order_number }) {
 
-    const { setMotherOrderData, setIsLoading, ShowTable1, setShowtable, setOrder_List, setTableData, setExtraData, setSelectedItems, setLineItemsData, setOpenTable, uniqOrderId, setMotherOrder } = useContext(ModalContext);
+    const { setMotherOrderData, setIsLoading, ShowTable1, setShowtable, setIdentifiersData, setOrder_List, setTableData, setExtraData, setSelectedItems, setLineItemsData, setOpenTable, uniqOrderId, setMotherOrder } = useContext(ModalContext);
 
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -34,6 +34,7 @@ function DeletePopup({ baby_order_number, mother_order_number }) {
             }
             setMotherOrderData(responsess.data.mother_order_list)
             setLineItemsData(responsess.data);
+            setIdentifiersData(responsess.data.identifier_Data);
             setTableData(responsess.data.order_list_extra[0].line_items);
             setExtraData(responsess.data.order_list_extra[0].line_items);
             setSelectedItems([]);

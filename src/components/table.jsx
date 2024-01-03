@@ -10,8 +10,7 @@ import {
     Banner,
     Button,
     Toast,
-    Frame,
-    Tooltip, Icon, Scrollable
+    Frame, Icon, Popover,
 } from '@shopify/polaris';
 import OpenModal from './openmodal';
 import ActionListInPopoverExample from './items';
@@ -223,6 +222,7 @@ function Table() {
         console.log(response.data, "get identifiers");
         if (response.status == 200) {
             setGenrateIdentifiersMessage(response.data.msg);
+            fetchGetOrderList()
             setIsLoading(false);
             setTimeout(() => {
                 toggleActive()
@@ -232,22 +232,38 @@ function Table() {
         }
     };
 
+    const [activeIdentifierModal, setActiveIdentifierModal] = useState(false);
     const Identifiers = ({ identifierData }) => {
+
+        const toggleActive = useCallback(() => {
+            setActiveIdentifierModal((prevActive) => !prevActive);
+        }, []);
+
+        const activator = (
+            <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+            >
+
+            </div>
+        );
         return (
             <div>
-                {identifierData.slice(0, 3).map((item, i) => (
-                    <div key={i}>
-                        <div style={{ display: '', marginTop: '15px', alignItems: 'center' }}>
-                            <div style={{ marginLeft: '8px', whiteSpace: 'normal' }}>
-                                <Text style={{ whiteSpace: 'normal' }}>
-                                    <Text fontWeight='bold'>{`Identifier ${item.ID} (0${item.created_parcel}/15)`}</Text>
-                                    <Text>PID : {item.PID}</Text>
-                                    <Text>SID : {item.SID}</Text>
-                                </Text>
+                <Popover active={activeIdentifierModal} activator={activator} onClose={toggleActive}>
+                    <LegacyCard sectioned style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                        {identifierData.map((item, i) => (
+                            <div key={i}>
+                                <div style={{ display: '', marginTop: '15px', alignItems: 'center' }}>
+                                    <div style={{ marginLeft: '8px', whiteSpace: 'normal' }}>
+                                        <Text style={{ whiteSpace: 'normal' }}>
+                                            <Text fontWeight='bold'>{`Mother ${item.ID} (0${item.created_parcel}/15)`}</Text>
+                                            <Text>PID : {item.PID}</Text>
+                                            <Text>SID : {item.SID}</Text>
+                                        </Text>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                ))}
+                        ))}
+                    </LegacyCard>
+                </Popover>
             </div>
         );
     };
@@ -276,11 +292,15 @@ function Table() {
                         <div style={{ display: "flex", justifyContent: "space-between" }}>
                             <div>Orders Lists</div>
                             <div>
-                                <Tooltip content={<Identifiers
+                                <Button onClick={() => fetchGenrateIdentifiersData()} pressed><span style={{ display: "flex", alignItems: 'center' }}> <p>Generate Identifiers ({`${identifierDataList.length}`})</p>
+                                    <p onClick={(e) => {
+                                        e.stopPropagation();
+                                        setActiveIdentifierModal(!activeIdentifierModal)
+
+                                    }}><Icon source={DropdownMinor} /></p></span></Button>
+                                {activeIdentifierModal && <Identifiers
                                     identifierData={identifierDataList}
-                                    Item='ITEMS' />}>
-                                    <Button onClick={() => fetchGenrateIdentifiersData()} pressed><span style={{ display: "flex", alignItems: 'center' }}> <p>Generate Identifiers ({`${identifierDataList.length}`})</p> <p><Icon source={DropdownMinor} /></p></span></Button>
-                                </Tooltip>
+                                    Item='ITEMS' />}
                             </div>
                         </div>}>
                         {orders.length === 0 && (

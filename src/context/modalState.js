@@ -15,7 +15,7 @@ export default function ModalState(props) {
     const [uniqOrderId, setUniqOrderId] = useState("");
     const [order_list, setOrder_List] = useState([]);
     const [trackingId, setTrackingId] = useState("");
-    const [lineItemsData, setLineItemsData] = useState(null); // New state variable
+    const [lineItemsData, setLineItemsData] = useState(null);
     const [tableData, setTableData] = useState([]);
 
     // open mother state
