@@ -102,7 +102,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
         if (IdentifierElement && order_list.length > 0 && popoverActive) {
             IdentifierElement.style.display = "none";
         } else {
-            return
+            return ;
         }
     },[order_list, popoverActive])
 
@@ -476,7 +476,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'self-end' }}>
                                 <div style={{ display: '', alignItems: 'center' }}>
                                     <Text fontWeight='semibold'>
-                                        {`mother ${identifiersData[0]?.ID} (0${identifiersData[0]?.Created_parcel}/15)`}
+                                        {`mother ${identifiersData[0]?.ID} (${identifiersData[0]?.Created_parcel}/15)`}
                                     </Text>
                                     <Text color='subdued'>
                                         PID : {identifiersData[0]?.PID} <br />

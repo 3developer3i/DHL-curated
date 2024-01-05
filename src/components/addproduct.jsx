@@ -184,11 +184,11 @@ function AddproductTable({ number }) {
                             <TrackModalExample trackingId={index} sub_order={order_list} />
                         </div>
                     </IndexTable.Cell>
-                    {parentBabyOrder.length > 0 ? '' : <IndexTable.Cell>
+                    {/* {parentBabyOrder.length > 0 ? '' : <IndexTable.Cell>
                         <div onClick={handleTrackModalClick}>
                             <DeletePopup baby_order_number={baby_ID} />
                         </div>
-                    </IndexTable.Cell>}
+                    </IndexTable.Cell>} */}
                     <IndexTable.Cell>
                         <div>
                             <Popover active={openCardIndex === index} activator={<div
@@ -301,7 +301,7 @@ function AddproductTable({ number }) {
         { title: 'Date' },
         { title: 'Box' },
         { title: 'Options' },
-        { title: 'action' },
+        // { title: 'action' },
         { title: 'items' }
     ];
 

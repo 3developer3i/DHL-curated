@@ -2,10 +2,9 @@ import { ButtonGroup, Tooltip, Page, Icon, Button, Banner, Modal, FormLayout, Te
 import axios from 'axios';
 import React, { useEffect, useState, useCallback } from 'react';
 import {
-    ReceiptMajor, LegalMajor, PrintMajor, LocationsMinor,
+    ReceiptMajor, LegalMajor, LocationsMinor,
     ChevronDownMinor, ChevronUpMinor, DeleteMajor
 } from '@shopify/polaris-icons';
-import DeletePopup from '../components/popopdelete';
 import { BaseURl, shop } from '../contant'
 import ActionListInPopoverExample from '../components/items';
 
@@ -198,7 +197,7 @@ const MotherOrderIndexTable = () => {
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Add Tracking</th>
-                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Action</th>
+                                            {/* <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Action</th> */}
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true"></th>
                                         </tr>
                                     </thead>
@@ -255,7 +254,7 @@ const MotherOrderIndexTable = () => {
                                                                 </ButtonGroup>
                                                             </div>
                                                         </td>
-                                                        <td className="Polaris-IndexTable__TableCell">
+                                                        {/* <td className="Polaris-IndexTable__TableCell">
                                                             <Tooltip content="delete">
                                                                 <Button onClick={() => {
                                                                     // console.log(datas.mother_order_id);
@@ -263,7 +262,7 @@ const MotherOrderIndexTable = () => {
                                                                     setIsDeleteModalOpen(!isDeleteModalOpen)
                                                                 }} destructive size='micro' accessibilityLabel='Delete' icon={DeleteMajor}></Button>
                                                             </Tooltip>
-                                                        </td>
+                                                        </td> */}
                                                         <td onClick={() => {
                                                             // setCountBaby(datas.parent_baby_order_data.length > 2 ? 148 : 111); 
                                                             toggleCollapsible(index, datas)

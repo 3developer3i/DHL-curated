@@ -1,31 +1,8 @@
-import {
-    IndexTable,
-    LegacyCard,
-    useIndexResourceState,
-    Text,
-    Badge,
-    Page,
-    Banner,
-    Popover,
-    Pagination,
-} from "@shopify/polaris";
+import { useIndexResourceState, Text, Page, Banner, Popover, Pagination } from "@shopify/polaris";
 import React, { useEffect, useState, useCallback, useContext } from "react";
 import axios from "axios";
-import {
-    Button,
-    Modal,
-    FormLayout,
-    TextField,
-    Icon,
-    ButtonGroup,
-    Tooltip, Toast, Grid, Thumbnail
-} from "@shopify/polaris";
-import {
-    ReceiptMajor,
-    LegalMajor,
-    DeleteMajor,
-    LocationsMinor, ChevronUpMinor, ChevronDownMinor
-} from "@shopify/polaris-icons";
+import { Button, Modal, FormLayout, TextField, Icon, ButtonGroup, Tooltip, Toast } from "@shopify/polaris";
+import { ReceiptMajor, LegalMajor, DeleteMajor, LocationsMinor } from "@shopify/polaris-icons";
 import { ModalContext } from "../context/modalContext";
 import { shop, BaseURl } from "../contant";
 import { Frame, TextContainer } from "@shopify/polaris";
@@ -33,7 +10,6 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Select } from "@shopify/polaris";
 import ActionListInPopoverExample from "../components/items";
-import { DropdownMinor } from '@shopify/polaris-icons';
 
 export default function TestBabyOrderList() {
 
@@ -620,16 +596,21 @@ export default function TestBabyOrderList() {
                 new URLSearchParams(formDatas)
             )
             .then((res) => {
+                console.log(res.data, "....619");
                 if (res.status === 200) {
-                    console.log(res.data, "mother order created ..........");
                     if (res.data.msg === "MotherOrder Created") {
                         handleSelectionChange();
                         fetchAllBabyOrderlist('yes', "create-mother");
-
+                    } else {
+                        setAPIMessage(res.data.msg);
+                        setLoading(false);
+                        toggleActive();
+                        handleSelectionChange();
+                        setSelectedRows([]);
                     }
                 }
             })
-            .catch((err) => console.log(err));
+            .catch((err) => { console.log(err); });
     };
 
     const DeleteSpecificMother = async () => {
@@ -829,6 +810,16 @@ export default function TestBabyOrderList() {
             setIdentifiersMatched(true);
         }
     }, [paginatedData, selectedResources]);
+
+    useEffect(() => {
+        if (identifiersMatched) {
+            setAPIMessage("You can only select Master Baby Order with same SID and PID");
+            toggleActive();
+        } else {
+            setAPIMessage("");
+            setToastMessage(false);
+        }
+    }, [identifiersMatched]);
 
     return (
         <Page>
@@ -1904,7 +1895,7 @@ export default function TestBabyOrderList() {
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Date</th>
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Total</th>
                                             <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Options</th>
-                                            <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Action</th>
+                                            {/* <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true">Action</th> */}
                                             {/* <th className="Polaris-IndexTable__TableHeading" data-index-table-heading="true"></th> */}
                                         </tr>
                                     </thead>
@@ -1972,7 +1963,7 @@ export default function TestBabyOrderList() {
                                                                 </Tooltip>
                                                             </ButtonGroup>
                                                         </td>
-                                                        <td className="Polaris-IndexTable__TableCell">
+                                                        {/* <td className="Polaris-IndexTable__TableCell">
                                                             <Tooltip content="delete">
                                                                 <Button onClick={() => {
                                                                     setDeleteParentId(datas.parent_baby_order_id);
@@ -1980,7 +1971,7 @@ export default function TestBabyOrderList() {
                                                                 }} destructive size='micro' accessibilityLabel='Delete' icon={DeleteMajor}></Button>
                                                             </Tooltip>
 
-                                                        </td>
+                                                        </td> */}
                                                         {/* <td onClick={() => {
                                                             toggleCollapsible(index);
                                                         }} className="Polaris-IndexTable__TableCell">
@@ -2231,4 +2222,4 @@ export default function TestBabyOrderList() {
         </Page>
     );
 
-}
+};

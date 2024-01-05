@@ -254,7 +254,7 @@ function Table() {
                                 <div style={{ display: '', marginTop: '15px', alignItems: 'center' }}>
                                     <div style={{ marginLeft: '8px', whiteSpace: 'normal' }}>
                                         <Text style={{ whiteSpace: 'normal' }}>
-                                            <Text fontWeight='bold'>{`Mother ${item.ID} (0${item.created_parcel}/15)`}</Text>
+                                            <Text fontWeight='bold'>{`Mother ${item.ID} (${item.created_parcel}/15)`}</Text>
                                             <Text>PID : {item.PID}</Text>
                                             <Text>SID : {item.SID}</Text>
                                         </Text>
