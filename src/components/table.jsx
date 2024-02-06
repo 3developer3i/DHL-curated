@@ -272,7 +272,7 @@ function Table() {
         <>
             {isLoading &&
                 <div className="spinner">
-                    <div className="spinner-inner"></div>
+                     <img src="https://i.stack.imgur.com/hzk6C.gif" id='loader' alt="Loading..." />
                 </div>
             }
             {isModalOpen ? (

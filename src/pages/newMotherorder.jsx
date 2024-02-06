@@ -167,9 +167,8 @@ const MotherOrderIndexTable = () => {
     return (
         <Page>
             {loading && (
-
                 <div className="spinner">
-                    <div className="spinner-inner"></div>
+                     <img src="https://i.stack.imgur.com/hzk6C.gif" alt="Loading..." />
                 </div>
             )}
             {motherorder.length === 0 && (

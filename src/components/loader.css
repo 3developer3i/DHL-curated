@@ -34,3 +34,7 @@
         transform: rotate(360deg);
     }
 }
+
+.spinner img {
+   filter: brightness(0.1) invert(0.1);
+}

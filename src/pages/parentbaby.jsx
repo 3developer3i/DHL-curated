@@ -825,8 +825,8 @@ export default function TestBabyOrderList() {
         <Page>
             {loading && (
                 <div className="spinner">
-                    <div className="spinner-inner"></div>
-                </div>
+                <img src="https://i.stack.imgur.com/hzk6C.gif" alt="Loading..." />
+           </div>
             )}
             <br />
             <ButtonGroup>

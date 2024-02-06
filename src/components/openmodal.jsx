@@ -97,14 +97,14 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
         setIdentifiersSelect(convertedData[0].label);
     }, []);
 
-    useEffect(()=>{
+    useEffect(() => {
         const IdentifierElement = document.querySelector("#identifier-icon .Polaris-Select__Icon");
         if (IdentifierElement && order_list.length > 0 && popoverActive) {
             IdentifierElement.style.display = "none";
         } else {
-            return ;
+            return;
         }
-    },[order_list, popoverActive])
+    }, [order_list, popoverActive])
 
     const fetchLineItems = async (checkIt) => {
         if (checkIt !== "parent") {
@@ -319,7 +319,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
         <>
             {(isLoading1 || isLoading) && (
                 <div className="spinner">
-                    <div className="spinner-inner"></div>
+                    <img src="https://i.stack.imgur.com/hzk6C.gif" alt="Loading..." />
                 </div>
             )}
             <Page
