@@ -37,7 +37,7 @@ const MotherOrderIndexTable = () => {
         }
         axios.get(`https://${BaseURl}/all_mother_order?shop_name=${shop}`)
             .then((res) => {
-                console.log(res, "mother order.");
+                // console.log(res, "mother order.");
                 setMotherOrder(res.data.mother_order_list);
                 if (name === 'mother-delete') {
                     toggleActive();
@@ -65,7 +65,7 @@ const MotherOrderIndexTable = () => {
             setTestIndex(null);
             setCountBaby1(73)
             // setCountBaby(0)
-            console.log("outside");
+            // console.log("outside");
         } else {
             setTestIndex(index);
             if (testIndex1 != null) {

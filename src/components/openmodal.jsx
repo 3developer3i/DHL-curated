@@ -14,10 +14,13 @@ import ActionListInPopoverExample from './customerpopover';
 import { ModalContext } from '../context/modalContext';
 import axios from 'axios';
 import './loader.css';
-import { BaseURl } from '../contant';
+import { BaseURl, conditionPath } from '../contant';
 import { shop } from '../contant';
 
 function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsData, id, setIsModalOpen, setIsLoading1, isLoading1 }) {
+    const [checked, setChecked] = useState(false);
+
+    const currentPath = window.location.pathname;
 
     const textStyle = {
         fontSize: '14px', // Adjust the font size as needed
@@ -25,7 +28,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
     };
 
     const modalcontext = useContext(ModalContext)
-    const { uniqOrderId, setMotherOrderData, isLoading, ShowTable1, setShowtable, setIsLoading, setSelectedItems, selectedItems, setBabyOrderData, setTableData, tableData, setParentBabyOrder, setOpenTable, setOrder_List, setCallApiParentBaby, callApiParentBaby, order_list, setMotherOrder, babyIDs, babyOrderIDs, setBabyOrderNumber, openmotherorder, setSub_order, identifiersData, parentBabyOrder, setIdentifiersData } = modalcontext;
+    const { uniqOrderId, setMotherOrderData, isLoading, ShowTable1, setShowtable, setIsLoading, setSelectedItems, selectedItems, setBabyOrderData, setTableData, tableData, setParentBabyOrder, setOpenTable, setOrder_List, setCallApiParentBaby, callApiParentBaby, order_list, setMotherOrder, babyIDs, babyOrderIDs, setBabyOrderNumber, openmotherorder, setSub_order, identifiersData, parentBabyOrder, setIdentifiersData, newPage_order_number, newPage_order_numberorginal } = modalcontext;
 
     const [isModalClose, setIsModalClose] = useState(false);
     const closeModal = () => { setIsModalOpen(false); };
@@ -46,6 +49,87 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
 
     // https://3itesth18.pagekite.me/create_baby_order
     const notes = lineItemsData && lineItemsData.order_list_extra[0].note ? lineItemsData.order_list_extra[0].note : 'No notes from customer';
+
+    const fetchSaveLineItemsApproved = async () => {
+        const apiUrl = `https://${BaseURl}/order_approval`;
+        const formData = new FormData();
+        formData.append("shop", shop);
+        formData.append("order_id", newPage_order_number);
+        try {
+            const response = await axios.post(apiUrl, new URLSearchParams(formData));
+            // console.log("new page.....open modal", response.data);
+            setTableData(response.data.order_list[0].line_items);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const activeApproveItems = async (product_id, variant_id) => {
+        const apiUrl = `https://${BaseURl}/approve_lineitem`;
+        const formData = new FormData();
+        formData.append("shop", shop);
+        formData.append("variant_id", variant_id);
+        formData.append("product_id", product_id);
+        formData.append("order_id", newPage_order_number);
+        try {
+            const response = await axios.post(apiUrl, new URLSearchParams(formData));
+            // console.log(response.data, "approved api response.. ");
+            if (response.data.status == 200) {
+                setAPIMessage(response.data.msg);
+                toggleActive();
+                fetchSaveLineItemsApproved();
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const activeInApproveItems = async (product_id, variant_id) => {
+        const apiUrl = `https://${BaseURl}/remove_lineitem`;
+        const formData = new FormData();
+        formData.append("shop", shop);
+        formData.append("variant_id", variant_id);
+        formData.append("product_id", product_id);
+        formData.append("order_id", newPage_order_number);
+        try {
+            const response = await axios.post(apiUrl, new URLSearchParams(formData));
+            // console.log(response.data, "remove_lineitem api response.. ");
+            if (response.data.status == 200) {
+                setAPIMessage(response.data.msg);
+                toggleActive();
+                fetchSaveLineItemsApproved();
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleToggle = (item) => {
+        const updatedItems = tableData.map((lineItem) => {
+            if (lineItem.variant_id === item.variant_id) {
+                // Toggle the is_accepted property for the clicked item
+                return { ...lineItem, is_accepted: !lineItem.is_accepted };
+            }
+            return lineItem;
+        });
+
+        // Update the state with the modified items
+        setTableData(updatedItems);
+
+        // Call your API function here with the updated item
+        if (!item.is_accepted) {
+            activeApproveItems(item.product_id, item.variant_id);
+        } else {
+            activeInApproveItems(item.product_id, item.variant_id);
+        }
+    };
+
+    useEffect(() => {
+        if (currentPath == conditionPath) {
+            // console.log('runnnn..');
+            fetchSaveLineItemsApproved();
+        }
+    }, [currentPath, conditionPath]);
 
     useEffect(() => {
         if (lineItemsData) {
@@ -89,12 +173,11 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
     // const convertedData = identifiersData && identifiersData.map(item => ({ value: item.ID, label: `PID : ${item.PID} | SID : ${item.SID}`,  }));
     const convertedData = identifiersData && identifiersData.map((item, index) => ({ value: item.ID, label: `Mother ${item.ID} (${item.Created_parcel}/15)` }));
     const arrayOfStrings = convertedData.map(obj => obj.label);
-    // console.log(arrayOfStrings, "arrayOfStrings...92");
-    // console.log(identifiersData, "identifiersData...93");
-    // console.log(order_list, "order_list...94");
 
     useEffect(() => {
-        setIdentifiersSelect(convertedData[0].label);
+        if (currentPath != conditionPath) {
+            setIdentifiersSelect(convertedData[0].label);
+        }
     }, []);
 
     useEffect(() => {
@@ -114,7 +197,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
             .then((response) => response.json())
             .then((data) => {
                 setShowtable(true);
-                console.log(data, "order list create baby..................");
+                // console.log(data, "order list create baby..................");
                 // Function to replicate items based on quantity
                 const replicateItems = (array) => {
                     return array.reduce((result, item) => {
@@ -129,7 +212,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                 const resultArray = replicateItems(data.order_list_extra[0].line_items);
                 setTableData(data.order_list_extra[0].line_items);
                 setOrder_List(data?.order_list);
-                console.log(data.identifier_Data, "delete baby after identifier...");
+                // console.log(data.identifier_Data, "delete baby after identifier...");
                 setIdentifiersData(data.identifier_Data);
                 setParentBabyOrder(data.parent_baby_order_list);
                 setIsModalOpen(true);
@@ -164,11 +247,11 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
 
         axios.post(`https://${BaseURl}/create_baby_order`, new URLSearchParams(formData))
             .then((res) => {
-                console.log(res.data);
+                // console.log(res.data);
                 if (res.data.json_line_items === undefined) {
                     // setIsLoading(false)
                     fetchLineItems('yes');
-                    console.log(res.data.msg);
+                    // console.log(res.data.msg);
                     setAPIMessage("Baby Order Created SuccessFully");
                 }
                 if (res.data) {
@@ -212,7 +295,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
         setIsLoading(true);
         axios.post(`https://${BaseURl}/create_mother_order`, new URLSearchParams(formData)).then((res) => {
             if (res.status === 200) {
-                console.log(res.data, "mother..........");
+                // console.log(res.data, "mother..........");
                 fetch(`https://${BaseURl}/get_baby_order?shop_name=${shop}&order_id=${uniqOrderId}`)
                     .then((response) => response.json())
                     .then((data) => {
@@ -290,7 +373,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
         formData.append("shipperselect", "1");
         setIsLoading(true);
         axios.post(`https://${BaseURl}/create_parent_baby_order`, new URLSearchParams(formData)).then((res) => {
-            console.log(res.data, "parent baby......");
+            // console.log(res.data, "parent baby......");
             if (res.status === 200) {
                 setTimeout(() => {
                     fetchLineItems('parent');
@@ -329,10 +412,12 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                             <a href='#' onClick={closeModal}>
                                 <Icon color='base' source={MobileBackArrowMajor} />
                             </a>
-                            <div style={{ display: 'flex', marginLeft: "10Px", alignItems: 'center', fontWeight: "bold" }}>
+                            {currentPath !== conditionPath ? <div style={{ display: 'flex', marginLeft: "10Px", alignItems: 'center', fontWeight: "bold" }}>
                                 #{lineItemsData && lineItemsData.order_list_extra[0].order_number && lineItemsData.order_list_extra[0].order_number}
-                            </div>
-                            <div style={{ marginLeft: "25%" }}>
+                            </div> : <div style={{ display: 'flex', marginLeft: "10Px", alignItems: 'center', fontWeight: "bold" }}>
+                                #{newPage_order_numberorginal}
+                            </div>}
+                            {currentPath !== conditionPath && <div style={{ marginLeft: "25%" }}>
                                 <Popover
                                     active={popoverActive}
                                     activator={<Button size='slim' primary onClick={() => togglePopoverActive()} disabled={createbabyorder && !openmotherorder ? false : true}>CREATE PARCEL</Button>}
@@ -345,12 +430,12 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                             onChange={handleSelectChange} label="Box Sizes:" options={['COAT BOXES - 40 x 26 x 10', 'SWEATER BOXES - 37 x 30 x 6', 'SHOULDER BAG BOXES - 36 x 22 x 11', 'MINI BAG BOX - 28 x 20 x 8']} />
                                         <div id='identifier-icon'>
                                             <Select disabled={order_list.length > 0 ? true : false} value={identifiersSelect}
-                                                onChange={(label) => { console.log(label); setIdentifiersId(label); setIdentifiersSelect(label) }} requiredIndicator={false} options={arrayOfStrings} />
+                                                onChange={(label) => { setIdentifiersId(label); setIdentifiersSelect(label) }} requiredIndicator={false} options={arrayOfStrings} />
                                         </div>
                                         <Button primary size="slim" onClick={ShowTable}>Add to baby order</Button>
                                     </FormLayout>
                                 </Popover>
-                            </div>
+                            </div>}
                             {openmotherorder && <div style={{ marginLeft: "10px" }}>
                                 <Button size='slim' onClick={() => { fetchMotherData() }} primary disabled={false}>CREATE MOTHER ORDER</Button>
                             </div>}
@@ -385,10 +470,10 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                                         resourceName={{ singular: 'product', plural: 'products' }}
                                                         selectedItems={selectedItems}
                                                         onSelectionChange={(selectedId) => {
-                                                            console.log(selectedId, "selectedId..");
+                                                            // console.log(selectedId, "selectedId..");
                                                             setSelectedItems(selectedId);
                                                         }}
-                                                        selectable
+                                                        selectable={currentPath == conditionPath ? false : true}
                                                         items={paginatedData}
                                                         idForItem={(item, index) => fetchGetUniqId(item.name)}
                                                         renderItem={(item, index) => {
@@ -402,7 +487,6 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                                                                 alt="Tucan scarf"
                                                                             />
                                                                         )}
-
                                                                         accessibilityLabel={`View details for ${item.name}`}
                                                                     >
                                                                         <Text variant="bodyMd" fontWeight="bold" as="h3">
@@ -418,6 +502,28 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                                                                                 <div>
                                                                                     <span style={{ marginLeft: '26px' }}> <span style={textStyle}>${(parseFloat(item.price.replace(/[^\d.-]/g, '')) * item.quantity).toFixed(2)}</span></span>
                                                                                 </div>
+                                                                                {currentPath == conditionPath && <div>
+                                                                                    <span style={{ marginLeft: '26px' }}>
+                                                                                        {/* {!item?.is_accepted && <label className="switch">
+                                                                                            <input id={item.variant_id} type="checkbox" checked={(checked == false && itemVariantiId == item.variant_id) ? false : checked} onChange={() => handleToggle(item)} />
+                                                                                            <span className="slider round"></span>
+                                                                                        </label>}
+                                                                                        {item?.is_accepted && <label className="switch">
+                                                                                            <input id={item.variant_id} type="checkbox" checked={(checked == false && itemVariantiId == item.variant_id) == false ? true : checked} onChange={() => 
+                                                                                                handleToggle(item)} />
+                                                                                            <span className="slider round"></span>
+                                                                                        </label>} */}
+                                                                                        <label className="switch">
+                                                                                            <input
+                                                                                                id={item.variant_id}
+                                                                                                type="checkbox"
+                                                                                                checked={item.is_accepted}
+                                                                                                onChange={() => handleToggle(item)}
+                                                                                            />
+                                                                                            <span className="slider round"></span>
+                                                                                        </label>
+                                                                                    </span>
+                                                                                </div>}
                                                                             </div> </>
                                                                         </Text>
                                                                     </ResourceItem>
@@ -486,7 +592,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
                             </div>
                         </LegacyCard>}
 
-                        {customerData.map((datas, index) => {
+                        {currentPath != conditionPath && customerData.map((datas, index) => {
                             // Create an array to store the names of missing fields
 
                             // Render LegacyCard with missing field messages
@@ -597,6 +703,7 @@ function OpenModal({ ordernumber, alreadybabyorder, date, customer, lineItemsDat
         </>
 
     );
+
 }
 
 

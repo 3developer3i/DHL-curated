@@ -8,7 +8,7 @@ export default function ModalState(props) {
     const [selectedItems, setSelectedItems] = useState([]);
     const [remainsproducts, setRemainsproducts] = useState();
     const [deselectitem, setDeselectitem] = useState([]);
-    
+
     // baby order states
     const [babyorderdata, setBabyOrderData] = useState([]);
     const [babyordernumber, setBabyOrderNumber] = useState("");
@@ -28,7 +28,7 @@ export default function ModalState(props) {
     const [parentBabyOrder, setParentBabyOrder] = useState([]);
     const [motherOrderData, setMotherOrderData] = useState([]);
     const [callApiParentBaby, setCallApiParentBaby] = useState(false);
-    
+
     // Initialize a state variable to hold the baby IDs
     const [babyIDs, setBabyIDs] = useState([]);
     const [babyOrderIDs, setBabyOrderIDs] = useState([]);
@@ -41,8 +41,12 @@ export default function ModalState(props) {
 
     const [identifiersData, setIdentifiersData] = useState([]);
 
+    // newpage stated
+    const [newPage_order_number, setNewPage_Order_Number] = useState(null);
+    const [newPage_order_numberorginal, setNewPage_Order_NumberOrginal] = useState(null);
+
     return (
-        <ModalContext.Provider value={{identifiersData, setIdentifiersData, callApiParentBaby, babyOrderIDs, setBabyOrderIDs, babyIDs, setBabyIDs, setCallApiParentBaby, parentBabyOrder, setParentBabyOrder, setDeleteIndex, ShowTable1, setShowtable, isLoading, setIsLoading, deleteIndex, setOrderLength, setExtraData, extraData, run, setRun, motherOrderData, setTableData, tableData, lineItemsData, setLineItemsData, setMotherOrderData, setOpenTable, opentable, orderlength, setSub_order, sub_order, openmotherorder, setMotherOrder, setOrder_List, trackingId, setTrackingId, order_list, setUniqOrderId, uniqOrderId, setTrackingNumbers, setBabyorderlists, setRemainsproducts, deselectitem, setDeselectitem, babyorderlists, trackingNumbers, selectedItems, remainsproducts, setSelectedItems, setBabyOrderData, babyorderdata, babyordernumber, setBabyOrderNumber }}>
+        <ModalContext.Provider value={{ newPage_order_numberorginal, setNewPage_Order_NumberOrginal, identifiersData, setIdentifiersData, callApiParentBaby, babyOrderIDs, setBabyOrderIDs, babyIDs, setBabyIDs, setCallApiParentBaby, parentBabyOrder, setParentBabyOrder, setDeleteIndex, ShowTable1, setShowtable, isLoading, setIsLoading, deleteIndex, setOrderLength, setExtraData, extraData, run, setRun, motherOrderData, setTableData, tableData, lineItemsData, setLineItemsData, setMotherOrderData, setOpenTable, opentable, orderlength, setSub_order, sub_order, openmotherorder, setMotherOrder, setOrder_List, trackingId, setTrackingId, order_list, setUniqOrderId, uniqOrderId, setTrackingNumbers, setBabyorderlists, setRemainsproducts, deselectitem, setDeselectitem, babyorderlists, trackingNumbers, selectedItems, remainsproducts, setSelectedItems, setBabyOrderData, babyorderdata, babyordernumber, setBabyOrderNumber, newPage_order_number, setNewPage_Order_Number }}>
             {props.children}
         </ModalContext.Provider>
     );

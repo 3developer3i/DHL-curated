@@ -176,7 +176,7 @@ export default function TestBabyOrderList() {
 
         axios.get(`https://${BaseURl}/all_parent_baby_order?shop_name=${shop}`)
             .then((res) => {
-                console.log(res, "all_parent_baby_order...");
+                // console.log(res, "all_parent_baby_order...");
                 setParentBabyOrder(res.data.parent_baby_order_list);
                 setDatas(res.data.parent_baby_order_list);
                 if (checkIt === "parent") {
@@ -555,7 +555,7 @@ export default function TestBabyOrderList() {
                 selectedBabyOrderIds.push(parentBabyOrder[index].baby_order_id);
             }
         });
-        console.log(selectedBabyOrderIds, "test...");
+        // console.log(selectedBabyOrderIds, "test...");
         const formDatas = new FormData();
         formDatas.append("baby_list", selectedBabyOrderNumbers);
         // formDatas.append("order_id", selectedBabyOrderIds);
@@ -596,7 +596,7 @@ export default function TestBabyOrderList() {
                 new URLSearchParams(formDatas)
             )
             .then((res) => {
-                console.log(res.data, "....619");
+                // console.log(res.data, "....619");
                 if (res.status === 200) {
                     if (res.data.msg === "MotherOrder Created") {
                         handleSelectionChange();
@@ -623,7 +623,7 @@ export default function TestBabyOrderList() {
             new URLSearchParams(formData)
         );
         if (response.status === 200) {
-            console.log(response.data);
+            // console.log(response.data);
             if (response.data.success === "Baby order is deleted") {
                 handleSelectionChange();
                 fetchAllBabyOrderlist('yes', 'baby-delete');
@@ -642,7 +642,7 @@ export default function TestBabyOrderList() {
         if (disallowedCharactersError == '') {
             if (!validateCommercialForm(commercialForm)) {
                 // Handle error for commercialForm
-                console.log('Error: Some fields in commercialForm are empty');
+                // console.log('Error: Some fields in commercialForm are empty');
                 return;
             };
             selectedResources.forEach((index) => {
@@ -666,7 +666,7 @@ export default function TestBabyOrderList() {
                 `https://${BaseURl}/get_comercial_detail`,
                 new URLSearchParams(formData)
             );
-            console.log(response.data, "checl first");
+            // console.log(response.data, "checl first");
             if (response.status === 200) {
                 fetchAllBabyOrderlist('yes', "add-commercial");
                 handleChanges();
@@ -685,14 +685,14 @@ export default function TestBabyOrderList() {
         if (disallowedCharactersError == '') {
             if (!validateFormData(formData)) {
                 // Handle error for formData
-                console.log('Error: Some fields in formData are empty');
+                // console.log('Error: Some fields in formData are empty');
                 // alert('Error: Some fields in formData are empty');
                 return;
             }
 
             if (!validateShipperFormData(shipperformData)) {
                 // Handle error for shipperformData
-                console.log('Error: Some fields in shipperformData are empty');
+                // console.log('Error: Some fields in shipperformData are empty');
                 // alert('Error: Some fields in shipperformData are empty');
                 return;
             }
@@ -756,7 +756,7 @@ export default function TestBabyOrderList() {
         setLoading(true);
         const response = await axios.post(`https://${BaseURl}/delete_specific_parent_baby_order`, new URLSearchParams(formData));
         if (response.status === 200) {
-            console.log(response.data, "delete parent baby..");
+            // console.log(response.data, "delete parent baby..");
             fetchAllBabyOrderlist('yes', 'parent');
             setIsDeleteModalOpen(!isDeleteModalOpen)
         };

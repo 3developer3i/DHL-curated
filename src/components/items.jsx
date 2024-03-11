@@ -6,7 +6,7 @@ function ActionListInPopoverExample({ quantity, itemsdata }) {
     const [active, setActive] = useState(false);
 
     const toggleActive = useCallback(() => {
-        setActive((prevActive) => !prevActive);
+        setActive((prevActive) =>  !prevActive);
     }, []);
 
     const activator = (

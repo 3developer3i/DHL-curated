@@ -15,7 +15,7 @@ import {
 import OpenModal from './openmodal';
 import ActionListInPopoverExample from './items';
 import './loader.css';
-import { shop } from '../contant';
+import { conditionPath, shop } from '../contant';
 import { BaseURl } from '../contant';
 import { useContext } from 'react';
 import { ModalContext } from '../context/modalContext';
@@ -26,7 +26,9 @@ import axios from 'axios';
 
 function Table() {
 
-    const { setUniqOrderId, setOrder_List, order_list, setSelectedItems, setMotherOrderData, setShowtable, setParentBabyOrder, setLineItemsData, lineItemsData, setTableData, setIdentifiersData } = useContext(ModalContext);
+    const { setNewPage_Order_Number, setUniqOrderId, setOrder_List, order_list, setSelectedItems, setMotherOrderData, setShowtable, setParentBabyOrder, setLineItemsData, lineItemsData, setTableData, setIdentifiersData, setNewPage_Order_NumberOrginal } = useContext(ModalContext);
+
+    const currentPath = window.location.pathname;
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
@@ -36,6 +38,117 @@ function Table() {
     const [active, setActive] = useState(false);
     const [genrateIdentifierMessage, setGenrateIdentifiersMessage] = useState('Message sent');
     const [identifierDataList, setIdentifiersList] = useState([]);
+
+
+    const [toastactive, setToastActive] = useState(false);
+    const toggleActive = useCallback(() => setToastActive((active) => !active), []);
+    const toastMarkup = toastactive ? (
+        <Toast content={genrateIdentifierMessage} onDismiss={toggleActive} />
+    ) : null;
+
+    const fetchSaveLineItemsApproved = async (orderId) => {
+        setIsLoading(true);
+        setIsLoading1(true);
+        setNewPage_Order_Number(orderId)
+        const apiUrl = `https://${BaseURl}/save_lineitem`;
+        const formData = new FormData();
+        formData.append("shop", shop);
+        formData.append("order_number", orderId);
+        try {
+            const response = await axios.post(apiUrl, new URLSearchParams(formData));
+            // console.log("new page.....46", response.data);
+            if (response.data.status == 200) {
+                // console.log("data created");
+                setIsModalOpen(true);
+                setIsLoading(false);
+                setIsLoading1(false);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const fetchGetOrderList = () => {
+        fetch(`https://${BaseURl}/${currentPath == conditionPath ? 'Get_temp_order_list' : 'Get_order_list'}?shop_name=${shop}`)
+            .then((response) => response.json())
+            .then((data) => {
+                // console.log(data);
+                setOrders(data.order_list);
+                setIdentifiersList(data.identifierList);
+                setIsLoading(false);
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+                setIsLoading(true);
+            });
+    };
+
+    // main approval order APIs
+    const mainOrderApprovedAPIs = async (order) => {
+        setIsLoading(true);
+        setIsLoading1(true);
+        // setNewPage_Order_Number(orderId)
+        const apiUrl = `https://${BaseURl}/main_order_approval`;
+        const formData = new FormData();
+        formData.append("shop", shop);
+        formData.append("order_id", order.order_id);
+        formData.append("order_number", order.order_number);
+        try {
+            const response = await axios.post(apiUrl, new URLSearchParams(formData));
+            // console.log("new page.....76", response.data);
+            if (response.data.status == 200) {
+                // console.log("data created");
+                setGenrateIdentifiersMessage(response.data.msg);
+                toggleActive();
+                fetchGetOrderList();
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    // main approval order APIs
+    const mainOrderRemoveAPIs = async (order) => {
+        setIsLoading(true);
+        setIsLoading1(true);
+        // setNewPage_Order_Number(orderId)
+        const apiUrl = `https://${BaseURl}/main_order_remove`;
+        const formData = new FormData();
+        formData.append("shop", shop);
+        formData.append("order_id", order.order_id);
+        formData.append("order_number", order.order_number);
+        try {
+            const response = await axios.post(apiUrl, new URLSearchParams(formData));
+            // console.log("new page.....121", response.data);
+            if (response.data.status == 200) {
+                setGenrateIdentifiersMessage(response.data.msg);
+                toggleActive();
+                // ("data created");
+                fetchGetOrderList();
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleToggle = (order) => {
+        const updatedItems = orders.map((lineItem) => {
+            if (lineItem.order_number === order.order_number) {
+                // Toggle the is_accepted property for the clicked item
+                return { ...lineItem, is_accepted: !lineItem.is_accepted };
+            }
+            return lineItem;
+        });
+
+        // Update the state with the modified items
+        setOrders(updatedItems);
+
+        // Call your API function here with the updated item
+        if (!order.is_accepted) {
+            mainOrderApprovedAPIs(order);
+        } else {
+            mainOrderRemoveAPIs(order);
+        }
+    };
 
     // babyorder available
 
@@ -50,6 +163,17 @@ function Table() {
         setIsLoading(true);
         setIsLoading1(true);
 
+        // if (currentPath == conditionPath) {
+        //     const checkit = await fetchSaveLineItemsApproved(orderId);
+        //     if (checkit == 200) {
+        //         console.log("data created");
+        //         setIsModalOpen(true);
+        //         setIsLoading(false);
+        //         setIsLoading1(false);
+        //         return
+        //     }
+        // }
+
         // Define your API endpoint
         const apiUrl = `https://${BaseURl}/get_baby_order?shop_name=${shop}&order_id=${orderId}`;
 
@@ -57,7 +181,7 @@ function Table() {
         const response = await axios.get(apiUrl)
         try {
             const data = response.data;
-            console.log(data, "get baby order");
+            // console.log(data, "get baby order");
             if (data.status == 500) {
                 setIsLoading(false);
                 setIsLoading1(false);
@@ -81,12 +205,9 @@ function Table() {
                         return result;
                     }, []);
                 };
-
-                // Call the function with the input array
-                const resultArray = replicateItems(data.order_list_extra[0].line_items);
                 setTableData(data.order_list_extra[0].line_items);
             }
-            console.log(data, "line items ..");
+            // console.log(data, "line items ..");
             setIdentifiersData(data.identifier_Data);
             setLineItemsData(data);
             setIsModalOpen(true);
@@ -111,21 +232,6 @@ function Table() {
 
     const closeModal = () => {
         setIsModalOpen(false);
-    };
-
-    const fetchGetOrderList = () => {
-        fetch(`https://${BaseURl}/Get_order_list?shop_name=${shop}`)
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                setOrders(data.order_list);
-                setIdentifiersList(data.identifierList);
-                setIsLoading(false);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-                setIsLoading(true);
-            });
     };
 
     useEffect(() => {
@@ -155,7 +261,14 @@ function Table() {
                 <Text variant="bodyMd" fontWeight="bold" as="span">
                     <a
                         style={{ cursor: "pointer" }}
-                        onClick={() => openModal(order)}
+                        onClick={() => {
+                            if (currentPath == conditionPath) {
+                                setNewPage_Order_NumberOrginal(order.order_number)
+                                // return mainOrderApprovedAPIs(order)
+                            } else {
+                                openModal(order);
+                            }
+                        }}
                     >
                         #{order.order_number}
                     </a>
@@ -181,11 +294,21 @@ function Table() {
                 </Badge>
             </IndexTable.Cell>
             <IndexTable.Cell>
-                <ActionListInPopoverExample
+                {currentPath != conditionPath ? <ActionListInPopoverExample
                     fulfillmentStatus={order.fulfillment_status}
                     itemsdata={order.line_items}
                     Item='ITEMS'
-                />
+                /> :
+                    <label className="switch">
+                        <input
+                            id={order.order_number}
+                            type="checkbox"
+                            checked={order.is_accepted}
+                            onChange={(e) => handleToggle(order)}
+                        />
+                        <span className="slider round"></span>
+                    </label>
+                }
             </IndexTable.Cell>
         </IndexTable.Row>
     ));
@@ -204,12 +327,6 @@ function Table() {
         }
     }, []);
 
-    const [toastactive, setToastActive] = useState(false);
-    const toggleActive = useCallback(() => setToastActive((active) => !active), []);
-    const toastMarkup = toastactive ? (
-        <Toast content={genrateIdentifierMessage} onDismiss={toggleActive} />
-    ) : null;
-
     const fetchGenrateIdentifiersData = async () => {
         setIsLoading(true);
         const formData = new FormData();
@@ -219,7 +336,7 @@ function Table() {
 
         // Use Axios to make the HTTP request
         const response = await axios.post(apiUrl, formData);
-        console.log(response.data, "get identifiers");
+        // console.log(response.data, "get identifiers");
         if (response.status == 200) {
             setGenrateIdentifiersMessage(response.data.msg);
             fetchGetOrderList()
@@ -272,7 +389,7 @@ function Table() {
         <>
             {isLoading &&
                 <div className="spinner">
-                     <img src="https://i.stack.imgur.com/hzk6C.gif" id='loader' alt="Loading..." />
+                    <img src="https://i.stack.imgur.com/hzk6C.gif" id='loader' alt="Loading..." />
                 </div>
             }
             {isModalOpen ? (
@@ -291,7 +408,7 @@ function Table() {
                     <Page title={
                         <div style={{ display: "flex", justifyContent: "space-between" }}>
                             <div>Orders Lists</div>
-                            <div>
+                            {currentPath != conditionPath && <div>
                                 <Button onClick={() => fetchGenrateIdentifiersData()} pressed><span style={{ display: "flex", alignItems: 'center' }}> <p>Generate Identifiers ({`${identifierDataList.length}`})</p>
                                     <p onClick={(e) => {
                                         e.stopPropagation();
@@ -301,7 +418,7 @@ function Table() {
                                 {activeIdentifierModal && <Identifiers
                                     identifierData={identifierDataList}
                                     Item='ITEMS' />}
-                            </div>
+                            </div>}
                         </div>}>
                         {orders.length === 0 && (
 
@@ -329,7 +446,7 @@ function Table() {
                                         { title: 'Total' },
                                         { title: 'Payment status' },
                                         { title: 'Fulfillment status' },
-                                        { title: 'Items' },
+                                        { title:  currentPath == conditionPath ?  '' : 'Items' },
                                     ]}
                                 >
                                     {rowMarkup}
@@ -357,6 +474,7 @@ function Table() {
             </div>
         </>
     );
+
 }
 
 export default Table;
